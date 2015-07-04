@@ -9,7 +9,7 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
     app.state = $state;
     // config
     $scope.app = {
-      name: '微讯平台',
+      name: '康哲健康医疗平台',
       version: '1.0.0',
       // for chart colors
       color: {
