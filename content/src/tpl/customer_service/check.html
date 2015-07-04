@@ -1,0 +1,128 @@
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="CustomerService">
+  <div class="panel-heading font-bold text-center">
+    医生资历审核
+  </div>
+  <div class="panel-body" ng-model="formData">
+    <form class="form-horizontal" method="get">
+      <div class="form-group">
+        <label class="col-sm-3 control-label">医生姓名</label>
+        <div class="col-sm-8">
+          <input type="text" placeholder="医生姓名" class="form-control" ng-model="formData.name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">手机号码</label>
+        <div class="col-sm-8">
+          <input type="text" placeholder="手机号码" class="form-control" ng-model="formData.simpleName">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 col-xs-11 control-label">医疗机构</label>
+        <div class="col-sm-6 col-xs-8">
+          <input id="superName" type="text" readonly placeholder="选择医疗机构" class="form-control" ng-model="viewData.superName">
+        </div>
+        <div class="col-sm-2 col-xs-4">
+          <a id="chooseBtn" ng-click="choose()" class="w100 btn btn-info">选择</a>
+        </div>
+      </div>
+      <div class="form-group none" id="superUnit">
+        <div class="col-sm-offset-3 col-sm-8">
+          <div ui-view class="fade-in-down smooth">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="wrapper-md">
+                  <div class="table-responsive">
+                    <table id="orgAddList" class="table table-striped b-t b-b">
+                      <thead>
+                        <tr>
+                          <th>编码</th>
+                          <th>名称</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">科室</label>
+        <div class="col-sm-8">
+          <select id="orgType" class="form-control">
+            <option value="1">外科</option>
+            <option value="2">内科</option>
+            <option value="3">骨科</option>
+            <option value="3">皮肤科科</option>
+            <option value="3">心理科科</option>
+            <option value="3">眼科</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">职称</label>
+        <div class="col-sm-8">
+          <select id="orgType" class="form-control">
+            <option value="1">主任医师</option>
+            <option value="2">副主任医师</option>
+            <option value="3">医师</option>
+            <option value="3">医师助理</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">证书编号</label>
+        <div class="col-sm-8">
+          <input type="tel" placeholder="证书编号" class="form-control" ng-model="formData.fax">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">证书到期日</label>
+        <div class="col-sm-8">
+          <input type="text" placeholder="证书到期日" class="form-control" ng-model='formData.adminAddress'>
+        </div>
+      </div>      
+      <div class="form-group">
+        <label class="col-sm-3 control-label">证书快照</label>
+        <div class="col-sm-4">
+          <a href="src/img/c0.jpg" target="_blank">
+            <img class="certificate w100" src="src/img/c0.jpg" />
+          </a>
+        </div>        
+        <div class="col-sm-4">
+          <a href="src/img/c8.jpg" target="_blank">
+            <img class="certificate w100" src="src/img/c8.jpg" />
+          </a>
+        </div>
+      </div>
+      <div class="line line-dashed b-b line-lg pull-in"></div>   
+      <div class="form-group check-opr">
+        <div class="col-sm-offset-3 col-sm-8">
+          <div class="radio">
+            <label class="i-checks text-success" for="pass">
+              <input type="radio" name="check" id="pass" class="form-control" checked />
+              <i></i>
+              审核通过
+            </label>
+          </div>          
+          <div class="radio">
+            <label class="i-checks text-danger" for="nopass">
+              <input type="radio" name="check" id="nopass" class="form-control" />
+              <i></i>
+              审核不通过
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="line line-dashed b-b line-lg pull-in"></div>
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-3 col-xs-6">
+          <button type="button" class="w100 btn btn-success" ng-click="submit()">确定</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

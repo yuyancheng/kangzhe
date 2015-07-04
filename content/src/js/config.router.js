@@ -10,8 +10,8 @@ angular.module('app').run(
   ['$stateProvider', '$urlRouterProvider', 'JQ_CONFIG',
     function($stateProvider, $urlRouterProvider, JQ_CONFIG) {
       //$urlRouterProvider.when('/app/home');
-      $urlRouterProvider.otherwise('/app/customer_service');
-      //$urlRouterProvider.otherwise('/access/signin');
+      //$urlRouterProvider.otherwise('/app/customer_service');
+      $urlRouterProvider.otherwise('/app/home');
       $stateProvider.state('app', {
         abstract: true,
         url: '/app',
