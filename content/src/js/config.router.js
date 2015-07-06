@@ -34,14 +34,38 @@ angular.module('app').run(
             }
           ]
         }
-      }).state('app.customer_service', {
-        url: '/customer_service',
-        templateUrl: 'src/tpl/customer_service/check.html',
+      }).state('app.check_list_undone', {
+        url: '/check_list_undone',
+        templateUrl: 'src/tpl/customer_service/check_list_undone.html',
+        resolve: {
+          deps: ['$ocLazyLoad', 'uiLoad',
+            function($ocLazyLoad, uiLoad) {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/check_list_undone.js').then(function() {
+                return uiLoad.load(JQ_CONFIG.dataTable);
+              });
+            }
+          ]
+        }
+      }).state('app.check_list_done', {
+        url: '/check_list_done',
+        templateUrl: 'src/tpl/customer_service/check_list_done.html',
+        resolve: {
+          deps: ['$ocLazyLoad', 'uiLoad',
+            function($ocLazyLoad, uiLoad) {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/check_list_done.js').then(function() {
+                return uiLoad.load(JQ_CONFIG.dataTable);
+              });
+            }
+          ]
+        }
+      }).state('app.check_edit', {
+        url: '/check_edit',
+        templateUrl: 'src/tpl/customer_service/check_edit.html',
         resolve: {
           deps: ['$ocLazyLoad', 'uiLoad',
             function($ocLazyLoad, uiLoad) {
               return $ocLazyLoad.load('angularBootstrapNavTree').then(function() {
-                return $ocLazyLoad.load('src/js/controllers/customer_service/check.js');
+                return $ocLazyLoad.load('src/js/controllers/customer_service/check_edit.js');
               })
             }
           ]

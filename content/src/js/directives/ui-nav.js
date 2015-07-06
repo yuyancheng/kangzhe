@@ -12,7 +12,7 @@ angular.module('app')
         el.on('click', 'a', function(e) {
           next && next.trigger('mouseleave.nav');
           var _this = $(this);
-          _this.parent().siblings( ".active" ).toggleClass('active');
+          //_this.parent().siblings( ".active" ).toggleClass('active');
           _this.next().is('ul') &&  _this.parent().toggleClass('active') &&  e.preventDefault();
           // mobile
           _this.next().is('ul') || ( ( _window.width() < _mb ) && $('.app-aside').removeClass('show off-screen') );

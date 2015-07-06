@@ -92,11 +92,11 @@ th.sorting div{
 .bg-black .dk{
 	background: none;
 }
-.nav .line{
-	height: 0;
-	border-top: 1px solid #131e26;
-	border-bottom: 1px solid #243744;
-}
+/*.nav .line {
+  height: 0;
+  border-top: 1px solid #CFD7DA;
+  border-bottom: 1px solid #EAF8FC;
+}*/
 table.dataTable thead > tr > th.sorting_asc {
 	padding-left: 15px;
 }

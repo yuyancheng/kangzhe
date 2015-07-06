@@ -6,19 +6,19 @@
     <form class="form-horizontal" method="get">
       <div class="form-group">
         <label class="col-sm-3 control-label">医生姓名</label>
-        <div class="col-sm-8">
+        <div class="col-sm-6">
           <input type="text" placeholder="医生姓名" class="form-control" ng-model="formData.name">
         </div>
       </div>
       <div class="form-group">
         <label class="col-sm-3 control-label">手机号码</label>
-        <div class="col-sm-8">
+        <div class="col-sm-6">
           <input type="text" placeholder="手机号码" class="form-control" ng-model="formData.simpleName">
         </div>
       </div>
       <div class="form-group">
         <label class="col-sm-3 col-xs-11 control-label">医疗机构</label>
-        <div class="col-sm-6 col-xs-8">
+        <div class="col-sm-4 col-xs-8">
           <input id="superName" type="text" readonly placeholder="选择医疗机构" class="form-control" ng-model="viewData.superName">
         </div>
         <div class="col-sm-2 col-xs-4">
@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="form-group none" id="superUnit">
-        <div class="col-sm-offset-3 col-sm-8">
+        <div class="col-sm-offset-3 col-sm-6">
           <div ui-view class="fade-in-down smooth">
             <div class="panel panel-default">
               <div class="panel-body">
@@ -51,7 +51,7 @@
       </div>
       <div class="form-group">
         <label class="col-sm-3 control-label">科室</label>
-        <div class="col-sm-8">
+        <div class="col-sm-6">
           <select id="orgType" class="form-control">
             <option value="1">外科</option>
             <option value="2">内科</option>
@@ -64,7 +64,7 @@
       </div>
       <div class="form-group">
         <label class="col-sm-3 control-label">职称</label>
-        <div class="col-sm-8">
+        <div class="col-sm-6">
           <select id="orgType" class="form-control">
             <option value="1">主任医师</option>
             <option value="2">副主任医师</option>
@@ -75,24 +75,24 @@
       </div>
       <div class="form-group">
         <label class="col-sm-3 control-label">证书编号</label>
-        <div class="col-sm-8">
+        <div class="col-sm-6">
           <input type="tel" placeholder="证书编号" class="form-control" ng-model="formData.fax">
         </div>
       </div>
       <div class="form-group">
         <label class="col-sm-3 control-label">证书到期日</label>
-        <div class="col-sm-8">
+        <div class="col-sm-6">
           <input type="text" placeholder="证书到期日" class="form-control" ng-model='formData.adminAddress'>
         </div>
       </div>      
       <div class="form-group">
         <label class="col-sm-3 control-label">证书快照</label>
-        <div class="col-sm-4">
-          <a href="src/img/c0.jpg" target="_blank">
-            <img class="certificate w100" src="src/img/c0.jpg" />
+        <div class="col-sm-3">
+          <a href="src/img/p0.jpg" target="_blank">
+            <img class="certificate w100" src="src/img/p0.jpg" />
           </a>
         </div>        
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           <a href="src/img/c8.jpg" target="_blank">
             <img class="certificate w100" src="src/img/c8.jpg" />
           </a>
@@ -100,7 +100,7 @@
       </div>
       <div class="line line-dashed b-b line-lg pull-in"></div>   
       <div class="form-group check-opr">
-        <div class="col-sm-offset-3 col-sm-8">
+        <div class="col-sm-offset-3 col-sm-6">
           <div class="radio">
             <label class="i-checks text-success" for="pass">
               <input type="radio" name="check" id="pass" class="form-control" checked />

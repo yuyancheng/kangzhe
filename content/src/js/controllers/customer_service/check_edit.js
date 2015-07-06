@@ -73,6 +73,7 @@ app.controller('CustomerService', ['$scope', '$http', '$state',  'uiLoad', 'JQ_C
       });
     };
     $scope.choose = function() {
+      alert(9999)
       var url = app.url.orgUnits;
       var data = null;
       step = chooseBtn.data('step') || 0;
@@ -105,18 +106,6 @@ app.controller('CustomerService', ['$scope', '$http', '$state',  'uiLoad', 'JQ_C
         orgTypeChosen.val(dt.unitLayerType.id);
       }
       
-/*      orgTypeChosen.chosen({
-        placeholder_text_single: '选择集团/公司/部门',
-        disable_search: true
-      }).ready(function(evt, params) {
-        if(dt.unitLayerType){
-          orgTypeChosen.siblings('.chosen-container').find('.chosen-default span').html(dt.unitLayerType.name);
-        }
-        console.log(params);
-      }).on('change', function(evt, params) {
-        $scope.formData['unitLayerType.id'] = params.selected;
-        console.log(params.selected);
-      });*/
     }
 
     function initTable(data) {

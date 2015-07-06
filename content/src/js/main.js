@@ -9,7 +9,7 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
     app.state = $state;
     // config
     $scope.app = {
-      name: '康哲健康医疗平台',
+      name: '康哲医疗平台',
       version: '1.0.0',
       // for chart colors
       color: {
@@ -23,7 +23,7 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
         black: '#1c2b36'
       },
       settings: {
-        themeID: 1,
+        themeID: 8,
         navbarHeaderColor: 'bg-black',
         navbarCollapseColor: 'bg-white-only',
         asideColor: 'bg-black',

@@ -1,12 +1,12 @@
 {
   "datalist": [{
-    "type": "导航",
+    "type": "公共模块",
     "name": null,
     "route": null,
     "count": null,
     "items": [{
       "type": null,
-      "name": "组织架构",
+      "name": "角色管理",
       "route": "app.org.list",
       "icon": "fa fa-sitemap text-primary",
       "count": 2,
@@ -19,7 +19,7 @@
       }]
     }, {
       "type": null,
-      "name": "员工管理",
+      "name": "成员管理",
       "route": "app.employee",
       "icon": "fa fa-group text-warning",
       "count": null,
@@ -38,7 +38,7 @@
       }]
     }, {
       "type": null,
-      "name": "职位管理",
+      "name": "待审核",
       "route": "app.org.position",
       "icon": "fa fa-mortar-board text-info",
       "count": 24,
