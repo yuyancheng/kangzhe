@@ -513,3 +513,31 @@ ul.nav.nav-list.abn-tree .level-9 i.tree-icon {
 	border: 1px solid #cfdadd;
 	border-radius: 2px;
 }
+
+.eara-panel{
+	display: table;
+	height: 300px;
+	padding: 0; 
+	overflow: hidden;
+}
+.eara-list{
+	float: left;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	overflow-y: auto;
+}
+.eara-list li{
+	min-width: 50px;
+	padding-left: 10px;
+	line-height: 2.499;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.eara-list li:hover{
+	background-color: #DDE6E9;
+}
+.eara-list li a{
+	margin-right: 20px;
+}

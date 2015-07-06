@@ -109,42 +109,7 @@ app.controller('CustomerService', ['$scope', '$http', '$state',  'uiLoad', 'JQ_C
     }
 
     function initTable(data) {
-      var dTable = $('#orgAddList').dataTable({
-        "data": data,
-        "sAjaxDataProp": "dataList",
-        "fnCreatedRow": function(nRow, aData, iDataIndex) {
-          $(nRow).attr({'data-id': aData['id'], 'data-name': aData['name']});
-        },
-        "aoColumns": [{
-          "mDataProp": "code"
-        }, {
-          "mDataProp": "name"
-        }]
-      });
-      dTable.$('tr').dblclick(function(e, settings) {
-        //$scope.seeDetails($(this).data('id'));
-      }).click(function(e) {
-        $scope.formData.parent = $(this).data('id');
-        $scope.viewData.superName = $(this).data('name');
 
-        var that = $(this), classname = 'rowSelected';
-        var siblings = $(this).siblings();
-
-        var chooseBtn = $('#chooseBtn');
-        if(that.hasClass(classname)){
-          that.removeClass(classname);
-          $('#superName').val('');
-          chooseBtn.html('取消').data('step', 1);
-          $scope.formData.parent = null;
-          $scope.viewData.superName = null;
-        }else{
-          that.addClass(classname);
-          $('#superName').val($scope.viewData.superName);
-          chooseBtn.html('确定').data('step', 2);
-        }
-        
-        siblings.removeClass(classname);
-      });
     }
   }
 ]);
