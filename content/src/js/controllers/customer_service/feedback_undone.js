@@ -1,20 +1,19 @@
 'use strict';
 
-app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout, $http, utils) {
-  var url = app.url.admin.check.getDoctors; // 后台API路径
+app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, $http, utils) {
+  var url = app.url.feedback.query; // 后台API路径
   var data = null;
-  
+
   // 从后台获取数据
   $http.post(url,{
-    status: 2,
     access_token: app.url.access_token
   }).then(function(resp) {
     if (resp.data.resultCode === 1) {
-      data = resp.data.data;
+      data = resp.data.data.pageData;
 
-      utils.localData('check_undo', data.length);
-      $scope.datas.check_undo = data.length;
-      
+      utils.localData('feedback_undo', data.length);
+      $scope.datas.feedback_undo = data.length;
+
       if(dTable){
         dTable.fnDestroy();
         initTable();
@@ -33,7 +32,7 @@ app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout,
   $scope.checkIt = function(){
     if($rootScope.obj['userId']){
       $rootScope.details = $rootScope.obj;
-      $state.go('app.check_edit');
+      $state.go('app.feedback_view');
     }
   };
 
@@ -58,7 +57,7 @@ app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout,
   $rootScope.ids = [];
 
   function clicked(that){
-    $rootScope.details = $rootScope.obj = utils.getDataByKey(data, 'userId', that.data('id'));
+    $rootScope.details = $rootScope.obj = utils.getDataByKey(data, '_id', that.data('id'));
     var id = $rootScope.obj['id'];
     $rootScope.ids.push(id);
     $scope.checkIt();
@@ -67,25 +66,28 @@ app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout,
   // 初始化表格 jQuery datatable
   var doctorList, dTable;
   function initTable() {
-    doctorList = $('#doctorList');
-    utils.extendHash(data, ["doctorNum","title","hospital","name","telephone"]);
+    doctorList = $('#feedbackList');
+    utils.extendHash(data, ["userId","userName","clientVersion","content","phoneSystem","phoneModel","createTime"]);
     dTable = doctorList.dataTable({
+      "search": null,
       "data": data,
-      //"sAjaxDataProp": "data",
-      "oLanguage": app.lang.datatables.translation,
+      //"oLanguage": app.lang.datatables.translation,
       "fnCreatedRow": function(nRow, aData, iDataIndex){
-        $(nRow).attr('data-id', aData['userId']);
+        $(nRow).attr('data-id', aData['_id']);
       },
-      "columns": [{
-        "data": "doctorNum"
+      "aoColumns": [{
+        "mDataProp": "userId"
       }, {
-        "data": "title"
+        "mDataProp": "userName"
       }, {
-        "data": "hospital"
+        "mDataProp": "clientVersion"
       }, {
-        "data": "name"
+        "mDataProp": "content"
       }, {
-        "data": "telephone"
+        "mDataProp": "createTime",
+        "render": function(o) {
+          return DataRender.DateTime(o);
+        }
       }]
     });
 

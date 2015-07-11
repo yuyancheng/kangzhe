@@ -77,10 +77,9 @@ th.sorting div{
 	padding-top: 10px;
 }
 .org-title{
-	line-height: 100%;
 	margin: 0;
-	padding: 20px 0 0;
-	font-size: 22px;
+	padding: 10px 0 0;
+	font-size: 18px;
 	font-weight: bold;
 }
 .org .col-xs-8{
@@ -102,9 +101,9 @@ table.dataTable thead > tr > th.sorting_asc {
 }
 .table-striped th,
 .table-striped td{
-	overflow: hidden;
+/*	overflow: hidden;
 	text-overflow: ellipsis;
-	white-space: nowrap;
+	white-space: nowrap;*/
 }
 .table-striped td{
 	/*font-size: 12px;*/
@@ -112,8 +111,10 @@ table.dataTable thead > tr > th.sorting_asc {
 .table-striped tr{
 	cursor: default;
 }
-.table-striped tbody tr:hover td{
+.table-striped tbody tr:hover td
+{
 	background-color: #EFF5FA;
+	cursor: pointer;
 }
 .table-striped tbody tr.rowSelected td{
 	background-color: #337ab7;
@@ -262,12 +263,12 @@ form .fa-asterisk{
   -webkit-animation-fill-mode: both;
   animation-fill-mode: both;
 }
-.table thead tr th:first-child{
+/*.table thead tr th:first-child{
 	background: none;
 }
 .table thead tr th:first-child{
 	margin-left: -3px;
-}
+}*/
 @media screen and (min-width: 768px) {
 	.table .i-checks{
 		margin-bottom: 0;
@@ -502,42 +503,169 @@ ul.nav.nav-list.abn-tree .level-9 i.tree-icon {
 
 /**********医疗项目*********/
 
-.check-opr .radio{
-	padding: 10px 0;
+.check-opr .check-items{
+	padding: 5px 0;
 }
 .check-opr .i-checks{
+	display: block;
 	font-size: 15px;
 	font-weight: bold;
 }
-.certificate{
+.certificate-list a{
+	display: inline-block;
+	width: 100%;
+	margin-bottom: 10px;
+}
+.certificate-list img{
 	border: 1px solid #cfdadd;
 	border-radius: 2px;
 }
 
-.eara-panel{
-	display: table;
+#eara_panel{
 	height: 300px;
 	padding: 0; 
-	overflow: hidden;
+	overflow-x: auto;
+	overflow-y: auto;
+	margin-right: 1px;
 }
 .eara-list{
-	float: left;
-	height: 100%;
+	display: table-cell;
 	margin: 0;
 	padding: 0;
 	list-style: none;
-	overflow-y: auto;
 }
 .eara-list li{
 	min-width: 50px;
 	padding-left: 10px;
-	line-height: 2.499;
+	line-height: 1.89999;
 	cursor: pointer;
 	white-space: nowrap;
 }
 .eara-list li:hover{
-	background-color: #DDE6E9;
+	background-color: #F4F4F4;
 }
 .eara-list li a{
-	margin-right: 20px;
+	margin-right: 5px;
 }
+.eara-list .item-odd,
+.eara-list .item-even{
+	padding-left: 5px;
+	border-left: 5px solid #f00;
+	background-color: #CCC;
+	border-radius: 2px;
+}
+/*.eara-list .item-odd{
+	background-color: #FFF;
+}
+.eara-list .item-even{
+	background-color: #F4F4F4;
+}
+.bg-odd{
+	background-color: #FFF;
+}
+.bg-even{
+	background-color: #F4F4F4;
+}
+.bg-odd li:hover{
+	background-color: #F4F4F4;
+}
+.bg-even li:hover{
+	background-color: #FFF;
+}*/
+#list_route{
+	position: relative;
+	z-index: 10;
+	padding: 0 10px;
+	line-height: 2.2999;
+	border-bottom: 1px solid #cfdadd;
+	color: #7E92C7;
+	box-shadow: 0 1px 1px rgba(0,0,0,.05);
+	overflow: hidden;
+	white-space: nowrap;
+}
+.route-link:not(:first-child){
+	margin-left: 10px;
+}
+.route-link:not(:first-child):before{
+	content: "\f105";
+	margin-right: 10px;
+	font: normal normal normal 14px/1 FontAwesome;
+}
+.def-border{
+	border: 1px solid #cfdadd;
+	border-radius: 2px;
+}
+.form-opr{
+	display: table;
+	width: 100%;
+	padding: 20px 0 10px;
+}
+.inner-items .i-checks{
+	font-size: 14px;
+	font-weight: normal;
+	cursor: pointer;
+	margin-bottom: 10px;
+}
+.check-items textarea{
+	min-height: 80px;
+	font-weight: normal;
+}
+.text-warning-dark{
+	color: #FFA500;
+}
+
+.check-items .i-checks > i {
+  width: 18px;
+  height: 18px;
+  margin-top: -2px;
+  margin-right: 4px;
+  margin-left: -20px;
+  line-height: 1;
+  vertical-align: middle;
+  background-color: #fff;
+  border: 1px solid #cfdadd;
+}
+.check-items .i-checks input:checked + i:before {
+  width: 8px;
+  height: 8px;
+}
+
+.inner-items{
+	display: none;
+}
+.inner-items textarea{
+	display: none;
+}
+.check-items .i-checks input:checked + i + .inner-items,
+.check-items .i-checks input:checked + i + .inner-items textarea{
+	display: block;
+}
+.check-items .inner-items{
+	margin-top: 10px;
+	margin-left: 8px;
+}
+
+.check-items .i-checks > span{
+	margin-left: 0;
+}
+
+.add-on{
+	margin-left: 30px;
+	position: absolute;
+  right: 27px;
+  top: 4px;
+  font-size: 20px;
+}
+
+#set_panel{
+	padding: 0;
+} 
+#set_panel .btn{
+	background-color: #F6F8F8;
+	border-color: #F6F8F8;
+} 
+#set_panel .btn:hover{
+	background-color: #fcfdfd;
+	border-color: #dee5e7;
+} 
+

@@ -10,17 +10,17 @@
       </div>
       <div class="list-group list-group-sm">
         <div class="list-group-item">
-          <input type="text" placeholder="用户名" class="form-control no-border" ng-model="user.name" tabindex="1" required>
+          <input type="text" placeholder="手机号码" class="form-control no-border" ng-model="user.telephone" tabindex="1" required>
         </div>
         <div class="list-group-item">
            <input type="password" placeholder="密码" class="form-control no-border" ng-model="user.password" tabindex="2" required>
         </div>
       </div>
-      <button type="submit" class="btn btn-lg btn-primary btn-block" ng-click="login()" ng-disabled='form.$invalid'>登录</button>
+      <button type="submit" class="btn btn-lg btn-success btn-block" ng-click="login()" ng-disabled='form.$invalid'>登录</button>
       <div class="text-center m-t m-b"><a ui-sref="access.forgotpwd">忘记密码？</a></div>
       <div class="line line-dashed"></div>
       <p class="text-center"><small>还没有帐号？</small></p>
-      <a ui-sref="access.signup" class="btn btn-lg btn-default btn-block">创建一个帐号</a>
+      <a ui-sref="access.signup" class="btn btn-lg btn-primary btn-block">创建一个帐号</a>
     </form>
   </div>
   <div class="text-center" ng-include="'src/tpl/blocks/page_footer.html'">

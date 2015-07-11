@@ -10,9 +10,13 @@ var app = angular.module('app').config(
       app.service = $provide.service;
       app.constant = $provide.constant;
       app.value = $provide.value;
+
       // API路径集合
-      app.urlRoot = '/weixun/';
-      //app.urlRoot = 'http://localhost:8070/weixun/{_proxy}/';
+      //app.urlRoot = '/kangzhe/';
+      app.urlRoot = 'http://192.168.3.7:8091/';
+      app.urlFile = '/upload/'
+      //app.urlFile = 'http://192.168.3.7:9000/';
+      //app.urlRoot = 'http://localhost:8070/kangzhe/{_proxy}/';
       var common = {
         list: 'list.iv',
         save: 'save.iv',
@@ -32,15 +36,37 @@ var app = angular.module('app').config(
         return apis;
       }
       app.url = {
-        login: app.urlRoot + 'user/login.iv',
-        logout: app.urlRoot + 'user/logout.iv',
-        currentUser: app.urlRoot + 'user/currentUserInfo.iv',
-        menus: app.urlRoot + 'mainMenuItem/list.iv',
-        orgUnits: app.urlRoot + 'adminOrgUnit/allAdminOrgUnits.iv',
-        orgTypes: app.urlRoot + 'orgUnitLayerType/allAdminOrgUnits.iv',
+        access_token: 'a6ca04531c9945bc9d68ba05ea5c747d',
+
+        login:  app.urlRoot + 'user/login',
+        logout: app.urlRoot + 'user/logout',
+        admin: {
+          check: {
+            getDoctors:   app.urlRoot + 'admin/check/getDoctors',
+            getDoctor:    app.urlRoot + 'admin/check/getDoctor',
+            getArea:      app.urlRoot + 'admin/check/getArea',
+            getHospitals: app.urlRoot + 'admin/check/getHospitals',
+            getDepts:     app.urlRoot + 'admin/check/getDepts',
+            getTitles:    app.urlRoot + 'admin/check/getTitles',
+            checked:      app.urlRoot + 'admin/check/checked',
+            fail:         app.urlRoot + 'admin/check/fail'
+          }
+        },
+        feedback: {
+          query: app.urlRoot + 'feedback/query',
+          get: app.urlRoot + 'feedback/get'
+        },
+        upload: {
+          getCertPath: app.urlFile + 'getCertPath'
+        },
+
+        currentUser:  app.urlRoot + 'user/currentUserInfo.iv',
+        menus:        app.urlRoot + 'mainMenuItem/list.iv',
+        orgUnits:     app.urlRoot + 'adminOrgUnit/allAdminOrgUnits.iv',
+        orgTypes:     app.urlRoot + 'orgUnitLayerType/allAdminOrgUnits.iv',
         org: {
-          api: getApi('adminOrgUnit', common),
-          freeze: app.urlRoot + 'adminOrgUnit/freeze.iv',
+          api:      getApi('adminOrgUnit', common),
+          freeze:   app.urlRoot + 'adminOrgUnit/freeze.iv',
           allUnits: app.urlRoot + 'adminOrgUnit/allAdminOrgUnits.iv',
           subUnits: app.urlRoot + 'adminOrgUnit/directSubAdminOrgUnits.iv'
         },        
@@ -54,36 +80,52 @@ var app = angular.module('app').config(
           api: getApi('position', common)
         },
         //orgLayer: app.urlRoot + 'orgUnitLayer/list.iv',
-        orgSave: app.urlRoot + 'adminOrgUnit/save.iv',
-        orgEdit: app.urlRoot + 'adminOrgUnit/modify.iv',
+        orgSave:  app.urlRoot + 'adminOrgUnit/save.iv',
+        orgEdit:  app.urlRoot + 'adminOrgUnit/modify.iv',
         position: app.urlRoot + 'position/list.iv',
         employee: app.urlRoot + 'person/list.iv',
-        signup: app.urlRoot + 'person/save.iv',
-        system: app.urlRoot + 'param/list.iv'
+        signup:   app.urlRoot + 'person/save.iv',
+        system:   app.urlRoot + 'param/list.iv'
       };
+      app.lang = {
+        datatables: {
+          translation: {
+            "sLengthMenu": "每页 _MENU_ 条",
+            "sZeroRecords": "没有找到符合条件的数据",
+            "sProcessing": "&lt;img src=’./loading.gif’ /&gt;",
+            "sInfo": "当前第 _START_ - _END_ 条，共 _TOTAL_ 条",
+            "sInfoEmpty": "没有记录",
+            "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+            "sSearch": "搜索",
+            "oPaginate": {
+              "sFirst": "<<",
+              "sPrevious": "<",
+              "sNext": ">",
+              "sLast": ">>"
+            }
+          }
+        }
+      }
     }
   ]).config(['$translateProvider',
   function($translateProvider) {
-    // Register a loader for the static files
-    // So, the module will search missing translation tables under the specified urls.
-    // Those urls are [prefix][langKey][suffix].
+    // 注册一个静态文件加载器，模块会在指定的url中查找翻译词典
+    // url结构为 [prefix][langKey][suffix].
     $translateProvider.useStaticFilesLoader({
       prefix: 'src/l10n/',
       suffix: '.js'
     });
-    // Tell the module what language to use by default
+    // 设置默认语言
     $translateProvider.preferredLanguage('en');
-    // Tell the module to store the language in the local storage
+    // 存储默认语言(本地)
     $translateProvider.useLocalStorage();
   }
 ]).factory('authorityInterceptor', [
-
   function() {
+
     var authorityInterceptor = {
       response: function(response) {
-        //console.log(response);
         if ('no permission' == response.data) {
-          //console.log(response);
           app.controller('Interceptor', ['$state',
             function($state) {
               app.state.go('access.404');
@@ -91,7 +133,6 @@ var app = angular.module('app').config(
           ]);
         }
         if ("no login" == response.data) {
-          //console.log(response);
           app.state.go('access.signin');
         }
         return response;

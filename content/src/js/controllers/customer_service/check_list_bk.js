@@ -1,20 +1,27 @@
 'use strict';
 
-app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
-  var url = app.url.orgUnits; // 后台API路径
+app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout, $http, utils) {
+  var url = app.url.admin.check.getDoctors; // 后台API路径
   var data = null;
 
   // 从后台获取数据
-  app.utils.getData(url, function callback(dt){
-    data = dt;
-    if(dTable){
-      dTable.fnDestroy();
-      initTable();
-    }else{
-      initTable();
+  $http.post(url,{
+    access_token: app.url.access_token
+  }).then(function(resp) {
+    if (resp.data.resultCode === 1) {
+      data = resp.data.data;
+      if(dTable){
+        dTable.fnDestroy();
+        initTable();
+      }else{
+        initTable();
+      }
+      $scope.loading = false;
+    } else {
+      console.warn(resp.statusText);
     }
-    $scope.loading = false;
-    $scope.loading_sub = false;
+  }, function(err) {
+    console.error(err.statusText);
   });
 
   $scope.click = function(){};
@@ -43,13 +50,13 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
   };
 
   // 编辑某一组织（工具栏按钮）
-  $scope.editIt = function(){
-    if($rootScope.obj['id']){
+  $scope.checkIt = function(){
+    if($rootScope.obj['userId']){
       $rootScope.details = $rootScope.obj;
       setStatus(status_false);
-      $state.go('app.org.edit');
+      $state.go('app.check_edit');
     }
-  };   
+  };
 
   var mask = $('<div class="mask"></div>');
   var container = $('#dialog-container');
@@ -145,13 +152,6 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
       }
     }
 
-/*    status = {
-      only : $scope.only,
-      single : $scope.single,
-      locked : $scope.locked,
-      mutiple : $scope.mutiple
-    };*/
-
     hButton.trigger('click'); // 触发一次点击事件，使所以按钮的状态值生效
   };
 
@@ -162,8 +162,6 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
       $scope.locked = param.locked,
       $scope.mutiple = param.mutiple
     }
-
-    //hButton.trigger('click');
   }
 
   ////////////////////////////////////////////////////////////
@@ -183,9 +181,8 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
       }
     });
   };
-  //$scope.init();
 
-  $rootScope.ids = [], $rootScope.obj;
+  $rootScope.ids = [];
 
   function clicked(target, that){
     var classname = 'rowSelected', id;
@@ -199,58 +196,34 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
         that = $(this).parents('tr');
       }
 
-      $rootScope.details = $rootScope.obj = app.utils.getDataByKey(data, 'id', that.data('id'));
+      $rootScope.details = $rootScope.obj = utils.getDataByKey(data, 'userId', that.data('id'));
       id = $rootScope.obj['id'];
 
       if(!$(this)[0].checked){
         var idx = $rootScope.ids.indexOf(id);
         if(idx !== -1 ) $rootScope.ids.splice(idx, 1);
-        //that.removeClass(classname);
       }else{
         $rootScope.ids.push(id);
-        //that.addClass(classname);
       }
       $scope.setBtnStatus();
     });
   }
 
   // 初始化表格 jQuery datatable
-  var orgList, dTable;
+  var doctorList, dTable;
   function initTable() {
-    orgList = $('#orgList');
-    dTable = orgList.dataTable({
-      // "serverSide": true,
-      //  "ajax": {
-      //   "url": app.url.org.subUnits,
-      //   "type": 'POST',
-      //   "data": {
-      //     "id": $scope.item_id
-      //   }
-      // },
-      //"bFilter": true,
+    doctorList = $('#doctorList');
+    dTable = doctorList.dataTable({
+      "search": null,
       "data": data,
       "sAjaxDataProp": "dataList",
-      "oLanguage": {
-        "sLengthMenu": "每页 _MENU_ 条",
-        "sZeroRecords": "没有找到符合条件的数据",
-        "sProcessing": "&lt;img src=’./loading.gif’ /&gt;",
-        "sInfo": "当前第 _START_ - _END_ 条，共 _TOTAL_ 条",
-        "sInfoEmpty": "没有记录",
-        "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
-        "sSearch": "搜索",
-        "oPaginate": {
-          "sFirst": "<<",
-          "sPrevious": "<",
-          "sNext": ">",
-          "sLast": ">>"
-        }
-      },
+      "oLanguage": app.lang.datatables.translation,
       "fnCreatedRow": function(nRow, aData, iDataIndex){
-        $(nRow).attr('data-id', aData['id']);
+        $(nRow).attr('data-id', aData['userId']);
       },
       "drawCallback": function( settings ) {
-        var input = orgList.find('thead .i-checks input');
-        var inputs = orgList.find('tbody .i-checks input');
+        var input = doctorList.find('thead .i-checks input');
+        var inputs = doctorList.find('tbody .i-checks input');
         var len = inputs.length, allChecked = true;
         for(var i=0; i<len; i++){
           if(!inputs.eq(i)[0].checked){
@@ -258,11 +231,11 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
             break;
           }
         }
-        if(allChecked){
-          input[0].checked = true;
-        }else{
-          input[0].checked = false;
-        }
+        // if(allChecked){
+        //   input[0].checked = true;
+        // }else{
+        //   input[0].checked = false;
+        // }
         
         input.off().click(function(){
           for(var i=0; i<len; i++){
@@ -274,16 +247,15 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
         });
       },
       "aoColumns": [{
-        "orderable": false,
-        "render": function(param){
-          return '<label class="i-checks"><input type="checkbox"><i></i></label>';
-        }
+        "mDataProp": "doctorNum"
       }, {
-        "mDataProp": "code",
+        "mDataProp": "title"
+      }, {
+        "mDataProp": "hospital"
       }, {
         "mDataProp": "name"
       }, {
-        "mDataProp": "simpleName"
+        "mDataProp": "telephone"
       }]
     });
 
@@ -291,7 +263,7 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
     
     // 表格行事件
     dTable.$('tr').dblclick(function(e, settings) {
-      $scope.seeDetails($(this).data('id'));
+      //$scope.seeDetails($(this).data('id'));
     }).click(function(e) {
       var evt = e || window.event;
       var target = event.target || event.srcElement;
@@ -301,8 +273,8 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
       var ipt = $(this).find('.i-checks input');
       clicked(ipt.off(), $(this));
       ipt.trigger('click');
-      var input = orgList.find('thead .i-checks input');
-      var inputs = orgList.find('tbody .i-checks input');
+      var input = doctorList.find('thead .i-checks input');
+      var inputs = doctorList.find('tbody .i-checks input');
       var len = inputs.length, allChecked = true;
       for(var i=0; i<len; i++){
         if(!inputs.eq(i)[0].checked){
@@ -310,11 +282,11 @@ app.controller('CheckListDone', function($rootScope, $scope, $state, $timeout) {
           break;
         }
       }
-      if(allChecked){
-        input[0].checked = true;
-      }else{
-        input[0].checked = false;
-      }
+      // if(allChecked){
+      //   input[0].checked = true;
+      // }else{
+      //   input[0].checked = false;
+      // }
     });
   }
 

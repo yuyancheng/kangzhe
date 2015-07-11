@@ -46,13 +46,25 @@ angular.module('app').run(
             }
           ]
         }
-      }).state('app.check_list_done', {
-        url: '/check_list_done',
-        templateUrl: 'src/tpl/customer_service/check_list_done.html',
+      }).state('app.check_list_pass', {
+        url: '/check_list_pass',
+        templateUrl: 'src/tpl/customer_service/check_list_pass.html',
         resolve: {
           deps: ['$ocLazyLoad', 'uiLoad',
             function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/check_list_done.js').then(function() {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/check_list_pass.js').then(function() {
+                return uiLoad.load(JQ_CONFIG.dataTable);
+              });
+            }
+          ]
+        }
+      }).state('app.check_list_nopass', {
+        url: '/check_list_nopass',
+        templateUrl: 'src/tpl/customer_service/check_list_nopass.html',
+        resolve: {
+          deps: ['$ocLazyLoad', 'uiLoad',
+            function($ocLazyLoad, uiLoad) {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/check_list_nopass.js').then(function() {
                 return uiLoad.load(JQ_CONFIG.dataTable);
               });
             }
@@ -62,189 +74,31 @@ angular.module('app').run(
         url: '/check_edit',
         templateUrl: 'src/tpl/customer_service/check_edit.html',
         resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('angularBootstrapNavTree').then(function() {
-                return $ocLazyLoad.load('src/js/controllers/customer_service/check_edit.js');
-              })
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/check_edit.js');
             }
           ]
         }
-      }).state('app.frame', {
-        url: '/frame',
-        templateUrl: 'src/tpl/org/frame.html',
+      }).state('app.feedback_undone', {
+        url: '/feedback_undone',
+        templateUrl: 'src/tpl/customer_service/feedback_undone.html',
         resolve: {
           deps: ['$ocLazyLoad', 'uiLoad',
             function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('angularBootstrapNavTree').then(function() {
-                //return $ocLazyLoad.load('src/js/controllers/org/frameTest.js');
-              })
-            }
-          ]
-        }
-      }).state('app.org', {
-        url: '/org',
-        templateUrl: 'src/tpl/org/org.html',
-        resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('angularBootstrapNavTree').then(function() {
-                return $ocLazyLoad.load('src/js/controllers/org/org.js');
-              });
-            }
-          ]
-        }
-      }).state('app.org.list', {
-        url: '/list',
-        templateUrl: 'src/tpl/org/org_list.html',
-        resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('src/js/controllers/org/org_list.js').then(function() {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/feedback_undone.js').then(function() {
                 return uiLoad.load(JQ_CONFIG.dataTable);
               });
             }
           ]
         }
-      }).state('app.org.add', {
-        url: '/add',
-        templateUrl: 'src/tpl/org/org_add.html',
+      }).state('app.feedback_view', {
+        url: '/feedback_view',
+        templateUrl: 'src/tpl/customer_service/feedback_view.html',
         resolve: {
           deps: ['$ocLazyLoad',
             function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/org/org_add.js');
-            }
-          ]
-        }
-      }).state('app.org.edit', {
-        url: '/edit',
-        templateUrl: 'src/tpl/org/org_edit.html',
-        resolve: {
-          deps: ['$ocLazyLoad',
-            function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/org/org_edit.js');
-            }
-          ]
-        }
-      }).state('app.org.remove', {
-        url: '/remove',
-        resolve: {
-          deps: ['$ocLazyLoad',
-            function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/org/org_remove.js');
-            }
-          ]
-        }
-      }).state('app.org.add.list', {
-        url: '/list',
-        templateUrl: 'src/tpl/org/org_add_list.html',
-        resolve: {
-          deps: ['$ocLazyLoad','uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return uiLoad.load(JQ_CONFIG.dataTable).then(function() {
-                return $ocLazyLoad.load('src/js/controllers/org/org_add_list.js');
-              });
-            }
-          ]
-        }
-      }).state('app.org.details', {
-        url: '/details',
-        templateUrl: 'src/tpl/org/org_details.html',
-        resolve: {
-          deps: ['$ocLazyLoad','uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return uiLoad.load(JQ_CONFIG.chosen).then(function() {
-                return $ocLazyLoad.load('src/js/controllers/org/org_details.js');
-              });
-            }
-          ]
-        }
-      }).state('app.org.position', {
-        url: '/position',
-        templateUrl: 'src/tpl/org/position/position.html',
-        resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('angularBootstrapNavTree').then(function() {
-                return $ocLazyLoad.load('src/js/controllers/org/position/position.js');
-              }).then(function() {
-                return uiLoad.load(JQ_CONFIG.dataTable).then(function() {
-                  //return $ocLazyLoad.load('src/js/controllers/org/org.js');
-                });
-              });
-            }
-          ]
-        }
-      }).state('app.employee', {
-        url: '/employee',
-        templateUrl: 'src/tpl/org/employee/employee.html',
-        resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('src/js/controllers/org/employee/employee.js').then(function() {
-                return uiLoad.load(JQ_CONFIG.dataTable);
-              });
-            }
-          ]
-        }
-      }).state('app.employee.list', {
-        url: '/list',
-        templateUrl: 'src/tpl/org/employee/employee_list.html',
-        resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('src/js/controllers/org/employee/employee_list.js').then(function() {
-                return uiLoad.load(JQ_CONFIG.dataTable);
-              });
-            }
-          ]
-        }
-      }).state('app.employee.details', {
-        url: '/details',
-        templateUrl: 'src/tpl/org/employee/employee_details.html',
-        resolve: {
-          deps: ['$ocLazyLoad','uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return uiLoad.load(JQ_CONFIG.chosen).then(function() {
-                return $ocLazyLoad.load('src/js/controllers/org/employee/employee_details.html');
-              });
-            }
-          ]
-        }
-      }).state('app.org.attendance', {
-        url: '/attendance',
-        templateUrl: 'src/tpl/org/org_attendance.html',
-        resolve: {
-          deps: ['$ocLazyLoad','uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return uiLoad.load(JQ_CONFIG.chosen).then(function() {
-                return $ocLazyLoad.load('src/js/controllers/org/org_attendance.js');
-              });
-            }
-          ]
-        }
-      })
-      // form
-      .state('app.form', {
-        url: '/form',
-        template: '<div ui-view class="fade-in"></div>',
-        resolve: {
-          deps: ['uiLoad',
-            function(uiLoad) {
-              return uiLoad.load('src/js/controllers/form.js');
-            }
-          ]
-        }
-      }).state('app.form.editor', {
-        url: '/editor',
-        templateUrl: 'src/tpl/form_editor.html',
-        controller: 'EditorCtrl',
-        resolve: {
-          deps: ['$ocLazyLoad',
-            function($ocLazyLoad) {
-              return $ocLazyLoad.load('textAngular').then(function() {
-                return $ocLazyLoad.load('src/js/controllers/editor.js');
-              });
+              return $ocLazyLoad.load('src/js/controllers/customer_service/feedback_view.js');
             }
           ]
         }

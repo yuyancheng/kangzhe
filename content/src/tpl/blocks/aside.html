@@ -2,7 +2,7 @@
   <!-- if you want to use a custom scroll when aside fixed, use the slimScroll
     <div class="navi-wrap" ui-jq="slimScroll" ui-options="{height:'100%', size:'8px'}">
   -->
-  <div class="navi-wrap">
+  <div class="navi-wrap" ng-model="datas">
     <!-- user -->
     <div class="clearfix hidden-xs text-center hide" id="aside-user">
       <div class="dropdown wrapper" dropdown>
@@ -14,25 +14,16 @@
         <a href class="dropdown-toggle hidden-folded" dropdown-toggle>
           <span class="clear">
             <span class="block m-t-sm">
-              <strong class="font-bold text-lt">admin</strong> 
+              <strong class="font-bold text-lt" ng-bind="datas.user_name">admin</strong> 
               <b class="caret"></b>
             </span>
-            <span class="text-muted text-xs block">管理员</span>
+            <span class="text-muted text-xs block" ng-bind="datas.user_type">管理员</span>
           </span>
         </a>
         <!-- dropdown -->
         <ul class="dropdown-menu animated fadeInRight w hidden-folded">
-          <li>
+          <li ui-toggle-class="active" target=".settings">
             <a href>设置</a>
-          </li>
-          <li>
-            <a ui-sref="app.page.profile">描述</a>
-          </li>
-          <li>
-            <a href>
-              <span class="badge bg-danger pull-right">3</span>
-              通知
-            </a>
           </li>
           <li class="divider"></li>
           <li>

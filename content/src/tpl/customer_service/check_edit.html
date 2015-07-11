@@ -1,320 +1,122 @@
 <div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="CustomerService">
   <div class="panel-heading font-bold text-center">
-    医生资历审核
+    医生认证审核
   </div>
   <div class="panel-body" ng-model="formData">
-    <form class="form-horizontal" method="get">
+    <form name="form" class="form-validation form-horizontal">
+      <div class="text-danger wrapper text-center" ng-show="authError" ng-bind="authError"></div>
       <div class="form-group">
         <label class="col-sm-3 control-label">医生姓名</label>
         <div class="col-sm-6">
-          <input type="text" placeholder="医生姓名" class="form-control" ng-model="formData.name">
+          <input type="text" placeholder="医生姓名" class="form-control" ng-model="viewData.name" tabindex="1" readonly />
         </div>
       </div>
       <div class="form-group">
         <label class="col-sm-3 control-label">手机号码</label>
         <div class="col-sm-6">
-          <input type="text" placeholder="手机号码" class="form-control" ng-model="formData.simpleName">
+          <input type="text" placeholder="手机号码" class="form-control" ng-model="viewData.telephone" readonly />
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-3 col-xs-11 control-label">医疗机构</label>
+        <label class="col-sm-3 col-xs-11 control-label">医疗机构<i class="fa fa-asterisk text-danger"></i></label>
         <div class="col-sm-4 col-xs-8">
-          <input id="superName" type="text" readonly placeholder="选择医疗机构" class="form-control" ng-model="viewData.superName">
+          <input type="text" readonly placeholder="选择医疗机构" class="form-control" ng-model="formData.hospital" required>
         </div>
         <div class="col-sm-2 col-xs-4">
-          <a id="chooseBtn" ng-click="choose()" class="w100 btn btn-info">选择</a>
-        </div>
-      </div>
-      <div class="form-group " id="superUnit">
-        <div class="col-sm-offset-3 col-sm-6">
-          <div ui-view class="fade-in-down smooth">
-            <div class="panel panel-default">
-              <div class="eara-panel">
-                <ul class="eara-list slimScrollDiv">
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>北京市</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>上海市</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>广东省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>江西省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>乌鲁木齐市</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>河南省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>湖南省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>黑龙江省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>陕西省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>湖北省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>广西省</span>
-                    </a>
-                  </li>
-                </ul>
-
-                <ul class="eara-list slimScrollDiv">
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>北京市</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>上海市</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>广东省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>江西省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>乌鲁木齐市</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>河南省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>湖南省</span>
-                    </a>
-                  </li>
-                </ul>
-
-                <ul class="eara-list slimScrollDiv">
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>北京市</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>上海市</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>广东省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>江西省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>乌鲁木齐市</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>河南省</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href class="auto">
-                      <span class="pull-right text-muted">
-                        <i class="fa fa-fw fa-angle-right text"></i>
-                      </span>
-                      <span>湖南省</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          <button type="button" ng-click="choose($index, 'hospital')" class="w100 btn btn-info">选择</button>
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-3 control-label">科室</label>
+        <label class="col-sm-3 col-xs-11 control-label">科室<i class="fa fa-asterisk text-danger"></i></label>
+        <div class="col-sm-4 col-xs-8">
+          <input type="text" readonly placeholder="选择科室" class="form-control" ng-model="formData.departments" required>
+        </div>
+        <div class="col-sm-2 col-xs-4">
+          <button type="button" ng-click="choose($index, 'department')" class="w100 btn btn-info">选择</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 col-xs-11 control-label">职称<i class="fa fa-asterisk text-danger"></i></label>
         <div class="col-sm-6">
-          <select id="orgType" class="form-control">
-            <option value="1">外科</option>
-            <option value="2">内科</option>
-            <option value="3">骨科</option>
-            <option value="3">皮肤科科</option>
-            <option value="3">心理科科</option>
-            <option value="3">眼科</option>
+          <select id="doctor_title" class="form-control" required>
+            <option value="1">请选择职称</option>
           </select>
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-3 control-label">职称</label>
+        <label class="col-sm-3 control-label">证书编号<i class="fa fa-asterisk text-danger"></i></label>
         <div class="col-sm-6">
-          <select id="orgType" class="form-control">
-            <option value="1">主任医师</option>
-            <option value="2">副主任医师</option>
-            <option value="3">医师</option>
-            <option value="3">医师助理</option>
-          </select>
+          <input type="tel" placeholder="证书编号" class="form-control" ng-model="formData.licenseNum" required>
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-3 control-label">证书编号</label>
-        <div class="col-sm-6">
-          <input type="tel" placeholder="证书编号" class="form-control" ng-model="formData.fax">
+        <label class="col-sm-3 control-label">证书到期时间<i class="fa fa-asterisk text-danger"></i></label>
+        <div class="col-sm-6 input-append date form_datetime">
+          <input type="text" placeholder="证书到期日" class="form-control" ng-model='formData.licenseExpire' required>
+          <span class="add-on"><i class="icon-th glyphicon glyphicon-calendar"></i></span>
         </div>
       </div>
-      <div class="form-group">
-        <label class="col-sm-3 control-label">证书到期日</label>
-        <div class="col-sm-6">
-          <input type="text" placeholder="证书到期日" class="form-control" ng-model='formData.adminAddress'>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-3 control-label">证书快照</label>
-        <div class="col-sm-3">
-          <a href="src/img/p0.jpg" target="_blank">
-          <img class="certificate w100" src="src/img/p0.jpg" />
+      <div class="form-group" ng-model="imgs">
+        <label class="col-sm-3 control-label">证书图片</label>
+        <div class="col-sm-6 certificate-list" ng-if="imgs">
+          <a ng-repeat="val in imgs" ng-href="{{val}}" target="_blank">
+            <img class="w100" ng-src="{{val}}" />
           </a>
         </div>
-        <div class="col-sm-3">
-          <a href="src/img/c8.jpg" target="_blank">
-          <img class="certificate w100" src="src/img/c8.jpg" />
-          </a>
-        </div>
+        <p class="col-sm-6 form-text" ng-if="!imgs">暂无证件图片！</p>
       </div>
       <div class="line line-dashed b-b line-lg pull-in"></div>
       <div class="form-group check-opr">
-        <div class="col-sm-offset-3 col-sm-6">
-          <div class="radio">
+        <label class="col-sm-3 control-label">审核意见<i class="fa fa-asterisk text-danger"></i></label>
+        <div class="col-sm-6">
+          <div class="check-items">
             <label class="i-checks text-success" for="pass">
-              <input type="radio" name="check" id="pass" class="form-control" checked />
+              <input type="radio" name="check" id="pass" checked required/>
               <i></i>
               审核通过
             </label>
           </div>
-          <div class="radio">
+          <div class="check-items">
             <label class="i-checks text-danger" for="nopass">
-              <input type="radio" name="check" id="nopass" class="form-control" />
+              <input type="radio" name="check" id="nopass" required/>
               <i></i>
               审核不通过
+              <div class="inner-items">
+                <label class="i-checks text-muted">
+                  <input type="radio" name="check-remark" checked />
+                  <i></i>
+                  <span>资料不真实</span>
+                </label>
+                <label class="i-checks text-muted">
+                  <input type="radio" name="check-remark"/>
+                  <i></i>
+                  <span>手机号不属于本人</span>
+                </label>
+                <label class="i-checks text-muted">
+                  <input type="radio" name="check-remark"/>
+                  <i></i>
+                  <span>已离职</span>
+                </label>
+                <label class="i-checks text-muted">
+                  <input type="radio" name="check-remark"/>
+                  <i></i>
+                  其它原因
+                  <div class="inner-items">
+                    <textarea placeholder="审核意见" class="form-control" ng-model='viewData.remarkNopass'></textarea>
+                  </div>
+                </label>
+              </div>
             </label>
           </div>
         </div>
       </div>
       <div class="line line-dashed b-b line-lg pull-in"></div>
       <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-3 col-xs-6">
-          <button type="button" class="w100 btn btn-success" ng-click="submit()">确定</button>
+        <div class="col-sm-offset-3 col-sm-2 col-xs-4">
+          <button type="submit" class="w100 btn btn-primary" ng-click="submit()" ng-disabled='form.$invalid'>确定</button>
+        </div>        
+        <div class="col-sm-2 col-xs-4">
+          <button type="button" class="w100 btn btn-default" ng-click="return()">取消</button>
         </div>
       </div>
     </form>

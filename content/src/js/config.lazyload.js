@@ -24,7 +24,8 @@ angular.module('app')
   footable: ['bower_components/footable/dist/footable.all.min.js', 'bower_components/footable/css/footable.core.css'],
   fullcalendar: ['bower_components/moment/moment.js', 'bower_components/fullcalendar/dist/fullcalendar.min.js', 'bower_components/fullcalendar/dist/fullcalendar.css', 'bower_components/fullcalendar/dist/fullcalendar.theme.css'],
   daterangepicker: ['bower_components/moment/moment.js', 'bower_components/bootstrap-daterangepicker/daterangepicker.js', 'bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css'],
-  tagsinput: ['bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js', 'bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css']
+  tagsinput: ['bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js', 'bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css'],
+  dateTimePicker: ['bower_components/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js','bower_components/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css','bower_components/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js']  
 })
 // oclazyload config
 .config(['$ocLazyLoadProvider',

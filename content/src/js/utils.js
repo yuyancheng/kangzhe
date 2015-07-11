@@ -50,6 +50,17 @@ app.factory('utils', ['$http', function($http) {
       }else{
         return false;
       }
+    },
+    extendHash: function(dt, keys){
+    	var len = dt.length;
+    	for(var i=0; i<len; i++){
+  			var l = keys.length;
+  			for(var n=0; n<l; n++){
+  				if(!dt[i][keys[n]]) {
+  					dt[i][keys[n]] = null;
+  				}	
+  			}
+    	}
     }
 	};
 }]);

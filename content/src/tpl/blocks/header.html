@@ -23,9 +23,9 @@
           <a href class="btn no-shadow navbar-btn" ng-click="app.settings.asideFolded = !app.settings.asideFolded">
             <i class="fa {{app.settings.asideFolded ? 'fa-indent' : 'fa-dedent'}} fa-fw"></i>
           </a>
-          <a href class="btn no-shadow navbar-btn" ui-toggle-class="show" target="#aside-user">
+<!--           <a href class="btn no-shadow navbar-btn" ui-toggle-class="show" target="#aside-user">
             <i class="icon-user fa-fw"></i>
-          </a>
+          </a> -->
         </div>
         <!-- / buttons -->
 
@@ -102,10 +102,10 @@
             </div>
           </li>
           <li class="dropdown" dropdown>
-            <a href class="dropdown-toggle" dropdown-toggle>
+<!--             <a href class="dropdown-toggle" dropdown-toggle>
               <i class="fa fa-fw fa-plus visible-xs-inline-block"></i>
-              <span translate="header.navbar.new.NEW">New</span> <span class="caret"></span>
-            </a>
+              <span translate="header.navbar.new.NEW">更新</span> <span class="caret"></span>
+            </a> -->
             <ul class="dropdown-menu" role="menu">
               <li><a href="#" translate="header.navbar.new.PROJECT">Projects</a></li>
               <li>
@@ -133,27 +133,27 @@
 
         <!-- nabar right -->
         <ul class="nav navbar-nav navbar-right">
-          <li class="dropdown hidden-sm" is-open="lang.isopen" dropdown>
+<!--           <li class="dropdown hidden-sm" is-open="lang.isopen" dropdown>
             <a href class="dropdown-toggle" dropdown-toggle>
               {{selectLang}} <b class="caret"></b>
-            </a>
+            </a> -->
             <!-- dropdown -->
-            <ul class="dropdown-menu animated fadeInRight w">
+<!--             <ul class="dropdown-menu animated fadeInRight w">
               <li ng-repeat="(langKey, label) in langs">
                 <a ng-click="setLang(langKey, $event)" href>{{label}}</a>
               </li>
-            </ul>
+            </ul> -->
             <!-- / dropdown -->
-          </li>
+<!--           </li> -->
           <li class="hidden-xs">
             <a ui-fullscreen></a>
           </li>
           <li class="dropdown" dropdown>
-            <a href class="dropdown-toggle" dropdown-toggle>
+<!--             <a href class="dropdown-toggle" dropdown-toggle>
               <i class="icon-bell fa-fw"></i>
               <span class="visible-xs-inline">通知</span>
               <span class="badge badge-sm up bg-danger pull-right-xs">2</span>
-            </a>
+            </a> -->
             <!-- dropdown -->
             <div class="dropdown-menu w-xl animated fadeInUp">
               <div class="panel bg-white">
@@ -191,23 +191,13 @@
                 <img src="src/img/a0.jpg" alt="...">
                 <i class="on md b-white bottom"></i>
               </span>
-              <span class="hidden-sm hidden-md">admin</span> <b class="caret"></b>
+              <span class="hidden-sm hidden-md" ng-bind="datas.user_name">admin</span> <b class="caret"></b>
             </a>
             <!-- dropdown -->
             <ul class="dropdown-menu animated fadeInRight w">
-              <li>
+              <li ui-toggle-class="active" target=".settings">
                 <a href>
-                  <span class="badge bg-danger pull-right">70%</span>
                   <span>设置</span>
-                </a>
-              </li>
-              <li>
-                <a ui-sref="app.page.profile">描述</a>
-              </li>
-              <li>
-                <a ui-sref="app.docs">
-                  <span class="label bg-info pull-right">new</span>
-                  文档
                 </a>
               </li>
               <li class="divider"></li>

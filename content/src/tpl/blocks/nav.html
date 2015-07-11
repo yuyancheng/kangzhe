@@ -1,6 +1,6 @@
 <!-- list -->
 <ul class="nav">
-  <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+<!--   <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
     <span>公共</span>
   </li>
   <li class="active">
@@ -23,15 +23,10 @@
           <span>角色管理</span>
         </a>
       </li>
-      <li ui-sref-active="active">
-        <a ui-sref="app.dashboard-v2">
-          <span>成员管理</span>
-        </a>
-      </li>
     </ul>
   </li>
 
-  <li class="line dk"></li>
+  <li class="line dk"></li> -->
 
   <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
     <span>与我相关</span>
@@ -54,14 +49,20 @@
       </li>
       <li ui-sref-active="active">
         <a ui-sref="app.check_list_undone">
-          <b class="badge bg-primary pull-right">3160</b>
+          <b class="badge bg-primary pull-right" ng-bind="datas.check_undo">0</b>
           <span>待审核</span>
         </a>
       </li>
       <li ui-sref-active="active">
-        <a ui-sref="app.check_list_done">
-          <b class="badge bg-success pull-right">213</b>
-          <span>已审核</span>
+        <a ui-sref="app.check_list_pass">
+          <b class="badge bg-success pull-right" ng-bind="datas.check_pass">0</b>
+          <span>已通过</span>
+        </a>
+      </li>
+      <li ui-sref-active="active">
+        <a ui-sref="app.check_list_nopass">
+          <b class="badge bg-danger pull-right" ng-bind="datas.check_nopass">0</b>
+          <span>未通过</span>
         </a>
       </li>
     </ul>
@@ -82,15 +83,9 @@
         </a>
       </li>
       <li ui-sref-active="active">
-        <a ui-sref="app.check_edit">
-          <b class="badge bg-info pull-right">28</b>
+        <a ui-sref="app.feedback_undone">
+          <b class="badge bg-info pull-right" ng-bind="datas.feedback_undo">0</b>
           <span>待处理</span>
-        </a>
-      </li>
-      <li ui-sref-active="active">
-        <a ui-sref="app.feedback_done">
-          <b class="badge bg-success pull-right">9</b>
-          <span>已处理</span>
         </a>
       </li>
     </ul>

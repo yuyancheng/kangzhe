@@ -1,7 +1,7 @@
 'use strict';
 /* Controllers */
-angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStorage', '$window', '$http', '$state','$cookieStore',
-  function($scope, $translate, $localStorage, $window, $http, $state,$cookieStore) {
+angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStorage', '$window', '$http', '$state','$cookieStore', 'utils',
+  function($scope, $translate, $localStorage, $window, $http, $state,$cookieStore,utils) {
     // add 'ie' classes to html
     var isIE = !! navigator.userAgent.match(/MSIE/i);
     isIE && angular.element($window.document.body).addClass('ie');
@@ -9,7 +9,7 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
     app.state = $state;
     // config
     $scope.app = {
-      name: '康哲医疗平台',
+      name: '健康伽平台',
       version: '1.0.0',
       // for chart colors
       color: {
@@ -53,10 +53,22 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
       isopen: false
     };
     $scope.langs = {
-      zh_CN: '中文（简体）',
-      en: 'English',
-      de_DE: 'German',
-      it_IT: 'Italian'
+      //en: 'English',
+      zh_CN: '中文（简体）'
+    };
+    $scope.userType = {
+      type_1: '患者',
+      type_2: '医助',
+      type_3: '医生',
+      type_4: '客服'
+    };
+    $scope.datas = {
+      user_name: utils.localData('user_name') || ' ',
+      user_type: utils.localData('user_type') || ' ',
+      check_undo: utils.localData('check_undo') || 0,
+      check_pass: utils.localData('check_pass') || 0,
+      check_nopass: utils.localData('check_nopass') || 0,
+      feedback_undo: utils.localData('feedback_undo') || 0
     };
     $scope.selectLang = $scope.langs[$translate.proposedLanguage()] || "中文（简体）";
     $scope.setLang = function(langKey, $event) {
@@ -78,11 +90,13 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
         };
       });
     };
-    uiInit();
+    //uiInit();
 
     // 用户退出
     $scope.logout = function(){
-      $http.get(app.url.logout).then(function(response) {
+      $http.get(app.url.logout,{
+        access_token: app.url.access_token
+      }).then(function(response) {
         if (response.statusText === 'OK') {
           $cookieStore.remove('username');
           $state.go('access.signin');
@@ -92,58 +106,6 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
       }, function(x) {
         console.log("Logout: " + x.statusText);
       });
-    };
-
-    // 公用函数工具
-    app.utils = {};
-    app.utils.getData = function(u, d, m, h) {
-      var args = arguments;
-      $http({
-        url: u,
-        data: typeof d !== 'function' ? d || {} : {},
-        method: typeof m !== 'function' ? m || 'POST' : 'POST',
-        headers: typeof h !== 'function' ? h || {} : {}
-      }).then(function(dt) {
-        if ((dt.data.dataList && dt.data.dataList.length !== 0) || dt.data.code == 1) {
-          for (var i = 0; i < args.length; i++) {
-            if (typeof args[i] === 'function') {
-              args[i].call(null, dt.data.dataList);
-            };
-          }
-        } else {
-          console.warn(dt.statusText);
-        }
-      }, function(x) {
-        console.error(x.statusText);
-      });
-    };
-    app.utils.getDataByKey = function(data, key, val){
-      var len = data.length;
-      for(var i=0; i<len; i++){
-        if(data[i][key] === val){
-          return data[i];
-        }
-      }
-    };
-
-    app.utils.localData = function(key, val){
-      if(window.localStorage){
-        if(val){
-          localStorage.setItem(key, val);
-          return true;
-        }else if(val === null){
-          localStorage.removeItem(key)  
-        }else{
-          var dt = localStorage.getItem(key);
-          if(dt){
-            return dt;
-          }else{
-            return null;
-          }
-        }
-      }else{
-        return false;
-      }
     };
 
     function isSmartDevice($window) {
