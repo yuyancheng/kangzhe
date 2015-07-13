@@ -52,12 +52,21 @@ app.factory('utils', ['$http', function($http) {
       }
     },
     extendHash: function(dt, keys){
-    	var len = dt.length;
-    	for(var i=0; i<len; i++){
-  			var l = keys.length;
-  			for(var n=0; n<l; n++){
-  				if(!dt[i][keys[n]]) {
-  					dt[i][keys[n]] = null;
+    	if(dt.constructor === Array){
+    		var len = dt.length;
+	    	for(var i=0; i<len; i++){
+	  			var l = keys.length;
+	  			for(var n=0; n<l; n++){
+	  				if(!dt[i][keys[n]]) {
+	  					dt[i][keys[n]] = '';
+	  				}	
+	  			}
+	    	}
+    	}else{
+				var len = keys.length;
+  			for(var i=0; i<len; i++){
+  				if(!dt[keys[i]]) {
+  					dt[keys[i]] = '';
   				}	
   			}
     	}

@@ -37,13 +37,13 @@ app.controller('FeedbackView', ['$scope', '$http', '$state', '$rootScope', 'util
           }
           dt = dt.data.data;
           $scope.viewData = {
-            userId: dt.userId,
-            userName: dt.userName,
-            clientVersion: dt.clientVersion,
-            phoneSystem: dt.phoneSystem,
-            content: dt.content,
-            phoneModel: dt.phoneModel,
-            createTime: new Date(dt.createTime).toLocaleString().replace(/\//g,'-')
+            userId: dt.userId || '--',
+            userName: dt.userName || '--',
+            clientVersion: dt.clientVersion || '--',
+            phoneSystem: dt.phoneSystem || '--',
+            content: dt.content || '--',
+            phoneModel: dt.phoneModel || '--',
+            createTime: new Date(dt.createTime).toLocaleString().replace(/\//g,'-') || '--'
           }
         });
       }

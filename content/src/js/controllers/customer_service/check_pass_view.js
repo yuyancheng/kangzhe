@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('CheckNopassView', ['$scope', '$http', '$state', '$rootScope', 'utils', 
+app.controller('CheckPassView', ['$scope', '$http', '$state', '$rootScope', 'utils', 
   function($scope, $http, $state, $rootScope, utils) {
     $scope.authError = null;
     $scope.viewData = {};

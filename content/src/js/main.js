@@ -28,7 +28,7 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
         navbarCollapseColor: 'bg-white-only',
         asideColor: 'bg-black',
         headerFixed: true,
-        asideFixed: false,
+        asideFixed: true,
         asideFolded: false,
         asideDock: false,
         container: false
@@ -94,9 +94,9 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
 
     // 用户退出
     $scope.logout = function(){
-      $http.get(app.url.logout,{
+      $http.get(app.url.logout + '?' + $.param({
         access_token: app.url.access_token
-      }).then(function(response) {
+      })).then(function(response) {
         if (response.statusText === 'OK') {
           $cookieStore.remove('username');
           $state.go('access.signin');

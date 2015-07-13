@@ -497,10 +497,6 @@ ul.nav.nav-list.abn-tree .level-9 i.tree-icon {
 
 
 
-
-
-
-
 /**********医疗项目*********/
 
 .check-opr .check-items{
@@ -511,14 +507,31 @@ ul.nav.nav-list.abn-tree .level-9 i.tree-icon {
 	font-size: 15px;
 	font-weight: bold;
 }
-.certificate-list a{
-	display: inline-block;
+.certificate-list{
 	width: 100%;
-	margin-bottom: 10px;
-}
-.certificate-list img{
 	border: 1px solid #cfdadd;
 	border-radius: 2px;
+}
+#gl_preview{
+	border-bottom: 2px solid #cfdadd;
+}
+#gl_point{
+	height: 50px;
+}
+#gl_point a{
+	float: left;
+	height: 100%;
+	border: 1px solid #cfda4d;
+}
+#gl_preview img{
+	width: 100%;
+}
+#gl_point img{
+	height: 100%;
+	border: 1px solid #fff;
+}
+.cur-img{
+	border: 1px solid #f00;
 }
 
 #eara_panel{

@@ -58,10 +58,17 @@
       </div>
       <div class="form-group" ng-model="imgs">
         <label class="col-sm-3 control-label">证书图片</label>
-        <div class="col-sm-6 certificate-list" ng-if="imgs">
-          <a ng-repeat="val in imgs" ng-href="{{val}}" target="_blank">
-            <img class="w100" ng-src="{{val}}" />
-          </a>
+        <div class="col-sm-6" ng-if="imgs">
+          <div class="certificate-list" ng-if="imgs">
+            <div id="gl_preview">
+              <img src="http://192.168.3.7:8081/cert/125/125/c1/1436778053054.jpg" />
+            </div>
+            <div id="gl_point">
+              <a ng-repeat="val in imgs" ng-class="{{cur-img}}" href>
+                <img ng-src="{{val}}" title="点击查看原图" />
+              </a>            
+            </div>
+          </div>
         </div>
         <p class="col-sm-6 form-text" ng-if="!imgs">暂无证件图片！</p>
       </div>

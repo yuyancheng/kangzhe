@@ -1,4 +1,4 @@
-<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="CheckNopassView">
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="CheckPassView">
   <div class="panel-heading font-bold text-center">
     审核详情
   </div>
@@ -34,8 +34,12 @@
         <p class="col-sm-6 form-text" ng-bind="viewData.title"></p>
       </div>
       <div class="form-group">
-        <label class="col-sm-3 control-label">审核意见</label>
-        <p class="col-sm-6 form-text" ng-bind="viewData.remark"></p>
+        <label class="col-sm-3 control-label">证书编号</label>
+        <p class="col-sm-6 form-text" ng-bind="viewData.licenseNum"></p>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">证书到期时间</label>
+        <p class="col-sm-6 form-text" ng-bind="viewData.licenseExpire"></p>
       </div>
       <div class="form-group" ng-model="imgs">
         <label class="col-sm-3 control-label">证书图片</label>

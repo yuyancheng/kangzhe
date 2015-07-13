@@ -10,13 +10,22 @@
           </div>
           <div class="list-group list-group-sm">
             <div class="list-group-item">
-              <input placeholder="用户名" class="form-control no-border" ng-model="user.name" required>
+              <input placeholder="手机号码" class="form-control no-border" ng-model="user.telephone" required>
             </div>
             <div class="list-group-item">
-              <input type="email" placeholder="邮箱" class="form-control no-border" ng-model="user.email" required>
+              <input placeholder="姓名" class="form-control no-border" ng-model="user.name" required>
             </div>
             <div class="list-group-item">
                <input type="password" placeholder="密码" class="form-control no-border" ng-model="user.password" required>
+            </div>
+            <div class="list-group-item">
+              <select id="doctor_title" class="form-control" required>
+                <option selected>选择用户类型</option>
+                <option value="1">患者</option>
+                <option value="2">医助</option>
+                <option value="3">医生</option>
+                <option value="4">客服</option>
+              </select>
             </div>
           </div>
           <div class="checkbox m-b-md m-t-none">

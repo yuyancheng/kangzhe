@@ -1,6 +1,6 @@
 // config
 var app = angular.module('app').config(
-  ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$stateProvider',
+  ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$stateProvider', 
     function($controllerProvider, $compileProvider, $filterProvider, $provide, $stateProvider) {
       // lazy controller, directive and service
       app.controller = $controllerProvider.register;
@@ -36,7 +36,7 @@ var app = angular.module('app').config(
         return apis;
       }
       app.url = {
-        access_token: 'a6ca04531c9945bc9d68ba05ea5c747d',
+        access_token: localStorage.getItem('access_token'),
 
         login:  app.urlRoot + 'user/login',
         logout: app.urlRoot + 'user/logout',

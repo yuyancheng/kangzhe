@@ -16,6 +16,9 @@
            <input type="password" placeholder="密码" class="form-control no-border" ng-model="user.password" tabindex="2" required>
         </div>
       </div>
+      <div class="list-group list-group-sm">
+         <label class="i-checks"><input type="checkbox" id="rememberInfo"><i></i>记住手机号码及密码</label>
+      </div>
       <button type="submit" class="btn btn-lg btn-success btn-block" ng-click="login()" ng-disabled='form.$invalid'>登录</button>
       <div class="text-center m-t m-b"><a ui-sref="access.forgotpwd">忘记密码？</a></div>
       <div class="line line-dashed"></div>

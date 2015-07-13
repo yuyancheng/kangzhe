@@ -55,9 +55,6 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
         name: dt.name || ' ',
         telephone: dt.telephone || ' '
       };
-      if(dt.imgs){
-        $scope.imgs = dt.imgs;
-      }
     });
 
     // 获取要医生证件图片

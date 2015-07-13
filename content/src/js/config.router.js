@@ -58,6 +58,16 @@ angular.module('app').run(
             }
           ]
         }
+      }).state('app.check_pass_view', {
+        url: '/check_pass_view',
+        templateUrl: 'src/tpl/customer_service/check_pass_view.html',
+        resolve: {
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/check_pass_view.js');
+            }
+          ]
+        }
       }).state('app.check_list_nopass', {
         url: '/check_list_nopass',
         templateUrl: 'src/tpl/customer_service/check_list_nopass.html',
@@ -67,6 +77,16 @@ angular.module('app').run(
               return $ocLazyLoad.load('src/js/controllers/customer_service/check_list_nopass.js').then(function() {
                 return uiLoad.load(JQ_CONFIG.dataTable);
               });
+            }
+          ]
+        }
+      }).state('app.check_nopass_view', {
+        url: '/check_nopass_view',
+        templateUrl: 'src/tpl/customer_service/check_nopass_view.html',
+        resolve: {
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/check_nopass_view.js');
             }
           ]
         }
