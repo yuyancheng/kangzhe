@@ -43,13 +43,13 @@
           </select>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group required-items">
         <label class="col-sm-3 control-label">证书编号<i class="fa fa-asterisk text-danger"></i></label>
         <div class="col-sm-6">
           <input type="tel" placeholder="证书编号" class="form-control" ng-model="formData.licenseNum" required>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group required-items">
         <label class="col-sm-3 control-label">证书到期时间<i class="fa fa-asterisk text-danger"></i></label>
         <div class="col-sm-6 input-append date form_datetime">
           <input type="text" placeholder="证书到期日" class="form-control" ng-model='formData.licenseExpire' required>
@@ -60,13 +60,13 @@
         <label class="col-sm-3 control-label">证书图片</label>
         <div class="col-sm-6" ng-if="imgs">
           <div class="certificate-list" ng-if="imgs">
-            <div id="gl_preview">
-              <img src="http://192.168.3.7:8081/cert/125/125/c1/1436778053054.jpg" />
-            </div>
             <div id="gl_point">
               <a ng-repeat="val in imgs" ng-class="{{cur-img}}" href>
-                <img ng-src="{{val}}" title="点击查看原图" />
+                <img ng-src="{{val}}" />
               </a>            
+            </div>
+            <div id="gl_preview">
+              <img src="" />
             </div>
           </div>
         </div>
@@ -105,11 +105,11 @@
                   <span>已离职</span>
                 </label>
                 <label class="i-checks text-muted">
-                  <input type="radio" name="check-remark"/>
+                  <input id="other_remark" type="radio" name="check-remark"/>
                   <i></i>
                   其它原因
                   <div class="inner-items">
-                    <textarea placeholder="审核意见" class="form-control" ng-model='viewData.remarkNopass'></textarea>
+                    <textarea id="remarkNopass" placeholder="审核意见" class="form-control" ng-model='viewData.remarkNopass'></textarea>
                   </div>
                 </label>
               </div>

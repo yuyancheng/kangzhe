@@ -1,7 +1,8 @@
 'use strict';
 
-app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'utils', 'uiLoad', 'JQ_CONFIG',
-  function($scope, $http, $state, $rootScope, utils, uiLoad, JQ_CONFIG) {
+app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'utils', 'uiLoad', 'JQ_CONFIG', '$compile',
+  function($scope, $http, $state, $rootScope, utils, uiLoad, JQ_CONFIG, $compile) {
+    $scope.isPass = true;
     uiLoad.load(JQ_CONFIG.dateTimePicker).then(function(){
       $(".form_datetime").datetimepicker({
           format: "yyyy-mm-dd",
@@ -18,11 +19,10 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
     var access_level = 0;
     var target = null;
 
-    var dt = $scope.details;
     var id = '';
-    if(dt){
-      id = dt.userId;
-      if(!utils.localData('idVal', dt.userId)){
+    if($scope.details){
+      id = $scope.details.id;
+      if(!utils.localData('idVal', id)){
         console.error('数据未保存！');
       }
     }else{
@@ -49,6 +49,7 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
       $scope.formData = {
         userId: dt.userId,
         departments: dt.departments,
+        hospital: dt.hospital,
         title: dt.title
       };
       $scope.viewData = {
@@ -69,7 +70,6 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
       }else{
         $scope.imgs = false;
       }
-      //$scope.imgs = ['src/img/c1.jpg','src/img/c2.jpg','src/img/c3.jpg','src/img/p0.jpg'];
     });
 
     var key = null;
@@ -91,6 +91,12 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
             route.animate({"scrollLeft": w - route.width() + 50}, 500);
           }
           return;
+        }else{
+          if(dt.data.data.length === 0){
+            target.find('i').css('visibility', 'hidden');
+            container.find('button[type=submit]').removeClass('disabled');
+            return;
+          }
         }
 
         var data = dt.data.data;
@@ -151,11 +157,12 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
             // 最终的目标标签
             if((access_level === 4) ||
             (param.key !== 'code' && access_level === 2)){
-              target = $(this);
               container.find('button[type=submit]').removeClass('disabled');
             }else{
               container.find('button[type=submit]').addClass('disabled');
             }
+
+            target = $(this); // 保存当前被点击的对象
 
             if(data_key){
               createList({
@@ -237,6 +244,12 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
         var url = app.url.admin.check.fail;
         formParam = {
           userId: $scope.formData.userId,
+
+          title: $scope.formData.title,
+          hospitalId: $scope.formData.hospitalId,
+          hospital: $scope.formData.hospital,
+          departments: $scope.formData.departments,
+
           remark: $scope.formData.remark,
           access_token: app.url.access_token
         };
@@ -303,7 +316,7 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
         if(access_level === 5){
           $scope.formData.hospitalId = target.data('id');
           $scope.formData.hospital = target.data('name');
-        }else if(access_level === 3){
+        }else if(access_level === 3 || access_level === 2){
           $scope.formData.departments = target.data('name');         
         }
         access_level = 0;
@@ -317,9 +330,6 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
       mask.remove();
       container.addClass('none');
     };  
-    function initTable(data) {
-
-    }
 
     $http.post(app.url.admin.check.getTitles,{
       access_token: app.url.access_token
@@ -348,7 +358,78 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
         $scope.formData['title'] = $(this).val();
       });
       select.val($scope.formData.title);
-      $scope.formData['title'] = select.val();
+      //$scope.formData['title'] = select.val();
     }
+
+    setTimeout(function(){
+      var preview = $('#gl_preview img');
+      var points = $('#gl_point a');
+      preview.attr('src', points.eq(0).find('img').addClass('cur-img').attr('src'));
+      points.click(function(){
+        var _img = $(this).find('img');
+        preview.attr('src', _img.attr('src'));
+        _img.addClass('cur-img');
+        $(this).siblings().find('img').removeClass('cur-img');
+      });
+
+      var chk_pass = $('#pass');
+      var chk_nopass = $('#nopass');
+      var is = $('.required-items i');
+      var ipts = $('.required-items input');
+      var btn = $('form button[type=submit]');
+      var other = $('#other_remark');
+      var txtr = $('#remarkNopass');
+      chk_nopass.change(function(){
+        var timer_a, timer_b;
+        if($(this).prop('checked')){
+          is.addClass('none');
+          ipts.removeAttr('required');
+          if(!other.prop('checked')){
+            btn.removeAttr('disabled');
+          }
+          
+          timer_a = setInterval(function(){
+            if(/\S/g.test(txtr.val())){
+              btn.removeAttr('disabled');
+            }else{
+              btn.attr('disabled', true);
+            }
+            console.log(123213143432);
+          },1000);
+
+          other.click(function(){
+            console.log(3442);
+            if(other[0].checked){
+              if(/\S/g.test(txtr.val())){
+                btn.removeAttr('disabled');
+              }else{
+                btn.attr('disabled', true);
+                clearInterval(timer);
+                timer = setInterval(function(){
+                  if(/\S/g.test(txtr.val())){
+                    btn.removeAttr('disabled');
+                  }else{
+                    btn.attr('disabled', true);
+                  }
+                  console.log(123213143432);
+                },1000);
+              }
+            }
+          });
+          other.blur(function(){
+            clearInterval(timer);
+            btn.removeAttr('disabled');
+          });
+        }
+      });      
+      chk_pass.change(function(){
+        if($(this).prop('checked')){
+          is.removeClass('none');
+          ipts.attr('required', true);
+          btn.attr('disabled', true);
+        }
+      });
+    }, 500);
+
   }
 ]);

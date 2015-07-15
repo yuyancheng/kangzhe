@@ -10,14 +10,6 @@
         <p class="col-sm-6 form-text" ng-bind="viewData.name"></p>
       </div>
       <div class="form-group">
-        <label class="col-sm-3 control-label">用户ID</label>
-        <p class="col-sm-6 form-text" ng-bind="viewData.userId"></p>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-3 control-label">手机号码</label>
-        <p class="col-sm-6 form-text" ng-bind="viewData.telephone"></p>
-      </div>
-      <div class="form-group">
         <label class="col-sm-3 col-xs-11 control-label">医生编号</label>
         <p class="col-sm-6 form-text" ng-bind="viewData.doctorNum"></p>
       </div>
@@ -34,25 +26,28 @@
         <p class="col-sm-6 form-text" ng-bind="viewData.title"></p>
       </div>
       <div class="form-group">
-        <label class="col-sm-3 control-label">证书编号</label>
-        <p class="col-sm-6 form-text" ng-bind="viewData.licenseNum"></p>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-3 control-label">证书到期时间</label>
-        <p class="col-sm-6 form-text" ng-bind="viewData.licenseExpire"></p>
-      </div>
-      <div class="form-group" ng-model="imgs">
-        <label class="col-sm-3 control-label">证书图片</label>
-        <div class="col-sm-6 certificate-list" ng-if="imgs">
-          <a ng-repeat="val in imgs" ng-href="{{val}}" target="_blank">
-            <img ng-src="{{val}}" title="点击查看原图" />
-          </a>
-        </div>
-        <p class="col-sm-6 form-text" ng-if="!imgs">暂无证件图片！</p>
+        <label class="col-sm-3 control-label">手机号码</label>
+        <p class="col-sm-6 form-text" ng-bind="viewData.telephone"></p>
       </div>
       <div class="form-group">
         <label class="col-sm-3 control-label">审核结果</label>
         <p class="col-sm-6 form-text" ng-bind="viewData.status"></p>
+      </div>
+      <div class="form-group" ng-model="imgs">
+        <label class="col-sm-3 control-label">证书图片</label>
+        <div class="col-sm-6" ng-if="imgs">
+          <div class="certificate-list" ng-if="imgs">
+            <div id="gl_point">
+              <a ng-repeat="val in imgs" ng-class="{{cur-img}}" href>
+                <img ng-src="{{val}}" />
+              </a>            
+            </div>
+            <div id="gl_preview">
+              <img src="" />
+            </div>
+          </div>
+        </div>
+        <p class="col-sm-6 form-text" ng-if="!imgs">暂无证件图片！</p>
       </div>
       <div class="line line-dashed b-b line-lg pull-in"></div>
       <div class="form-group">

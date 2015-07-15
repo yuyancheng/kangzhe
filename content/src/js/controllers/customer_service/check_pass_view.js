@@ -6,7 +6,7 @@ app.controller('CheckPassView', ['$scope', '$http', '$state', '$rootScope', 'uti
     $scope.viewData = {};
     var id = '';
     if($scope.details){
-      id = $scope.details.userId;
+      id = $scope.details.id;
       if(!utils.localData('idVal', id)){
         console.error('数据未保存！');
       }
@@ -76,5 +76,17 @@ app.controller('CheckPassView', ['$scope', '$http', '$state', '$rootScope', 'uti
       $rootScope.ids = [];
       window.history.back();
     }; 
+
+    setTimeout(function(){
+      var preview = $('#gl_preview img');
+      var points = $('#gl_point a');
+      preview.attr('src', points.eq(0).find('img').addClass('cur-img').attr('src'));
+      points.click(function(){
+        var _img = $(this).find('img');
+        preview.attr('src', _img.attr('src'));
+        _img.addClass('cur-img');
+        $(this).siblings().find('img').removeClass('cur-img');
+      });      
+    }, 500);
   }
 ]);
