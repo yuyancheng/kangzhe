@@ -8,7 +8,7 @@
       <div class="form-group">
         <label class="col-sm-3 control-label">医生姓名</label>
         <div class="col-sm-6">
-          <input type="text" placeholder="医生姓名" class="form-control" ng-model="viewData.name" tabindex="1" readonly />
+          <input type="text" placeholder="医生姓名" class="form-control" ng-model="viewData.name" readonly />
         </div>
       </div>
       <div class="form-group">
@@ -38,7 +38,7 @@
       <div class="form-group">
         <label class="col-sm-3 col-xs-11 control-label">职称<i class="fa fa-asterisk text-danger"></i></label>
         <div class="col-sm-6">
-          <select id="doctor_title" class="form-control" required>
+          <select id="doctor_title" class="form-control" tabindex="1" required>
             <option value="1">请选择职称</option>
           </select>
         </div>
@@ -46,13 +46,13 @@
       <div class="form-group required-items">
         <label class="col-sm-3 control-label">证书编号<i class="fa fa-asterisk text-danger"></i></label>
         <div class="col-sm-6">
-          <input type="tel" placeholder="证书编号" class="form-control" ng-model="formData.licenseNum" required>
+          <input type="tel" placeholder="证书编号" class="form-control" ng-model="formData.licenseNum" tabindex="2" required>
         </div>
       </div>
       <div class="form-group required-items">
         <label class="col-sm-3 control-label">证书到期时间<i class="fa fa-asterisk text-danger"></i></label>
         <div class="col-sm-6 input-append date form_datetime">
-          <input type="text" placeholder="证书到期日" class="form-control" ng-model='formData.licenseExpire' required>
+          <input type="text" placeholder="证书到期日" class="form-control" ng-model='formData.licenseExpire' tabindex="3" required>
           <span class="add-on"><i class="icon-th glyphicon glyphicon-calendar"></i></span>
         </div>
       </div>

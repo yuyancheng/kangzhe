@@ -12,9 +12,10 @@ var app = angular.module('app').config(
       app.value = $provide.value;
 
       // API路径集合
-      //app.urlRoot = '/kangzhe/';
-      app.urlRoot = 'http://192.168.3.7:8091/';
-      app.urlFile = '/upload/'
+      app.urlRoot = '/kangzhe/';
+      //app.urlRoot = 'http://192.168.3.7:8091/';
+      //app.urlRoot = '/api/';
+      app.urlFile = '/upload/';
       //app.urlFile = 'http://192.168.3.7:9000/';
       //app.urlRoot = 'http://localhost:8070/kangzhe/{_proxy}/';
       var common = {

@@ -12,13 +12,27 @@
   <body ng-controller="AppCtrl">
   <span draggable>Drag ME</span>
     <form name="myForm">
-<input type="date" id="exampleInput" name="input" ng-model="value"
+    <p ng-bind="vals.txt">rewqrewrewqrewr</p>
+  <input type="date" id="exampleInput" name="input" ng-model="value"
        placeholder="yyyy-MM-dd" min="2013-01-01" max="2013-12-31" required />
+       <input type="radio" name="group" /><label>AAAA</label><br/>
+       <input type="radio" name="group" /><label>BBBB</label><br/>
+       <input type="radio" name="group" id="theOne" /><label>CCCC</label><br/>
+       <input type="radio" name="group" /><label>DDDD</label><br/>
     </form>
     <hr>
     <script>
+
+    var one = document.getElementById('theOne');
+    one.onchange = function(){
+      console.log(this.checked);
+      console.log(this.status);
+    };
+
       var app = angular.module('app', []).controller('AppCtrl', ['$scope', function($scope){
-        
+        $scope.vals = {};
+        $scope.vals.txt = "OOOOOO";
+        console.log($scope.vals);
       }]).directive('draggable', function($document) {
         var startX=0, startY=0, x = 0, y = 0;
         return function(scope, element, attr) {

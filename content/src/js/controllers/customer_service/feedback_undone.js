@@ -6,7 +6,7 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
   if($rootScope.pageName !== 'feedback'){
     utils.localData('page_index', null);
     utils.localData('page_start', null);
-    utils.localData('page_length', null);
+    //utils.localData('page_length', null);
     $rootScope.pageName = 'feedback';
   }
 
@@ -25,10 +25,10 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
 
   function initTable() {
     var doctorList, 
-      dTable, 
+      dTable,
       index = utils.localData('page_index') * 1 || 1, 
       start = utils.localData('page_start') * 1 || 0, 
-      length = utils.localData('page_length') * 1 || 15;
+      length = utils.localData('page_length') * 1 || 10;
 
     var setTable = function(){
       doctorList = $('#feedbackList');
@@ -51,8 +51,6 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
               access_token: app.url.access_token
             }, 
             "success": function(resp) {
-              $scope.datas.feedback_undo = resp.data.total;
-              utils.localData('feedback_undo', resp.data.total);
               index = aoData[0]['value'];
               utils.extendHash(resp.data.pageData, ["userId", "userName", "clientVersion", "content", "phoneSystem", "phoneModel", "createTime"]);
               resp.start = resp.data.start;
@@ -61,10 +59,14 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
               resp.length = resp.data.pageSize;
               resp.data = resp.data.pageData;
               fnCallback(resp);
+              setTimeout(function(){
+                $('#feedback_undo').html(resp.recordsTotal);
+                utils.localData('feedback_undo', resp.recordsTotal);
+              }, 1000);
             }
           });
         },
-        "search": null,
+        "searching": false,
         "language": app.lang.datatables.translation,
         "createdRow": function(nRow, aData, iDataIndex) {
           $(nRow).attr('data-id', aData['_id']).click(aData['_id'], function(param, e) {
@@ -72,13 +74,20 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
           });
         },
         "columns": [{
-          "data": "userName"
+          "data": "userName",
+          "orderable": false
         }, {
-          "data": "clientVersion"
+          "data": "clientVersion",
+          "orderable": false,
+          "searchable": false
         }, {
-          "data": "content"
+          "data": "content",
+          "orderable": false,
+          "searchable": false
         }, {
           "data": "createTime",
+          "orderable": false,
+          "searchable": false,
           "render": function(o) {
             return DataRender.DateTime(o);
           }

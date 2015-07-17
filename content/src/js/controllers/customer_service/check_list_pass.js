@@ -7,7 +7,7 @@ app.controller('CheckListPass', function($rootScope, $scope, $state, $timeout, $
   if($rootScope.pageName !== 'list_pass'){
     utils.localData('page_index', null);
     utils.localData('page_start', null);
-    utils.localData('page_length', null);
+    //utils.localData('page_length', null);
     $rootScope.pageName = 'list_pass';
   }
 
@@ -28,9 +28,14 @@ app.controller('CheckListPass', function($rootScope, $scope, $state, $timeout, $
   function initTable() {
     var doctorList, 
       dTable, 
+      name,
+      _index,
+      _start,
+      isSearch = false,
+      searchTimes = 0,
       index = utils.localData('page_index') * 1 || 1, 
       start = utils.localData('page_start') * 1 || 0, 
-      length = utils.localData('page_length') * 1 || 15;
+      length = utils.localData('page_length') * 1 || 10;
 
     var setTable = function(){
       doctorList = $('#doctorList_pass');
@@ -40,15 +45,16 @@ app.controller('CheckListPass', function($rootScope, $scope, $state, $timeout, $
         "lengthMenu": [5,10,15,20,30,40,50,100],
         "pageLength": length,
         "bServerSide": true, 
-        "sAjaxSource": url,  
+        "sAjaxSource": url,
         "fnServerData": function(sSource, aoData, fnCallback) {
           $.ajax({
             "type": "post",
             "url": sSource,
             "dataType": "json",
             "data": {
-              aoData: JSON.stringify(aoData),
+              //aoData: JSON.stringify(aoData),
               status: 1,
+              name: name,
               pageIndex: index - 1,
               pageSize: aoData[4]['value'],
               access_token: app.url.access_token
@@ -62,12 +68,14 @@ app.controller('CheckListPass', function($rootScope, $scope, $state, $timeout, $
               resp.length = resp.data.pageSize;
               resp.data = resp.data.pageData;
               fnCallback(resp);
-              $scope.datas.check_pass = resp.recordsTotal;
-              utils.localData('check_pass', resp.recordsTotal);
+              setTimeout(function(){
+                $('#check_pass').html(resp.recordsTotal);
+                utils.localData('check_pass', resp.recordsTotal);
+              }, 500);
             }
           });
         },
-        //"search": null,
+        //"searching": false,
         "language": app.lang.datatables.translation,
         "createdRow": function(nRow, aData, iDataIndex){
           $(nRow).attr('data-id', aData['userId']).click(aData['userId'], function(param, e) {
@@ -75,15 +83,24 @@ app.controller('CheckListPass', function($rootScope, $scope, $state, $timeout, $
           });
         },
         "columns": [{
-          "data": "name"
+          "data": "name",
+          "orderable": false
         }, {
-          "data": "hospital"
+          "data": "hospital",
+          "orderable": false,
+          "searchable": false
         }, {
-          "data": "departments"
+          "data": "departments",
+          "orderable": false,
+          "searchable": false
         }, {
-          "data": "title"
+          "data": "title",
+          "orderable": false,
+          "searchable": false
         }, {
-          "data": "telephone"
+          "data": "telephone",
+          "orderable": false,
+          "searchable": false
         }]
       });
 
@@ -93,7 +110,7 @@ app.controller('CheckListPass', function($rootScope, $scope, $state, $timeout, $
         length = len;
         dTable.fnDestroy();
         setTable();
-        utils.localData('page_length', length);
+        utils.localData('page_length', len);
       }).on('page.dt', function(e, settings){
         index = settings._iDisplayStart / length + 1;
         start = length * (index - 1);
@@ -101,6 +118,29 @@ app.controller('CheckListPass', function($rootScope, $scope, $state, $timeout, $
         setTable();
         utils.localData('page_index', index);
         utils.localData('page_start', start);
+      }).on('search.dt', function(e, settings){
+        if(settings.oPreviousSearch.sSearch){
+          isSearch = true;
+          searchTimes ++;
+          _index = settings._iDisplayStart / settings._iDisplayLength + 1;
+          _start = settings._iDisplayStart;
+          name = settings.oPreviousSearch.sSearch;
+        }else{
+          isSearch = false;
+          name = null;
+        }
+        if(isSearch){
+          index = 1;
+          start = 0;
+        }else{
+          if(searchTimes > 0){
+            searchTimes = 0;
+            index = _index;
+            start = _start;
+            dTable.fnDestroy();
+            setTable();
+          }
+        }
       });
     };
     

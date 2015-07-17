@@ -50,6 +50,7 @@ app.controller('CheckNopassView', ['$scope', '$http', '$state', '$rootScope', 'u
           telephone: dt.telephone || '--',
           status: dt.status==3?'未通过':dt.status==1?'已通过':'待审核',
           remark: dt.remark || '--',
+          checker: dt.checker || '--',
           licenseExpire: date ? _y + ' 年 ' + _m + ' 月 ' + _d + ' 日' : '--',
           licenseNum: dt.licenseNum || '--'
         }

@@ -32,6 +32,15 @@ app.controller('FeedbackView', ['$scope', '$http', '$state', '$rootScope', 'util
         return;
       }
       dt = dt.data.data;
+      var date = dt.createTime;
+      if(date){
+        date = new Date(dt.createTime);
+        var _y = date.getFullYear();
+        var _M = date.getMonth() + 1;
+        var _d = date.getDate();
+        var _h = date.getHours();
+        var _m = date.getMinutes();
+      }
       $scope.viewData = {
         userId: dt.userId || '--',
         userName: dt.userName || '--',
@@ -39,7 +48,8 @@ app.controller('FeedbackView', ['$scope', '$http', '$state', '$rootScope', 'util
         phoneSystem: dt.phoneSystem || '--',
         content: dt.content || '--',
         phoneModel: dt.phoneModel || '--',
-        createTime: new Date(dt.createTime).toLocaleString().replace(/\//g,'-') || '--'
+        userTypeTiltle: dt.userTypeTiltle || '--',
+        createTime: date ? _y + ' 年 ' + _M + ' 月 ' + _d + ' 日 ' + _h + ' 点 ' + _m + ' 分' : '--'
       }
     });
 

@@ -13,6 +13,13 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
           language: 'zh-CN'
       });
     });
+
+    // utils.validate({
+
+    // },function(){
+
+    // });
+
     $scope.authError = null;
     $scope.formData = {};
     $scope.viewData = {};
@@ -88,7 +95,7 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
             w += lnks.eq(i).width();
           }
           if(w > route.width() ){
-            route.animate({"scrollLeft": w - route.width() + 50}, 500);
+            route.animate({"scrollLeft": w - route.width() + 50}, 300);
           }
           return;
         }else{
@@ -200,12 +207,13 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
           w2 += links.eq(i).width();
         }
         if(w1 > panel.width()){
-          panel.animate({"scrollTop": 0, "scrollLeft": w1 - panel.width() + 25}, 500);
+          panel.animate({"scrollLeft": w1 - panel.width() + 25}, 300);
         }
+        panel.animate({"scrollTop": 0}, 300);
         if(w2 > panel.width()){
-          route.animate({"scrollLeft": w2 - panel.width() + 50}, 500);
+          route.animate({"scrollLeft": w2 - panel.width() + 50}, 300);
         }
-        console.log(panel.width() + ', ' + w2);
+        panel.animate({"scrollTop": 0}, 300);
       });
 
       access_level++;
@@ -278,7 +286,7 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
     // 不操作返回
     $scope.return = function(){
       $rootScope.ids = [];
-      window.history.back();
+      $state.go('app.check_list_undone');
     }; 
 
     $scope.choose = function(idx, txt) {
@@ -349,9 +357,17 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
       var select = $('#doctor_title');
       var len = dt.length;
       var tmp = $('<select></select>');
+      var isExist = false;
       for(var i=0; i<len; i++){
         var opt = $('<option>'+ dt[i]['name'] +'</option>');
+        if($scope.formData.title === dt[i]['name']){
+          isExist = true;
+        }
         tmp.append(opt);
+      }
+      if(!isExist){
+        opt = $('<option>'+ $scope.formData.title +'</option>');
+        tmp.prepend(opt);
       }
       select.html(tmp.html());
       select.on('change', function(e){
@@ -379,51 +395,49 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
       var btn = $('form button[type=submit]');
       var other = $('#other_remark');
       var txtr = $('#remarkNopass');
+      var timer_a, timer_b;
       chk_nopass.change(function(){
-        var timer_a, timer_b;
-        if($(this).prop('checked')){
+        if(chk_nopass.prop('checked')){
           is.addClass('none');
           ipts.removeAttr('required');
           if(!other.prop('checked')){
             btn.removeAttr('disabled');
           }
-          
-          timer_a = setInterval(function(){
-            if(/\S/g.test(txtr.val())){
-              btn.removeAttr('disabled');
-            }else{
-              btn.attr('disabled', true);
-            }
-            console.log(123213143432);
-          },1000);
-
-          other.click(function(){
-            console.log(3442);
-            if(other[0].checked){
-              if(/\S/g.test(txtr.val())){
-                btn.removeAttr('disabled');
-              }else{
-                btn.attr('disabled', true);
-                clearInterval(timer);
-                timer = setInterval(function(){
-                  if(/\S/g.test(txtr.val())){
-                    btn.removeAttr('disabled');
-                  }else{
-                    btn.attr('disabled', true);
+          if(!timer_a){
+            timer_a = setInterval(function(){
+              if(other.prop('checked')){
+                if(/\S/g.test(txtr.val())){
+                  btn.removeAttr('disabled');
+                }else{
+                  btn.attr('disabled', true);
+                  clearInterval(timer_b);
+                  if(!timer_b){
+                    timer_b = setInterval(function(){
+                      if(/\S/g.test(txtr.val())){
+                        btn.removeAttr('disabled');
+                      }else{
+                        btn.attr('disabled', true);
+                      }
+                    },500);
                   }
-                  console.log(123213143432);
-                },1000);
+                }
+              }else{
+                clearInterval(timer_b);
+                timer_b = null;
+                btn.removeAttr('disabled');
               }
-            }
-          });
-          other.blur(function(){
-            clearInterval(timer);
-            btn.removeAttr('disabled');
-          });
+            },1000);
+          }
+        }else{
+          clearInterval(timer_a);
+          timer_a = null;
         }
-      });      
+      });  
       chk_pass.change(function(){
-        if($(this).prop('checked')){
+        clearInterval(timer_a);
+        clearInterval(timer_b);
+        timer_a = timer_b = null;
+        if(chk_pass.prop('checked')){
           is.removeClass('none');
           ipts.attr('required', true);
           btn.attr('disabled', true);
