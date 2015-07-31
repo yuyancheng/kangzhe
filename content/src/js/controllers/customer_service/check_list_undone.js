@@ -1,18 +1,22 @@
 'use strict';
 
 app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout, $http, utils) {
-  var url = app.url.admin.check.getDoctors; // 后台API路径
-  var data = null;
+  var url = app.url.admin.check.getDoctors, // 后台API路径
+      data = null,
+      html = $('html'),
+      body = $('body');
 
   if($rootScope.pageName !== 'list_undone'){
     utils.localData('page_index', null);
     utils.localData('page_start', null);
     //utils.localData('page_length', null);
     $rootScope.pageName = 'list_undone';
+    $rootScope.scrollTop = 0;
   }
 
   // 编辑某一审核信息
   $scope.seeDetails = function(id) {
+    $rootScope.scrollTop = body.scrollTop() || html.scrollTop();
     if (id) {
       $rootScope.details = {};
       $rootScope.details.id = id;
@@ -26,16 +30,14 @@ app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout,
   var doctorList, dTable;
 
   function initTable() {
-    var doctorList, 
-      dTable, 
-      name,
+    var name,
       _index,
       _start,
       isSearch = false,
       searchTimes = 0,
       index = utils.localData('page_index') * 1 || 1, 
       start = utils.localData('page_start') * 1 || 0, 
-      length = utils.localData('page_length') * 1 || 10;
+      length = utils.localData('page_length') * 1 || 50;
 
     var setTable = function(){
       doctorList = $('#doctorList_undone');
@@ -68,10 +70,10 @@ app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout,
               resp.length = resp.data.pageSize;
               resp.data = resp.data.pageData;
               fnCallback(resp);
-              setTimeout(function(){
-                $('#check_undo').html(resp.recordsTotal);
-                utils.localData('check_undo', resp.recordsTotal);
-              }, 500);
+              
+              // 更新界面中的数据
+              $('#check_undo').html(resp.recordsTotal);
+              utils.localData('check_undo', resp.recordsTotal);
             }
           });
         },
@@ -80,6 +82,8 @@ app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout,
         "createdRow": function(nRow, aData, iDataIndex){
           $(nRow).attr('data-id', aData['userId']).click(aData['userId'], function(param, e) {
             $scope.seeDetails(param.data);
+            $('.currentRow').removeClass('currentRow');
+            $rootScope.curRowId = $(this).data('id');
           });
         },
         "columns": [{
@@ -104,7 +108,12 @@ app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout,
         }]
       });
 
-      dTable.off().on('length.dt', function(e, settings, len){
+      // 表格事件处理,init-初始化完成,length-改变每页长度,page-翻页,search-搜索
+      dTable.off().on('init.dt', function(){
+        html.scrollTop($rootScope.scrollTop);
+        body.scrollTop($rootScope.scrollTop);
+        doctorList.find('tr[data-id=' + $rootScope.curRowId + ']').addClass('currentRow');
+      }).on('length.dt', function(e, settings, len){
         index = 1;
         start = 0;
         length = len;
@@ -115,9 +124,10 @@ app.controller('CheckListUndone', function($rootScope, $scope, $state, $timeout,
         index = settings._iDisplayStart / length + 1;
         start = length * (index - 1);
         dTable.fnDestroy();
-        setTable();
+        $rootScope.scrollTop = html.scrollTop() ? 103 : 152;
         utils.localData('page_index', index);
         utils.localData('page_start', start);
+        setTable();
       }).on('search.dt', function(e, settings){
         if(settings.oPreviousSearch.sSearch){
           isSearch = true;

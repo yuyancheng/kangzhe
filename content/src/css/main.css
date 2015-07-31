@@ -550,7 +550,7 @@ ul.nav.nav-list.abn-tree .level-9 i.tree-icon {
 	white-space: nowrap;
 }
 .eara-list li:hover{
-	background-color: #F4F4F4;
+	background-color: #ccc;
 }
 .eara-list li a{
 	margin-right: 5px;
@@ -580,10 +580,12 @@ ul.nav.nav-list.abn-tree .level-9 i.tree-icon {
 .bg-even li:hover{
 	background-color: #FFF;
 }*/
+
 #list_route{
 	position: relative;
 	z-index: 10;
 	padding: 0 10px;
+	height: 33px;
 	line-height: 2.2999;
 	border-bottom: 1px solid #cfdadd;
 	color: #7E92C7;
@@ -680,3 +682,99 @@ ul.nav.nav-list.abn-tree .level-9 i.tree-icon {
 .pb-10{
 	padding-bottom: 10px;
 }
+.table-striped > tbody > tr.currentRow td{
+	background-color: #FFEFBC;
+}
+.table-striped > tbody > tr.currentRow:hover td{
+	background-color: #FFEFBC;
+}
+.list-header{
+	position: relative;
+}
+.data-search > div{
+	position: relative;
+  height: 5px;
+  top: 20px;
+	border-right: 2px solid #3E8DBA;
+  border-bottom: 2px solid #3E8DBA;
+  border-left: 2px solid #3E8DBA;
+}
+.data-search{
+	position: absolute;
+	z-index: 1000;
+  top: 5px;
+  right: 5px;
+  height: 26px;
+  background-color: #fff;
+}
+.data-search input{
+	position: relative;
+	z-index: 11;
+	top: -20px;
+	width: 30px;
+	padding-right: 30px;
+	padding-left: 5px;
+	background: none;
+	border-top: none;
+	border-right: none;
+	border-bottom: none;
+	border-left: none;
+}
+.data-search input:focus{
+	width: 200px;
+}
+.data-search i{
+	position: relative;
+	z-index: 1;
+	top: -20px;
+	margin-left: -25px;
+}
+.data-list{
+	position: absolute;
+	top: 34px;
+	z-index: 1000;
+	background-color: #fff;
+	max-height: 150px;
+	border: 1px solid #cfdadd;
+	border-radius: 2px;
+	padding: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+	min-width: 100%;
+	box-shadow: 2px 2px 1px rgba(0, 0, 0, .05);
+}
+.data-list li {
+  min-width: 50px;
+  padding-left: 10px;
+  padding-right: 20px;
+  line-height: 1.89999;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.data-list li:hover{
+	background-color: #7B82FF;
+	color: #fff;
+}
+.data-list .cur-li{
+	background-color: #7B82FF;
+	color: #fff;
+}
+.rewrite-col .re-col{
+	padding-right: 0;
+	padding-left: 0;
+	margin-right: -15px;
+	margin-left: 15px;
+}
+.rewrite-col .form-control{
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.rewrite-col .btn{
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	box-shadow: none;
+}
+
+
+
+

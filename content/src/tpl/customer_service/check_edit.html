@@ -17,19 +17,19 @@
           <input type="text" placeholder="手机号码" class="form-control" ng-model="viewData.telephone" readonly />
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group rewrite-col">
         <label class="col-sm-3 col-xs-11 control-label">医疗机构<i class="fa fa-asterisk text-danger"></i></label>
-        <div class="col-sm-4 col-xs-8">
-          <input type="text" readonly placeholder="选择医疗机构" class="form-control" ng-model="formData.hospital" required>
+        <div class="col-sm-4 col-xs-8 re-col">
+          <input type="text" id="hospital_ipt" placeholder="选择医疗机构" class="form-control" ng-model="formData.hospital" required>
         </div>
         <div class="col-sm-2 col-xs-4">
           <button type="button" ng-click="choose($index, 'hospital')" class="w100 btn btn-info">选择</button>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group rewrite-col">
         <label class="col-sm-3 col-xs-11 control-label">科室<i class="fa fa-asterisk text-danger"></i></label>
-        <div class="col-sm-4 col-xs-8">
-          <input type="text" readonly placeholder="选择科室" class="form-control" ng-model="formData.departments" required>
+        <div class="col-sm-4 col-xs-8 re-col">
+          <input type="text" id="departments_ipt" placeholder="选择科室" class="form-control" ng-model="formData.departments" required>
         </div>
         <div class="col-sm-2 col-xs-4">
           <button type="button" ng-click="choose($index, 'department')" class="w100 btn btn-info">选择</button>
@@ -62,8 +62,8 @@
           <div class="certificate-list" ng-if="imgs">
             <div id="gl_point">
               <a ng-repeat="val in imgs" ng-class="{{cur-img}}" href>
-                <img ng-src="{{val}}" />
-              </a>            
+              <img ng-src="{{val}}" />
+              </a>
             </div>
             <div id="gl_preview">
               <img src="" />
@@ -121,7 +121,7 @@
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-2 col-xs-4">
           <button type="submit" class="w100 btn btn-primary" ng-click="submit()" ng-disabled='form.$invalid'>确定</button>
-        </div>        
+        </div>
         <div class="col-sm-2 col-xs-4">
           <button type="button" class="w100 btn btn-default" ng-click="return()">取消</button>
         </div>

@@ -1,17 +1,21 @@
 'use strict';
 app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, $http, utils) {
-  var url = app.url.feedback.query; // 后台API路径
-  var data = null;
+  var url = app.url.feedback.query, // 后台API路径
+      data = null,
+      html = $('html'),
+      body = $('body');
 
   if($rootScope.pageName !== 'feedback'){
     utils.localData('page_index', null);
     utils.localData('page_start', null);
     //utils.localData('page_length', null);
     $rootScope.pageName = 'feedback';
+    $rootScope.scrollTop = 0;
   }
 
-  // 编辑某一组织（工具栏按钮）
+  // 查看某一反馈信息
   $scope.seeDetails = function(id) {
+    $rootScope.scrollTop = body.scrollTop() || html.scrollTop();
     if (id) {
       $rootScope.details = {};
       $rootScope.details.id = id;
@@ -24,11 +28,9 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
   var doctorList, dTable;
 
   function initTable() {
-    var doctorList, 
-      dTable,
-      index = utils.localData('page_index') * 1 || 1, 
+    var index = utils.localData('page_index') * 1 || 1, 
       start = utils.localData('page_start') * 1 || 0, 
-      length = utils.localData('page_length') * 1 || 10;
+      length = utils.localData('page_length') * 1 || 50;
 
     var setTable = function(){
       doctorList = $('#feedbackList');
@@ -59,10 +61,10 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
               resp.length = resp.data.pageSize;
               resp.data = resp.data.pageData;
               fnCallback(resp);
-              setTimeout(function(){
-                $('#feedback_undo').html(resp.recordsTotal);
-                utils.localData('feedback_undo', resp.recordsTotal);
-              }, 1000);
+              
+              // 更新界面中的数据
+              $('#feedback_undo').html(resp.recordsTotal);
+              utils.localData('feedback_undo', resp.recordsTotal);
             }
           });
         },
@@ -71,6 +73,8 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
         "createdRow": function(nRow, aData, iDataIndex) {
           $(nRow).attr('data-id', aData['_id']).click(aData['_id'], function(param, e) {
             $scope.seeDetails(param.data);
+            $('.currentRow').removeClass('currentRow');
+            $rootScope.curRowId = $(this).data('id');
           });
         },
         "columns": [{
@@ -94,7 +98,12 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
         }]
       });
 
-      dTable.off().on('length.dt', function(e, settings, len){
+      // 表格事件处理,init-初始化完成,length-改变每页长度,page-翻页,search-搜索
+      dTable.off().on('init.dt', function(){
+        html.scrollTop($rootScope.scrollTop);
+        body.scrollTop($rootScope.scrollTop);
+        doctorList.find('tr[data-id=' + $rootScope.curRowId + ']').addClass('currentRow');
+      }).on('length.dt', function(e, settings, len){
         index = 1;
         start = 0;
         length = len;
@@ -105,9 +114,10 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
         index = settings._iDisplayStart / length + 1;
         start = length * (index - 1);
         dTable.fnDestroy();
-        setTable();
+        $rootScope.scrollTop = html.scrollTop() ? 103 : 152;
         utils.localData('page_index', index);
         utils.localData('page_start', start);
+        setTable();
       });
     };
     
@@ -119,4 +129,3 @@ app.controller('FeedbackUndone', function($rootScope, $scope, $state, $timeout, 
 
 });
 
-//[{"name":"sEcho","value":1},{"name":"iColumns","value":5},{"name":"sColumns","value":",,,,"},{"name":"iDisplayStart","value":0},{"name":"iDisplayLength","value":10},{"name":"mDataProp_0","value":"userName"},{"name":"sSearch_0","value":""},{"name":"bRegex_0","value":false},{"name":"bSearchable_0","value":true},{"name":"bSortable_0","value":true},{"name":"mDataProp_1","value":"userId"},{"name":"sSearch_1","value":""},{"name":"bRegex_1","value":false},{"name":"bSearchable_1","value":true},{"name":"bSortable_1","value":true},{"name":"mDataProp_2","value":"clientVersion"},{"name":"sSearch_2","value":""},{"name":"bRegex_2","value":false},{"name":"bSearchable_2","value":true},{"name":"bSortable_2","value":true},{"name":"mDataProp_3","value":"content"},{"name":"sSearch_3","value":""},{"name":"bRegex_3","value":false},{"name":"bSearchable_3","value":true},{"name":"bSortable_3","value":true},{"name":"mDataProp_4","value":"createTime"},{"name":"sSearch_4","value":""},{"name":"bRegex_4","value":false},{"name":"bSearchable_4","value":true},{"name":"bSortable_4","value":true},{"name":"sSearch","value":""},{"name":"bRegex","value":false},{"name":"iSortCol_0","value":0},{"name":"sSortDir_0","value":"asc"},{"name":"iSortingCols","value":1}]

@@ -363,203 +363,147 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
       $state.go('app.check_list_undone');
     }; 
 
-    // (Search) 医疗机构搜索
-    var hospital = $('#hospital_ipt');
-    var departments = $('#departments_ipt');
-    hospital.on('focus', function(){
-      searchByKey($(this), 'focus', 'hospital', app.url.admin.check.getHospitals);
-    }).on('blur', function(){
-      searchByKey($(this), 'blur');
-    });    
-    departments.on('focus', function(){
-      searchByKey($(this), 'focus', 'depts', app.url.admin.check.getDepts);
-    }).on('blur', function(){
-      searchByKey($(this), 'blur');
-    });
+    // 医疗机构搜索
+    var hospital_ipt = $('#hospital_ipt'),
+        dataList = $('#dataList'),
+        tmr = null,
+        isFocused = false,
+        val = '',
+        doReturn = false;
 
-    var doReturn = false,
-        curIpt = null,
-        isBlured = false;
-    $('body').on('mousedown', function(e){
-      var evt = e || window.event;
-      var target = evt.target || evt.srcElement;
-      if(target.nodeName.toLowerCase() === 'ul' && $(target).hasClass('data-list')){
-        doReturn = true;
-      }else{
-        if(curIpt && target !== curIpt[0]){
-          doReturn = false;
-          isBlured = true;
-          curIpt.trigger('blur');
+
+
+    hospital_ipt.off().on('focus', function(){
+      isFocused = true;
+
+/*      $('body').off().on('mousedown', function(e){
+        console.log(3333);
+        var evt = e || window.event;
+        var target = evt.target || evt.srcElement;
+        console.log(target);
+        if(target === dataList[0]){
+          doReturn = true;
         }else{
-          isBlured = false;
+          dataList.addClass('none');
+          doReturn = false;
+          $('body').off();
+          clearInterval(tmr);
         }
-      }
-    });
+      });*/
 
-    function searchByKey(ipt, satus, type, url){
-      var isFocused = false,
-          val = '';
+      clearInterval(tmr);
+      tmr = setInterval(function(){
+        console.log(222);
+        if(val !== $.trim(hospital_ipt.val())){
+          val = $.trim(hospital_ipt.val());
+          $http({
+            url: app.url.admin.check.getHospitals,
+            data: {
+              name: val,
+              access_token: app.url.access_token
+            },
+            method: 'POST'
+          }).then(function(resp){
+            var dt = resp.data.data,
+                len = dt.length,
+                liStr = '',
+                lis = null,
+                idx = 0,
+                ulHg = 0,
+                liHg = 0,
+                top = 0;
+            if (len > 0) {
+              for(var i=0; i<len; i++){
+                liStr += '<li data-id="'+ dt[i].id +'">'+ dt[i].name +'</li>';
+              }
+              ulHg = dataList.removeClass('none').html(liStr).height();
+              lis = dataList.find('li');
+              lis.on('click', function(){
+                $scope.formData.hospitalId = $(this).data('id');
+                //val = $scope.formData.hospital = $(this).html();
+                hospital_ipt.val($(this).html());
+                setTimeout(function(){
+                  hospital_ipt.trigger('blur');
+                  dataList.html('');
+                  dataList.addClass('none');
+                }, 200);
+                clearInterval(tmr);
+                console.log($scope.formData.hospital);
+              });
 
-      curIpt = ipt;
-      switch(satus){
-        case 'focus':  
-          var dataList = $('<ul class="data-list none"></ul>');  
-
-          ipt.parent().append(dataList);
-          isFocused = true;
-          var len = 0,
-              idx = 0,
-              lis = dataList.find('li'),
-              ulHg = 0,
-              liHg = 0,
-              top = 0;
-
-          $(document).off().on('keydown', function(e){
-            var evt = e || window.event;
-            var keyCode = evt.keyCode;
-            var scTop = dataList.scrollTop();
-
-            if(isFocused){
-              switch(keyCode){
-                case 38:  // 向上选择
-                  if(len === 0) return;
-                  if(idx >= 1){
-                    idx--;
-                  }else{
-                    idx = len - 1;
-                    dataList.scrollTop((len - 1) * liHg);
-                  }
-                  lis.eq(idx).addClass('cur-li').siblings().removeClass('cur-li');
-                  if(liHg * (idx) < scTop){
-                    top = liHg * (idx);
-                    dataList.scrollTop(top);
-                  }
-
-                  ipt.val(val = lis.eq(idx).html());
-                  if(type === 'hospital'){
-                    $scope.formData.hospitalId = lis.eq(idx).data('id');
-                    $scope.formData.hospital = lis.eq(idx).html();
-                  }else{
-                    $scope.formData.departments = lis.eq(idx).html();
-                  }
-                break;
-                case 40:  // 向下选择
-                  if(len === 0) return;
-                  if(idx < len - 1){
-                    idx++;
-                  }else{
-                    idx = 0;
-                    dataList.scrollTop(0);
-                  }
-                  lis.eq(idx).addClass('cur-li').siblings().removeClass('cur-li');
-                  if(liHg * (idx + 1) > ulHg + scTop){
-                    top = liHg * (idx + 1) - ulHg;
-                    dataList.scrollTop(top);
-                  }
-
-                  ipt.val(val = lis.eq(idx).html());
-                  if(type === 'hospital'){
-                    $scope.formData.hospitalId = lis.eq(idx).data('id');
-                    $scope.formData.hospital = lis.eq(idx).html();
-                  }else{
-                    $scope.formData.departments = lis.eq(idx).html();
-                  }
-                break;
-                case 13:  // 回车确认
-                  if(len === 0) return;
-
-                  ipt.val(val = lis.eq(idx).html());
-                  if(type === 'hospital'){
-                    $scope.formData.hospitalId = lis.eq(idx).data('id');
-                    $scope.formData.hospital = lis.eq(idx).html();
-                  }else{
-                    $scope.formData.departments = lis.eq(idx).html();
-                  }
-                  
-                  setTimeout(function(){
-                    ipt.trigger('blur');
-                    dataList.remove();
-                  }, 200);
-                break;
-                default:  // 其它按键，正常输入
-                  dataList.scrollTop(0);
-                  idx = 0;
-                  setTimeout(function(){
-                    var v = $.trim(ipt.val());
-                    if(val !== v && /\S+/.test(v)){
-                      val = v;
-
-                      $http({
-                        url: url,
-                        data: {
-                          name: val,
-                          access_token: app.url.access_token
-                        },
-                        method: 'POST'
-                      }).then(function(resp){
-                        var dt = resp.data.data,
-                            liStr = '';
-                        len = dt.length;
-                        if (len > 0) {
-                          for(var i=0; i<len; i++){
-                            liStr += '<li data-id="'+ dt[i].id +'">'+ dt[i].name +'</li>';
-                          }
-                          ulHg = dataList.removeClass('none').html(liStr).height();
-                          lis = dataList.find('li');
-
-                          // 点击选择
-                          lis.on('click', function(){
-                            if(type === 'hospital'){
-                              $scope.formData.hospitalId = lis.eq(idx).data('id');
-                              $scope.formData.hospital = lis.eq(idx).html();
-                            }else{
-                              $scope.formData.departments = lis.eq(idx).html();
-                            }
-                  
-                            ipt.val(val = $(this).html());
-
-                            setTimeout(function(){
-                              ipt.trigger('blur');
-                              dataList.remove();
-                            }, 200);
-                          });
-                          liHg = lis.eq(idx).addClass('cur-li').height();
-                        }else{
-                          setTimeout(function(){
-                            dataList.html('');
-                            dataList.addClass('none');
-                          }, 200);
-                        }
-                      });
-                    }else if(!/\S+/.test(v)){
-                      val = v;
-                      dataList.html('');
-                      dataList.addClass('none');
-                    }
-                  }, 500);
-                break;
+              liHg = lis.eq(idx).addClass('cur-li').height();
+              if(isFocused){
+                $(document).off().on('keydown', function(e){
+                  var evt = e || window.event;
+                  var keyCode = evt.keyCode;
+                  var scTop = dataList.scrollTop();
+                  switch(keyCode){
+                    case 38:
+                      if(idx >= 1){
+                        idx--;
+                      }else{
+                        idx = len - 1;
+                        dataList.scrollTop((len - 1) * liHg);
+                      }
+                      lis.eq(idx).addClass('cur-li').siblings().removeClass('cur-li');
+                      if(liHg * (idx) < scTop){
+                        top = liHg * (idx);
+                        dataList.scrollTop(top);
+                      }
+                      hospital_ipt.val(lis.eq(idx).html());
+                    break;
+                    case 40:
+                      if(idx < len - 1){
+                        idx++;
+                      }else{
+                        idx = 0;
+                        dataList.scrollTop(0);
+                      }
+                      lis.eq(idx).addClass('cur-li').siblings().removeClass('cur-li');
+                      if(liHg * (idx + 1) > ulHg + scTop){
+                        top = liHg * (idx + 1) - ulHg;
+                        dataList.scrollTop(top);
+                      }
+                      hospital_ipt.val(lis.eq(idx).html());
+                    break;
+                    case 13:
+                      $scope.formData.hospitalId = lis.eq(idx).data('id');
+                      val = $scope.formData.hospital = lis.eq(idx).html();
+                      setTimeout(function(){
+                        hospital_ipt.trigger('blur');
+                        dataList.html('');
+                        dataList.addClass('none');
+                      }, 200);
+                      clearInterval(tmr);
+                    break;
+                    default:break;
+                  }  
+                });
+              }else{
+                dataList.addClass('none');
               }
             }else{
-              dataList.remove();
+              setTimeout(function(){
+                dataList.html('');
+                dataList.addClass('none');
+              }, 200);
             }
           });
-        break;
-        case 'blur':     
-          if(!doReturn){
-            setTimeout(function(){
-              isFocused = false;
-              ipt.siblings().remove();
-              if(!isBlured){
-                $(document).off();  
-              }
-              val = '';
-            }, 200);
-          }
-        break;
-        default:break;
+        }else{
+          dataList.removeClass('none');
+        }
+      }, 500);
+    });
+    hospital_ipt.on('blur', function(){
+      if(!doReturn){
+        setTimeout(function(){
+          isFocused = false;
+          $(document).off();
+          dataList.addClass('none');
+          clearInterval(tmr);
+        }, 200);
       }
-    } 
-    // (End Search)
+    });
 
     $scope.choose = function(idx, txt) {
       var header = $('<div class="list-header"></div>'),

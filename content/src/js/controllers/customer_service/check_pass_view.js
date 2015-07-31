@@ -40,6 +40,8 @@ app.controller('CheckPassView', ['$scope', '$http', '$state', '$rootScope', 'uti
           var _m = date.getMonth() + 1;
           var _d = date.getDate();
         }
+
+        // 要显示的数据
         $scope.viewData = {
           name: dt.name || '--',
           userId: dt.userId || '--',
@@ -78,6 +80,7 @@ app.controller('CheckPassView', ['$scope', '$http', '$state', '$rootScope', 'uti
       window.history.back();
     }; 
 
+    // 缩略图为动态生成，要延迟后执行相关操作
     setTimeout(function(){
       var preview = $('#gl_preview img');
       var points = $('#gl_point a');
