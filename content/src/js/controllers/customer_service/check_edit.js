@@ -217,47 +217,48 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
         makeList(data);
         var isLast = true;
         
-        search.off().on('change', function(){
-
-          val = $(this).val();
-          if(!val.match(/\S+/g)) {
-            lastUl.remove();
-            isLast = true;
-            makeList(data);
-            return;
-          }
-          var len = data.length,
-              keys = val.split(/\s+/),
-              isMatched = false,
-              dts = [];
-            
-          for(var i=0; i<len; i++){
-            isMatched = true;
-            for(var j=0; j<keys.length; j++){
-              if(data[i].name.search(keys[j]) === -1){
-                isMatched = false;
-              }
-            }
-            if(isMatched){
-              dts.push(data[i]);
-            }
-          }
-          if(dts.length !== 0){
-            if(isLast){
-              panel.find('.eara-list').last().remove();
-            }
-            isLast = true;
-            makeList(dts);
-          }else{
-            if(keys.length !== 0){
-              lastUl.remove();
-              isLast = false;
-            }else{
+        search.off().on('keydown', function(){
+          setTimeout(function(){
+            val = search.val();
+            if(!val.match(/\S+/g)) {
               lastUl.remove();
               isLast = true;
               makeList(data);
+              return;
             }
-          }
+            var len = data.length,
+                keys = val.split(/\s+/),
+                isMatched = false,
+                dts = [];
+              
+            for(var i=0; i<len; i++){
+              isMatched = true;
+              for(var j=0; j<keys.length; j++){
+                if(data[i].name.search(keys[j]) === -1){
+                  isMatched = false;
+                }
+              }
+              if(isMatched){
+                dts.push(data[i]);
+              }
+            }
+            if(dts.length !== 0){
+              if(isLast){
+                panel.find('.eara-list').last().remove();
+              }
+              isLast = true;
+              makeList(dts);
+            }else{
+              if(keys.length !== 0){
+                lastUl.remove();
+                isLast = false;
+              }else{
+                lastUl.remove();
+                isLast = true;
+                makeList(data);
+              }
+            }
+          }, 200);
         });
 
         var uls = panel.find('.eara-list');
@@ -409,12 +410,12 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
           isFocused = true;
           var len = 0,
               idx = 0,
-              lis = dataList.find('li'),
+              lis = null,
               ulHg = 0,
               liHg = 0,
               top = 0;
 
-          $(document).off().on('keydown', function(e){
+          $(document).off('keydown').on('keydown', function(e){
             var evt = e || window.event;
             var keyCode = evt.keyCode;
             var scTop = dataList.scrollTop();
@@ -510,10 +511,10 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
                           // 点击选择
                           lis.on('click', function(){
                             if(type === 'hospital'){
-                              $scope.formData.hospitalId = lis.eq(idx).data('id');
-                              $scope.formData.hospital = lis.eq(idx).html();
+                              $scope.formData.hospitalId = $(this).data('id');
+                              $scope.formData.hospital = $(this).html();
                             }else{
-                              $scope.formData.departments = lis.eq(idx).html();
+                              $scope.formData.departments = $(this).html();
                             }
                   
                             ipt.val(val = $(this).html());
@@ -550,7 +551,7 @@ app.controller('CustomerService', ['$scope', '$http', '$state', '$rootScope', 'u
               isFocused = false;
               ipt.siblings().remove();
               if(!isBlured){
-                $(document).off();  
+                $(document).off('keydown');  
               }
               val = '';
             }, 200);
