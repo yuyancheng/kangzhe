@@ -1,65 +1,106 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="app">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>测试平台</title>
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
+    <title>test</title>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1" />
-    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="../bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="data.js"></script>
+    <style type="text/css">
+
+      .rect-a{
+        stroke-width: 5px;
+        stroke: rgba(255,0,0,.5);
+        fill: rgba(0,0,0,.3);
+        x: 25px;
+        y: 35px;
+      }      
+      .rect-b{
+        stroke-width: 5px;
+        stroke: rgba(255,0,0,.5);
+        fill: rgba(255,255,255,.8);
+        x: 5px;
+        y: 5px;
+        stroke-linecap: round;
+        stroke-dasharray: 20,10,5,5,5,10;
+      }
+      .cur-line{
+        position: relative;
+        width: 200px;
+        height: 200px;
+        /*transform: rotate(40deg);*/
+      } 
+      .cur-line-h{
+        position: absolute;
+        top:98px;
+        left: 0;
+        display: inline-block;
+        width: 100px;
+        height: 2px;
+        background-color: rgba(200,140,72,1);
+        box-shadow: 0 0 5px rgba(0,0,0,.2);
+      }      
+      .cur-line-v{
+        position: absolute;
+        top:0;
+        left:100px;
+        display: inline-block;
+        width: 2px;
+        height: 100px;
+        background-color: rgba(200,140,72,1);
+        box-shadow: 0 0 5px rgba(0,0,0,.2);
+      }
+      .info-card{
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        margin-left:40px;
+        border:2px solid #C88C48;
+        border-radius:40px;
+        box-shadow: 0 0 8px rgba(0,0,0,.4);
+        overflow: hidden;
+      }
+      .info-card img{
+        width: 100%;
+        height: 100%;
+      }
+
+    </style>
   </head>
   <body ng-controller="AppCtrl">
-  <span draggable>Drag ME</span>
-    <form name="myForm">
-    <p ng-bind="vals.txt">rewqrewrewqrewr</p>
-  <input type="date" id="exampleInput" name="input" ng-model="value"
-       placeholder="yyyy-MM-dd" min="2013-01-01" max="2013-12-31" required />
-       <input type="radio" name="group" /><label>AAAA</label><br/>
-       <input type="radio" name="group" /><label>BBBB</label><br/>
-       <input type="radio" name="group" id="theOne" /><label>CCCC</label><br/>
-       <input type="radio" name="group" /><label>DDDD</label><br/>
-    </form>
-    <hr>
+    <div class="app" id="app">
+      
+      <svg width="500" height="300" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <title>Cat</title>
+        <desc>Stick Figure of a Cat</desc>
+        <rect width="60" height="100" class="rect-a">
+        </rect>
+        <image width="50" height="50" x="0" y="0" xlink:href="a0.jpg" />  
+        <rect id="circle_a" width="60" height="100" class="rect-b" stroke-linecap="round">
+        </rect>
+        <circle cx="70" cy="95" r="50" style="stroke: black; fill: none" />
+        <text x="60" y="165" style="font-family: sans-serif; font-size: 14pt;
+    stroke: none; fill: black;">Some people</text>
+      </svg> 
+
+    <div>
+        <div class="info-card">
+            <img src="a0.jpg">
+        </div>
+        <div class="cur-line">
+            <span class="cur-line-h"></span>
+            <span class="cur-line-v"></span>
+        </div>
+        <div class="cur-line"></div>
+    </div>
+    </div>
     <script>
 
-    //console.log(3<<4);
-
-      var app = angular.module('app', []).controller('AppCtrl', ['$scope', function($scope){
-        $scope.vals = {};
-        $scope.vals.txt = "OOOOOO";
-        console.log($scope.vals);
-      }]).directive('draggable', function($document) {
-        var startX=0, startY=0, x = 0, y = 0;
-        return function(scope, element, attr) {
-          element.css({
-           position: 'relative',
-           border: '1px solid red',
-           backgroundColor: 'lightgrey',
-           cursor: 'pointer'
-          });
-          element.bind('mousedown', function(event) {
-            startX = event.screenX - x;
-            startY = event.screenY - y;
-            $document.bind('mousemove', mousemove);
-            $document.bind('mouseup', mouseup);
-          });
-
-          function mousemove(event) {
-            y = event.screenY - startY;
-            x = event.screenX - startX;
-            element.css({
-              top: y + 'px',
-              left:  x + 'px'
-            });
-          }
-
-          function mouseup() {
-            $document.unbind('mousemove', mousemove);
-            $document.unbind('mouseup', mouseup);
-          }
-        }
-     });
+    window.onload = fnction(){
+        var circle_a = document.getElementById("circle_a");
+        circle_a.onclick = function(){
+            alert("fdsf");
+        };
+    };
     </script>
   </body>
 </html>

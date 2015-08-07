@@ -1,0 +1,73 @@
+<div class="org hbox hbox-auto-xs hbox-auto-sm" ng-controller="Contacts">
+  <div class="frame-panel">
+    <div class="row">
+      <!-- <div class="col-md-3 col-xs-0"></div> -->
+      <div class="col-md-3 mrb-15">
+        <h2 class="title-3 text-center">通讯录</h2>
+      </div>
+      <div class="col-md-9 mrb-10">
+        <div class="pull-right">
+          <button type="button" class="btn btn-info" ng-click="addUnit()">
+          <i class="fa fa-fw fa-plus"></i>
+          <span class="hid">添加</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 cnt-col-lt">
+        <!--    <div ng-if="loading" class="loading">
+                    <i class="glyphicon glyphicon-repeat"></i>
+        </div> -->
+        <div id="cnt_list" class="list-group">
+          <div href="" class="list-group-item cur-li">
+            <i class="fa fa-chevron-right text-muted"></i>儿科
+            <ul class="dept-list">
+              <li><span class="badge bg-default">3321</span>儿外科</li>
+            </ul>
+          </div>
+          <div href="" class="list-group-item">
+            <i class="fa fa-chevron-right text-muted"></i>皮肤性病科
+          </div>
+          <div href="" class="list-group-item">
+            <span class="badge bg-default">308</span>骨科
+          </div>
+          <div href="" class="list-group-item cur-li">
+            <span class="badge bg-default">4610</span>中西医结合科
+          </div>
+          <div href="" class="list-group-item dropdown" dropdown>
+            <i class="fa fa-chevron-down text-muted"></i>外科
+            <button type="button" class="btn btn-default" dropdown-toggle aria-haspopup="true" aria-expanded="false"><span></span></button>
+            <ul class="dropdown-menu">
+              <li><a href="">添加</a></li>
+              <li><a href="">删除</a></li>
+            </ul>
+            <ul class="dept-list">
+              <li><span class="badge bg-default">7</span>心理（心身医学）科<button type="button" class="btn btn-default" dropdown-toggle aria-haspopup="true" aria-expanded="false"><span></span></button></li>
+              <li class="cur-li"><span class="badge bg-default">10</span>烧伤科<button type="button" class="btn btn-default" dropdown-toggle aria-haspopup="true" aria-expanded="false"><span></span></button></li>
+              <li><span class="badge bg-default">279</span>肝胆胰血管外科</li>
+              <li><span class="badge bg-default">56</span>外科监护室</li>
+            </ul>
+          </div>
+          <div href="" class="list-group-item">
+            <span class="badge bg-warning">14</span>
+            <i class="fa fa-bookmark fa-fw m-r-xs"></i>未分配
+          </div>
+          <div href="" class="list-group-item">
+            <span class="badge bg-info">30</span>
+            <i class="fa fa-bell fa-fw m-r-xs"></i>待审核
+          </div>
+          <div href="" class="list-group-item">
+            <span class="badge bg-danger">10</span>
+            <i class="fa fa-clock-o fa-fw m-r-xs"></i>离职
+          </div>
+        </div>
+      </div>
+      <div class="col-md-9 cnt-col-rt">
+        <div class="panel panel-default">
+          <div class="" ui-view></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

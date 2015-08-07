@@ -1,0 +1,107 @@
+<!-- list -->
+<ul class="nav" ng-model="datas">
+<!--   <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+    <span>公共</span>
+  </li>
+  <li class="active">
+    <a href class="auto">      
+      <span class="pull-right text-muted">
+        <i class="fa fa-fw fa-angle-right text"></i>
+        <i class="fa fa-fw fa-angle-down text-active"></i>
+      </span>
+      <i class="fa fa-sitemap icon text-primary-dker"></i>
+      <span class="font-bold">管理</span>
+    </a>
+    <ul class="nav nav-sub dk">
+      <li class="nav-sub-header">
+        <a href>
+          <span>管理</span>
+        </a>
+      </li>
+      <li ui-sref-active="active">
+        <a ui-sref="app.dashboard-v1">
+          <span>角色管理</span>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <li class="line dk"></li> -->
+
+  <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+    <span>与我相关</span>
+  </li>
+
+  <li class="active">
+    <a href class="auto">
+      <span class="pull-right text-muted">
+        <i class="fa fa-fw fa-angle-right text"></i>
+        <i class="fa fa-fw fa-angle-down text-active"></i>
+      </span>
+      <i class="glyphicon glyphicon-list"></i>
+      <span>认证审核</span>
+    </a>
+    <ul class="nav nav-sub dk">
+      <li class="nav-sub-header">
+        <a href>
+          <span>认证审核</span>
+        </a>
+      </li>
+      <li ui-sref-active="active">
+        <a ui-sref="app.check_list_undone">
+          <b class="badge bg-primary pull-right" id="check_undo" ng-bind="datas.check_undo">0</b>
+          <span>待审核</span>
+        </a>
+      </li>
+      <li ui-sref-active="active">
+        <a ui-sref="app.check_list_pass">
+          <b class="badge bg-success pull-right" id="check_pass" ng-bind="datas.check_pass">0</b>
+          <span>已通过</span>
+        </a>
+      </li>
+      <li ui-sref-active="active">
+        <a ui-sref="app.check_list_nopass">
+          <b class="badge bg-danger pull-right" id="check_nopass" ng-bind="datas.check_nopass">0</b>
+          <span>未通过</span>
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="active">
+    <a href class="auto">
+      <span class="pull-right text-muted">
+        <i class="fa fa-fw fa-angle-right text"></i>
+        <i class="fa fa-fw fa-angle-down text-active"></i>
+      </span>
+      <i class="glyphicon glyphicon-edit"></i>
+      <span>反馈处理</span>
+    </a>
+    <ul class="nav nav-sub dk">
+      <li class="nav-sub-header">
+        <a href>
+          <span>反馈处理</span>
+        </a>
+      </li>
+      <li ui-sref-active="active">
+        <a ui-sref="app.feedback_undone">
+          <b class="badge bg-info pull-right" id="feedback_undo" ng-bind="datas.feedback_undo">0</b>
+          <span>待处理</span>
+        </a>
+      </li>
+    </ul>
+  </li>
+<!-- 
+  <li class="line dk"></li>
+
+  <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">          
+    <span>我的工作</span>
+  </li>  
+  <li>
+    <a ui-sref="app.page.profile">
+      <i class="icon-user icon text-success-lter"></i>
+      <b class="badge bg-success pull-right">70%</b>
+      <span>已审核</span>
+    </a>
+  </li> -->
+</ul>
+<!-- / list -->

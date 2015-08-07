@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Cards</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1" />
+    <script type="text/javascript" src="data.js"></script>
+    <script type="text/javascript" src="cards.js"></script>
+    <style type="text/css">
+      .cur-line{
+        position: relative;
+        width: 200px;
+        height: 200px;
+        /*transform: rotate(40deg);*/
+      } 
+      .cur-line-h{
+        position: absolute;
+        top:97px;
+        left: 0;
+        display: inline-block;
+        width: 100px;
+        height: 2px;
+        background-color: rgba(200,140,72,1);
+        box-shadow: 0 0 5px rgba(0,0,0,.2);
+      }      
+      .cur-line-v{
+        position: absolute;
+        top:0;
+        left:97px;
+        display: inline-block;
+        width: 2px;
+        height: 100px;
+        background-color: rgba(200,140,72,1);
+        box-shadow: 0 0 5px rgba(0,0,0,.2);
+      }
+      .info-icon{
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        margin-left:40px;
+        border:3px solid #C88C48;
+        border-radius:45px;
+        box-shadow: 0 0 8px rgba(0,0,0,.4);
+        overflow: hidden;
+      }
+      .info-icon img{
+        width: 100%;
+        height: 100%;
+      }
+      #cnvs{
+        width: 900px;
+        height: 500px;
+        margin: 0 auto;
+      }
+
+    </style>
+  </head>
+  <body ng-controller="AppCtrl">
+<!--     <div>
+        <div class="info-icon">
+            <img src="a0.jpg">
+        </div>
+        <div class="cur-line">
+            <span class="cur-line-h"></span>
+            <span class="cur-line-v"></span>
+        </div>
+    </div> -->
+    
+    <canvas id="cnvs"></canvas>
+  </body>
+</html>
