@@ -1,0 +1,75 @@
+.sch-table tr th{
+	text-align: center;
+	vertical-align: middle !important;
+	height: 50px;
+}
+.sch-table tr td:first-of-type{
+	text-align: center;
+	vertical-align: middle;
+	width: 10%;
+}
+.sch-table tr{
+	height: 80px;
+}
+.sch-table tr:first-of-type{
+	height: 50px;
+}
+.sch-table td:nth-child(2){
+	width: 30%;
+}
+.sch-table td:nth-child(3){
+	width: 30%;
+}
+.sch-table td:nth-child(4){
+	width: 30%;
+}
+.sch-table td:hover{
+	background-color: #DFF0D8;
+	opacity:0.4;
+	cursor: pointer;
+}
+.sch-table td:first-of-type:hover{
+	background-color: #fff;
+	opacity:1;
+}
+.hbox .col-xs-12{
+	padding-top: 10px;
+}
+.org-title{
+	margin: 0;
+	padding: 10px 0;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.sch-slide-bar-hide{
+	width:600px;
+	height: 100%;
+	position: absolute;
+	right: -600px;
+	top: 40px;
+	transition: right 0.2s;
+}
+.sch-slide-bar-show{
+	width:600px;
+	height: 100%;
+	position: absolute;
+	right: 0;
+	top: 40px;
+	transition: right 0.2s;
+}
+.sch-slide-bar .panel-body{
+	background-color: #eee;
+}
+.sch-slide-bar .doctor-list{
+	padding: 20px;
+}
+.sch-slide-bar .choosed-doctor{
+	padding: 20px;
+	background-color: #fff;
+}
+.sch-slide-bar .publish{
+	margin-top: 20px;
+}
+
+

@@ -1,45 +1,54 @@
-    <div class="container w-xxl w-auto-xs" ng-controller="SignupFormController" ng-init="app.settings.container = false;">
+    <div class="container w-auto-xs " ng-controller="SignupFormController">
       <a href class="navbar-brand block m-t">{{app.name}}</a>
-      <div class="m-b-lg">
-        <div class="wrapper text-center">
-          <strong></strong>
+      <div class="panel panel-default m-t-lg col-lg-10 col-lg-offset-1">
+        <div class="row">
+          <div class="panel-heading font-bold ">公司账户注册</div>
         </div>
-        <form name="form" class="form-validation">
-          <div class="text-danger wrapper text-center" ng-show="authError">
-              {{authError}}
-          </div>
-          <div class="list-group list-group-sm">
-            <div class="list-group-item">
-              <input placeholder="手机号码" class="form-control no-border" ng-model="user.telephone" required>
+        <div class="panel-body ">
+          <form class="form-horizontal" novalidate name="singnupForm">
+            <div class="form-group">
+              <div class="col-sm-12"><i class="fa fa-chevron-right"></i>&nbsp;&nbsp;公司账户基本信息&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-chevron-right"></i>&nbsp;&nbsp;公司账户基本信息</div>
             </div>
-            <div class="list-group-item">
-              <input placeholder="姓名" class="form-control no-border" ng-model="user.name" required>
+            <div class="form-group m-t-lg" ng-class="{'has-error':singnupForm.userName.$invalid&&singnupForm.userName.$dirty}">
+              <label class="control-label col-sm-2">用户名</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control " placeholder="用户名" required ng-model="userName" name="userName" ng-pattern="/^[a-z0-9]+$/i" ng-minlength="6" ng-maxlength="16">
+                <span class="help-block m-b-none">6-16位英文字母或数字</span>
+              </div>
             </div>
-            <div class="list-group-item">
-               <input type="password" placeholder="密码" class="form-control no-border" ng-model="user.password" required>
+            <div class="form-group" ng-class="{'has-error':singnupForm.userPwd.$invalid&&singnupForm.userPwd.$dirty}">
+              <label class="control-label col-sm-2">密码</label>
+              <div class="col-sm-10">
+                <input type="password" class="form-control " placeholder="密码" name="userPwd" ng-model="userPwd" ng-pattern="/^[a-z0-9]+$/i" ng-minlength="6" ng-maxlength="16" required>
+                <span class="help-block m-b-none">6-16位英文字母或数字，区分大小写</span>
+              </div>
             </div>
-            <div class="list-group-item">
-              <select id="doctor_title" class="form-control" required>
-                <option selected>选择用户类型</option>
-                <option value="1">患者</option>
-                <option value="2">医助</option>
-                <option value="3">医生</option>
-                <option value="4">客服</option>
-              </select>
+            <div class="form-group" ng-class="{'has-error':(singnupForm.userPwdCheck.$dirty&&userPwdCheck!=userPwd)||(singnupForm.userPwdCheck.$invalid&&singnupForm.userPwdCheck.$dirty)}">
+              <label class="control-label col-sm-2">确认密码</label>
+              <div class="col-sm-10">
+                <input type="password" class="form-control " placeholder="确认密码" name="userPwdCheck" ng-model="userPwdCheck" required>
+                <span class="help-block m-b-none">请确认，再次输入您的密码</span>
+              </div>
             </div>
-          </div>
-          <div class="checkbox m-b-md m-t-none">
-            <label class="i-checks">
-              <input type="checkbox" ng-model="agree" required><i></i> 同意相关 <a href>条款及协议</a>
-            </label>
-          </div>
-          <button type="submit" class="btn btn-lg btn-primary btn-block" ng-click="signup()" ng-disabled='form.$invalid'>注册</button>
-          <div class="line line-dashed"></div>
-          <p class="text-center"><small>已经有一个帐号？</small></p>
-          <a ui-sref="access.signin" class="btn btn-lg btn-default btn-block">登录</a>
-        </form>
-      </div>
-      <div class="text-center" ng-include="'src/tpl/blocks/page_footer.html'">
-        {% include 'blocks/page_footer.html' %}
+            <div class="form-group" ng-class="{'has-error':singnupForm.userPhone.$invalid&&singnupForm.userPhone.$dirty}">
+              <label class="control-label col-sm-2">手机号码</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control " placeholder="手机号码" name="userPhone" ng-model="userPhone" ng-pattern="/^[1][358][0-9]{9}$/" required></div>
+              <div class="col-sm-4 text-right">
+                <button class="btn btn-info btn-block" ng-disabled="singnupForm.userPhone.$invalid">获取验证码</button>
+              </div>
+            </div>
+            <div class="form-group" ng-class="{'has-error':singnupForm.smsCode.$invalid&&singnupForm.smsCode.$dirty}">
+              <label class="control-label col-sm-2">短信验证码</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control " placeholder="短信验证码" name="smsCode" ng-model="smsCode" required></div>
+            </div>
+            <div class="form-group m-t-lg">
+              <div class="col-sm-3 col-sm-offset-2">
+                <button class="btn btn-primary btn-block" ng-disabled="singnupForm.$invalid" ng-click="signup()">注册</button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ app.controller('SigninFormController', ['$scope', '$http', '$state', '$cookieSto
       $http.post(app.url.login, {
         telephone: $scope.user.telephone,
         password: $scope.user.password,
-        userType: 4,
+        userType: 2,
         access_token: app.url.access_token
       }).then(function(response) {
         if (response.data.resultCode === 1) {

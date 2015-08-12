@@ -14,13 +14,13 @@ app.controller('ContactsList', function($rootScope, $scope, $state, $timeout, $h
     $rootScope.scrollTop = 0;
   }
 
-  // 查看某一审核信息
+  // 查看某一信息
   $scope.seeDetails = function(id) {
     $rootScope.scrollTop = body.scrollTop() || html.scrollTop();
     if (id) {
       $rootScope.details = {};
       $rootScope.details.id = id;
-      $state.go('app.check_pass_view');
+      $state.go('app.contacts.list.details');
     }
   };
 
@@ -70,10 +70,6 @@ app.controller('ContactsList', function($rootScope, $scope, $state, $timeout, $h
               resp.length = resp.data.pageSize;
               resp.data = resp.data.pageData;
               fnCallback(resp);
-
-              // 更新界面中的数据
-              $('#check_pass').html(resp.recordsTotal);
-              utils.localData('check_pass', resp.recordsTotal);
             }
           });
         },
@@ -150,36 +146,6 @@ app.controller('ContactsList', function($rootScope, $scope, $state, $timeout, $h
             dTable.fnDestroy();
             setTable();
           }
-        }
-      });
-
-      var id;
-      
-      // 表格行事件
-      dTable.$('tr').dblclick(function(e, settings) {
-        $scope.seeDetails($(this).data('id'));
-      }).click(function(e) {
-        var evt = e || window.event;
-        var target = event.target || event.srcElement;
-
-        evt.preventDefault();
-        //evt.stopPropagation();
-        var ipt = $(this).find('.i-checks input');
-        clicked(ipt.off(), $(this));
-        ipt.trigger('click');
-        var input = orgList.find('thead .i-checks input');
-        var inputs = orgList.find('tbody .i-checks input');
-        var len = inputs.length, allChecked = true;
-        for(var i=0; i<len; i++){
-          if(!inputs.eq(i)[0].checked){
-            allChecked = false;
-            break;
-          }
-        }
-        if(allChecked){
-          input[0].checked = true;
-        }else{
-          input[0].checked = false;
         }
       });
     };

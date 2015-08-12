@@ -25,7 +25,7 @@ angular.module('app')
   fullcalendar: ['../bower_components/moment/moment.js', '../bower_components/fullcalendar/dist/fullcalendar.min.js', '../bower_components/fullcalendar/dist/fullcalendar.css', '../bower_components/fullcalendar/dist/fullcalendar.theme.css'],
   daterangepicker: ['../bower_components/moment/moment.js', '../bower_components/bootstrap-daterangepicker/daterangepicker.js', '../bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css'],
   tagsinput: ['../bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js', '../bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css'],
-  dateTimePicker: ['../bower_components/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js','../bower_components/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css','../bower_components/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js']  
+  dateTimePicker: ['../bower_components/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js','../bower_components/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css','../bower_components/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js']
 })
 // oclazyload config
 .config(['$ocLazyLoadProvider',
@@ -44,7 +44,7 @@ angular.module('app')
         name: 'ui.select',
         files: ['../bower_components/angular-ui-select/dist/select.min.js', '../bower_components/angular-ui-select/dist/select.min.css']
       }, {
-        name: 'angularFileUpload',
+        name: 'ngFileUpload',
         files: ['../bower_components/angular-file-upload/angular-file-upload.min.js']
       }, {
         name: 'ui.calendar',

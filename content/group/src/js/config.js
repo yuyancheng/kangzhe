@@ -1,7 +1,7 @@
 // config
 var app = angular.module('app').config(
-  ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$stateProvider', 
-    function($controllerProvider, $compileProvider, $filterProvider, $provide, $stateProvider) {
+  ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$stateProvider',
+      function($controllerProvider, $compileProvider, $filterProvider, $provide, $stateProvider) {
       // lazy controller, directive and service
       app.controller = $controllerProvider.register;
       app.directive = $compileProvider.directive;
@@ -55,7 +55,8 @@ var app = angular.module('app').config(
         },
         upload: {
           getCertPath: app.urlFile + 'getCertPath'
-        }
+        },
+        signup:app.urlRoot + 'company/registerCompany'
       };
       app.lang = {
         datatables: {

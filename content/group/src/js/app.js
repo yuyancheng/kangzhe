@@ -14,7 +14,6 @@ angular.module('app', [
     'ui.load',
     'ui.jq',
     'oc.lazyLoad',
-    'pascalprecht.translate',
-    'ngCookies'
+    'pascalprecht.translate'
 ]);
 

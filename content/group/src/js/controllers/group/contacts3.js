@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile) {
+app.controller('Contacts', function($rootScope, $scope, $state, $http) {
   //var url = app.url.contacts.getContacts; // 后台API路径
   var data = null;
   var cnt_list = $('#cnt_list');
@@ -66,21 +66,14 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
           });
 
           li.hover(function(){
-            var that = $(this);
             var hBtn = $('<button type="button" class="btn btn-default" dropdown-toggle aria-haspopup="true" aria-expanded="false"><span></span></button>');
-            var menu = $('<ul class="dropdown-menu"><li><a ng-href>添加</a></li><li><a ng-href ng-click="remove()">删除</a></li></ul>');
+            var menu = $('<ul class="dropdown-menu"><li><a href="">添加</a></li><li><a href="" ng-click="remove()">删除</a></li></ul>');
             $(this).append(hBtn).append(menu);
             hBtn.on('click', function(e){
               var evt = e || window.event;
               evt.stopPropagation();  // 阻止事件冒泡
-              showMenu(that);
+              console.log("test1111");
             });
-            var b = $(this).parent().siblings('.btn-default');
-            var m = $(this).parent().siblings('.dropdown-menu');
-            if(b.length > 0){
-              b.remove();
-              m.remove();
-            }
           }, function(){
             $(this).find('.dropdown-menu').remove();
             $(this).find('.btn-default').remove();
@@ -120,35 +113,18 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
       });
 
       // 鼠标停留时显示操作菜单热点
-      item.hover(function(e){
-        var evt = e || window.event;
-        var target = evt.target || evt.srcElement;
-        if(target.nodeName !== 'DIV' || $(this).find('.dept-list').length > 0) {
-          return;
-        }
-        var that = $(this);
+      item.hover(function(){
         var hBtn = $('<button type="button" class="btn btn-default" dropdown-toggle aria-haspopup="true" aria-expanded="false"><span></span></button>');
-        var menu = $('<ul class="dropdown-menu"><li><a ng-href>添加</a></li><li><a ng-href ng-click="remove()">删除</a></li></ul>');
+        var menu = $('<ul class="dropdown-menu"><li><a href="">添加</a></li><li><a href="" ng-click="remove()">删除</a></li></ul>');
+        $(this).addClass('dropdown').attr('dropdown','');
         $(this).append(hBtn).append(menu);
         hBtn.on('click', function(e){
           var evt = e || window.event;
           evt.stopPropagation();
-          showMenu(that);
         });
       }, function(){
         $(this).find('.dropdown-menu').remove();
         $(this).find('.btn-default').remove();
-      });
-    }
-
-    function showMenu(obj){
-      var menu = obj.find('.dropdown-menu');
-      cnt_list.find('.dropdown-menu').css('display', 'none');
-      var lis = menu.css('display', 'block').find('li');
-      lis.on('click', function(e){
-        var evt = e || window.event;
-        evt.stopPropagation();
-        //showMenu(that);
       });
     }
 

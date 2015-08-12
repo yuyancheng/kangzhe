@@ -19,5 +19,5 @@ app.controller('SignupFormController', ['$scope', '$http', '$state',
         $scope.authError = '服务器错误！';
       });
     };
-  }
+  };
 ]);

@@ -1,1332 +1,884 @@
-/*
- angular-file-upload v1.1.5
- https://github.com/nervgh/angular-file-upload
-*/
-(function(angular, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define('angular-file-upload', ['angular'], function(angular) {
-            return factory(angular);
-        });
-    } else {
-        return factory(angular);
-    }
-}(typeof angular === 'undefined' ? null : angular, function(angular) {
-
-var module = angular.module('angularFileUpload', []);
-
-'use strict';
-
-/**
- * Classes
- *
- * FileUploader
- * FileUploader.FileLikeObject
- * FileUploader.FileItem
- * FileUploader.FileDirective
- * FileUploader.FileSelect
- * FileUploader.FileDrop
- * FileUploader.FileOver
+/**!
+ * AngularJS file upload/drop directive and service with progress and abort
+ * @author  Danial  <danial.farid@gmail.com>
+ * @version 6.0.3
  */
 
-module
+if (window.XMLHttpRequest && !(window.FileAPI && FileAPI.shouldLoad)) {
+  window.XMLHttpRequest.prototype.setRequestHeader = (function (orig) {
+    return function (header, value) {
+      if (header === '__setXHR_') {
+        var val = value(this);
+        // fix for angular < 1.2.0
+        if (val instanceof Function) {
+          val(this);
+        }
+      } else {
+        orig.apply(this, arguments);
+      }
+    };
+  })(window.XMLHttpRequest.prototype.setRequestHeader);
+}
 
+var ngFileUpload = angular.module('ngFileUpload', []);
 
-    .value('fileUploaderOptions', {
-        url: '/',
-        alias: 'file',
-        headers: {},
-        queue: [],
-        progress: 0,
-        autoUpload: false,
-        removeAfterUpload: false,
-        method: 'POST',
-        filters: [],
-        formData: [],
-        queueLimit: Number.MAX_VALUE,
-        withCredentials: false
-    })
+ngFileUpload.version = '6.0.3';
+ngFileUpload.defaults = {};
 
+ngFileUpload.service('Upload', ['$http', '$q', '$timeout', function ($http, $q, $timeout) {
+  function sendHttp(config) {
+    config.method = config.method || 'POST';
+    config.headers = config.headers || {};
 
-    .factory('FileUploader', ['fileUploaderOptions', '$rootScope', '$http', '$window', '$compile',
-        function(fileUploaderOptions, $rootScope, $http, $window, $compile) {
-            /**
-             * Creates an instance of FileUploader
-             * @param {Object} [options]
-             * @constructor
-             */
-            function FileUploader(options) {
-                var settings = angular.copy(fileUploaderOptions);
-                angular.extend(this, settings, options, {
-                    isUploading: false,
-                    _nextIndex: 0,
-                    _failFilterIndex: -1,
-                    _directives: {select: [], drop: [], over: []}
-                });
+    var deferred = $q.defer();
+    var promise = deferred.promise;
 
-                // add default filters
-                this.filters.unshift({name: 'queueLimit', fn: this._queueLimitFilter});
-                this.filters.unshift({name: 'folder', fn: this._folderFilter});
+    config.headers.__setXHR_ = function () {
+      return function (xhr) {
+        if (!xhr) return;
+        config.__XHR = xhr;
+        if (config.xhrFn) config.xhrFn(xhr);
+        xhr.upload.addEventListener('progress', function (e) {
+          e.config = config;
+          if (deferred.notify) {
+            deferred.notify(e);
+          } else if (promise.progressFunc) {
+            $timeout(function () {
+              promise.progressFunc(e);
+            });
+          }
+        }, false);
+        //fix for firefox not firing upload progress end, also IE8-9
+        xhr.upload.addEventListener('load', function (e) {
+          if (e.lengthComputable) {
+            e.config = config;
+            if (deferred.notify) {
+              deferred.notify(e);
+            } else if (promise.progressFunc) {
+              $timeout(function () {
+                promise.progressFunc(e);
+              });
             }
-            /**********************
-             * PUBLIC
-             **********************/
-            /**
-             * Checks a support the html5 uploader
-             * @returns {Boolean}
-             * @readonly
-             */
-            FileUploader.prototype.isHTML5 = !!($window.File && $window.FormData);
-            /**
-             * Adds items to the queue
-             * @param {File|HTMLInputElement|Object|FileList|Array<Object>} files
-             * @param {Object} [options]
-             * @param {Array<Function>|String} filters
-             */
-            FileUploader.prototype.addToQueue = function(files, options, filters) {
-                var list = this.isArrayLikeObject(files) ? files: [files];
-                var arrayOfFilters = this._getFilters(filters);
-                var count = this.queue.length;
-                var addedFileItems = [];
-
-                angular.forEach(list, function(some /*{File|HTMLInputElement|Object}*/) {
-                    var temp = new FileUploader.FileLikeObject(some);
-
-                    if (this._isValidFile(temp, arrayOfFilters, options)) {
-                        var fileItem = new FileUploader.FileItem(this, some, options);
-                        addedFileItems.push(fileItem);
-                        this.queue.push(fileItem);
-                        this._onAfterAddingFile(fileItem);
-                    } else {
-                        var filter = this.filters[this._failFilterIndex];
-                        this._onWhenAddingFileFailed(temp, filter, options);
-                    }
-                }, this);
-
-                if(this.queue.length !== count) {
-                    this._onAfterAddingAll(addedFileItems);
-                    this.progress = this._getTotalProgress();
-                }
-
-                this._render();
-                if (this.autoUpload) this.uploadAll();
-            };
-            /**
-             * Remove items from the queue. Remove last: index = -1
-             * @param {FileItem|Number} value
-             */
-            FileUploader.prototype.removeFromQueue = function(value) {
-                var index = this.getIndexOfItem(value);
-                var item = this.queue[index];
-                if (item.isUploading) item.cancel();
-                this.queue.splice(index, 1);
-                item._destroy();
-                this.progress = this._getTotalProgress();
-            };
-            /**
-             * Clears the queue
-             */
-            FileUploader.prototype.clearQueue = function() {
-                while(this.queue.length) {
-                    this.queue[0].remove();
-                }
-                this.progress = 0;
-            };
-            /**
-             * Uploads a item from the queue
-             * @param {FileItem|Number} value
-             */
-            FileUploader.prototype.uploadItem = function(value) {
-                var index = this.getIndexOfItem(value);
-                var item = this.queue[index];
-                var transport = this.isHTML5 ? '_xhrTransport' : '_iframeTransport';
-
-                item._prepareToUploading();
-                if(this.isUploading) return;
-
-                this.isUploading = true;
-                this[transport](item);
-            };
-            /**
-             * Cancels uploading of item from the queue
-             * @param {FileItem|Number} value
-             */
-            FileUploader.prototype.cancelItem = function(value) {
-                var index = this.getIndexOfItem(value);
-                var item = this.queue[index];
-                var prop = this.isHTML5 ? '_xhr' : '_form';
-                if (item && item.isUploading) item[prop].abort();
-            };
-            /**
-             * Uploads all not uploaded items of queue
-             */
-            FileUploader.prototype.uploadAll = function() {
-                var items = this.getNotUploadedItems().filter(function(item) {
-                    return !item.isUploading;
-                });
-                if (!items.length) return;
-
-                angular.forEach(items, function(item) {
-                    item._prepareToUploading();
-                });
-                items[0].upload();
-            };
-            /**
-             * Cancels all uploads
-             */
-            FileUploader.prototype.cancelAll = function() {
-                var items = this.getNotUploadedItems();
-                angular.forEach(items, function(item) {
-                    item.cancel();
-                });
-            };
-            /**
-             * Returns "true" if value an instance of File
-             * @param {*} value
-             * @returns {Boolean}
-             * @private
-             */
-            FileUploader.prototype.isFile = function(value) {
-                var fn = $window.File;
-                return (fn && value instanceof fn);
-            };
-            /**
-             * Returns "true" if value an instance of FileLikeObject
-             * @param {*} value
-             * @returns {Boolean}
-             * @private
-             */
-            FileUploader.prototype.isFileLikeObject = function(value) {
-                return value instanceof FileUploader.FileLikeObject;
-            };
-            /**
-             * Returns "true" if value is array like object
-             * @param {*} value
-             * @returns {Boolean}
-             */
-            FileUploader.prototype.isArrayLikeObject = function(value) {
-                return (angular.isObject(value) && 'length' in value);
-            };
-            /**
-             * Returns a index of item from the queue
-             * @param {Item|Number} value
-             * @returns {Number}
-             */
-            FileUploader.prototype.getIndexOfItem = function(value) {
-                return angular.isNumber(value) ? value : this.queue.indexOf(value);
-            };
-            /**
-             * Returns not uploaded items
-             * @returns {Array}
-             */
-            FileUploader.prototype.getNotUploadedItems = function() {
-                return this.queue.filter(function(item) {
-                    return !item.isUploaded;
-                });
-            };
-            /**
-             * Returns items ready for upload
-             * @returns {Array}
-             */
-            FileUploader.prototype.getReadyItems = function() {
-                return this.queue
-                    .filter(function(item) {
-                        return (item.isReady && !item.isUploading);
-                    })
-                    .sort(function(item1, item2) {
-                        return item1.index - item2.index;
-                    });
-            };
-            /**
-             * Destroys instance of FileUploader
-             */
-            FileUploader.prototype.destroy = function() {
-                angular.forEach(this._directives, function(key) {
-                    angular.forEach(this._directives[key], function(object) {
-                        object.destroy();
-                    }, this);
-                }, this);
-            };
-            /**
-             * Callback
-             * @param {Array} fileItems
-             */
-            FileUploader.prototype.onAfterAddingAll = function(fileItems) {};
-            /**
-             * Callback
-             * @param {FileItem} fileItem
-             */
-            FileUploader.prototype.onAfterAddingFile = function(fileItem) {};
-            /**
-             * Callback
-             * @param {File|Object} item
-             * @param {Object} filter
-             * @param {Object} options
-             * @private
-             */
-            FileUploader.prototype.onWhenAddingFileFailed = function(item, filter, options) {};
-            /**
-             * Callback
-             * @param {FileItem} fileItem
-             */
-            FileUploader.prototype.onBeforeUploadItem = function(fileItem) {};
-            /**
-             * Callback
-             * @param {FileItem} fileItem
-             * @param {Number} progress
-             */
-            FileUploader.prototype.onProgressItem = function(fileItem, progress) {};
-            /**
-             * Callback
-             * @param {Number} progress
-             */
-            FileUploader.prototype.onProgressAll = function(progress) {};
-            /**
-             * Callback
-             * @param {FileItem} item
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             */
-            FileUploader.prototype.onSuccessItem = function(item, response, status, headers) {};
-            /**
-             * Callback
-             * @param {FileItem} item
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             */
-            FileUploader.prototype.onErrorItem = function(item, response, status, headers) {};
-            /**
-             * Callback
-             * @param {FileItem} item
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             */
-            FileUploader.prototype.onCancelItem = function(item, response, status, headers) {};
-            /**
-             * Callback
-             * @param {FileItem} item
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             */
-            FileUploader.prototype.onCompleteItem = function(item, response, status, headers) {};
-            /**
-             * Callback
-             */
-            FileUploader.prototype.onCompleteAll = function() {};
-            /**********************
-             * PRIVATE
-             **********************/
-            /**
-             * Returns the total progress
-             * @param {Number} [value]
-             * @returns {Number}
-             * @private
-             */
-            FileUploader.prototype._getTotalProgress = function(value) {
-                if(this.removeAfterUpload) return value || 0;
-
-                var notUploaded = this.getNotUploadedItems().length;
-                var uploaded = notUploaded ? this.queue.length - notUploaded : this.queue.length;
-                var ratio = 100 / this.queue.length;
-                var current = (value || 0) * ratio / 100;
-
-                return Math.round(uploaded * ratio + current);
-            };
-            /**
-             * Returns array of filters
-             * @param {Array<Function>|String} filters
-             * @returns {Array<Function>}
-             * @private
-             */
-            FileUploader.prototype._getFilters = function(filters) {
-                if (angular.isUndefined(filters)) return this.filters;
-                if (angular.isArray(filters)) return filters;
-                var names = filters.match(/[^\s,]+/g);
-                return this.filters.filter(function(filter) {
-                    return names.indexOf(filter.name) !== -1;
-                }, this);
-            };
-            /**
-             * Updates html
-             * @private
-             */
-            FileUploader.prototype._render = function() {
-                if (!$rootScope.$$phase) $rootScope.$apply();
-            };
-            /**
-             * Returns "true" if item is a file (not folder)
-             * @param {File|FileLikeObject} item
-             * @returns {Boolean}
-             * @private
-             */
-            FileUploader.prototype._folderFilter = function(item) {
-                return !!(item.size || item.type);
-            };
-            /**
-             * Returns "true" if the limit has not been reached
-             * @returns {Boolean}
-             * @private
-             */
-            FileUploader.prototype._queueLimitFilter = function() {
-                return this.queue.length < this.queueLimit;
-            };
-            /**
-             * Returns "true" if file pass all filters
-             * @param {File|Object} file
-             * @param {Array<Function>} filters
-             * @param {Object} options
-             * @returns {Boolean}
-             * @private
-             */
-            FileUploader.prototype._isValidFile = function(file, filters, options) {
-                this._failFilterIndex = -1;
-                return !filters.length ? true : filters.every(function(filter) {
-                    this._failFilterIndex++;
-                    return filter.fn.call(this, file, options);
-                }, this);
-            };
-            /**
-             * Checks whether upload successful
-             * @param {Number} status
-             * @returns {Boolean}
-             * @private
-             */
-            FileUploader.prototype._isSuccessCode = function(status) {
-                return (status >= 200 && status < 300) || status === 304;
-            };
-            /**
-             * Transforms the server response
-             * @param {*} response
-             * @param {Object} headers
-             * @returns {*}
-             * @private
-             */
-            FileUploader.prototype._transformResponse = function(response, headers) {
-                var headersGetter = this._headersGetter(headers);
-                angular.forEach($http.defaults.transformResponse, function(transformFn) {
-                    response = transformFn(response, headersGetter);
-                });
-                return response;
-            };
-            /**
-             * Parsed response headers
-             * @param headers
-             * @returns {Object}
-             * @see https://github.com/angular/angular.js/blob/master/src/ng/http.js
-             * @private
-             */
-            FileUploader.prototype._parseHeaders = function(headers) {
-                var parsed = {}, key, val, i;
-
-                if (!headers) return parsed;
-
-                angular.forEach(headers.split('\n'), function(line) {
-                    i = line.indexOf(':');
-                    key = line.slice(0, i).trim().toLowerCase();
-                    val = line.slice(i + 1).trim();
-
-                    if (key) {
-                        parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
-                    }
-                });
-
-                return parsed;
-            };
-            /**
-             * Returns function that returns headers
-             * @param {Object} parsedHeaders
-             * @returns {Function}
-             * @private
-             */
-            FileUploader.prototype._headersGetter = function(parsedHeaders) {
-                return function(name) {
-                    if (name) {
-                        return parsedHeaders[name.toLowerCase()] || null;
-                    }
-                    return parsedHeaders;
-                };
-            };
-            /**
-             * The XMLHttpRequest transport
-             * @param {FileItem} item
-             * @private
-             */
-            FileUploader.prototype._xhrTransport = function(item) {
-                var xhr = item._xhr = new XMLHttpRequest();
-                var form = new FormData();
-                var that = this;
-
-                that._onBeforeUploadItem(item);
-
-                angular.forEach(item.formData, function(obj) {
-                    angular.forEach(obj, function(value, key) {
-                        form.append(key, value);
-                    });
-                });
-
-                form.append(item.alias, item._file, item.file.name);
-
-                xhr.upload.onprogress = function(event) {
-                    var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
-                    that._onProgressItem(item, progress);
-                };
-
-                xhr.onload = function() {
-                    var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                    var response = that._transformResponse(xhr.response, headers);
-                    var gist = that._isSuccessCode(xhr.status) ? 'Success' : 'Error';
-                    var method = '_on' + gist + 'Item';
-                    that[method](item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                };
-
-                xhr.onerror = function() {
-                    var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                    var response = that._transformResponse(xhr.response, headers);
-                    that._onErrorItem(item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                };
-
-                xhr.onabort = function() {
-                    var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                    var response = that._transformResponse(xhr.response, headers);
-                    that._onCancelItem(item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                };
-
-                xhr.open(item.method, item.url, true);
-
-                xhr.withCredentials = item.withCredentials;
-
-                angular.forEach(item.headers, function(value, name) {
-                    xhr.setRequestHeader(name, value);
-                });
-
-                xhr.send(form);
-                this._render();
-            };
-            /**
-             * The IFrame transport
-             * @param {FileItem} item
-             * @private
-             */
-            FileUploader.prototype._iframeTransport = function(item) {
-                var form = angular.element('<form style="display: none;" />');
-                var iframe = angular.element('<iframe name="iframeTransport' + Date.now() + '">');
-                var input = item._input;
-                var that = this;
-
-                if (item._form) item._form.replaceWith(input); // remove old form
-                item._form = form; // save link to new form
-
-                that._onBeforeUploadItem(item);
-
-                input.prop('name', item.alias);
-
-                angular.forEach(item.formData, function(obj) {
-                    angular.forEach(obj, function(value, key) {
-                        var element = angular.element('<input type="hidden" name="' + key + '" />');
-                        element.val(value);
-                        form.append(element);
-                    });
-                });
-
-                form.prop({
-                    action: item.url,
-                    method: 'POST',
-                    target: iframe.prop('name'),
-                    enctype: 'multipart/form-data',
-                    encoding: 'multipart/form-data' // old IE
-                });
-
-                iframe.bind('load', function() {
-                    try {
-                        // Fix for legacy IE browsers that loads internal error page
-                        // when failed WS response received. In consequence iframe
-                        // content access denied error is thrown becouse trying to
-                        // access cross domain page. When such thing occurs notifying
-                        // with empty response object. See more info at:
-                        // http://stackoverflow.com/questions/151362/access-is-denied-error-on-accessing-iframe-document-object
-                        // Note that if non standard 4xx or 5xx error code returned
-                        // from WS then response content can be accessed without error
-                        // but 'XHR' status becomes 200. In order to avoid confusion
-                        // returning response via same 'success' event handler.
-
-                        // fixed angular.contents() for iframes
-                        var html = iframe[0].contentDocument.body.innerHTML;
-                    } catch (e) {}
-
-                    var xhr = {response: html, status: 200, dummy: true};
-                    var headers = {};
-                    var response = that._transformResponse(xhr.response, headers);
-
-                    that._onSuccessItem(item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                });
-
-                form.abort = function() {
-                    var xhr = {status: 0, dummy: true};
-                    var headers = {};
-                    var response;
-
-                    iframe.unbind('load').prop('src', 'javascript:false;');
-                    form.replaceWith(input);
-
-                    that._onCancelItem(item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                };
-
-                input.after(form);
-                form.append(input).append(iframe);
-
-                form[0].submit();
-                this._render();
-            };
-            /**
-             * Inner callback
-             * @param {File|Object} item
-             * @param {Object} filter
-             * @param {Object} options
-             * @private
-             */
-            FileUploader.prototype._onWhenAddingFileFailed = function(item, filter, options) {
-                this.onWhenAddingFileFailed(item, filter, options);
-            };
-            /**
-             * Inner callback
-             * @param {FileItem} item
-             */
-            FileUploader.prototype._onAfterAddingFile = function(item) {
-                this.onAfterAddingFile(item);
-            };
-            /**
-             * Inner callback
-             * @param {Array<FileItem>} items
-             */
-            FileUploader.prototype._onAfterAddingAll = function(items) {
-                this.onAfterAddingAll(items);
-            };
-            /**
-             *  Inner callback
-             * @param {FileItem} item
-             * @private
-             */
-            FileUploader.prototype._onBeforeUploadItem = function(item) {
-                item._onBeforeUpload();
-                this.onBeforeUploadItem(item);
-            };
-            /**
-             * Inner callback
-             * @param {FileItem} item
-             * @param {Number} progress
-             * @private
-             */
-            FileUploader.prototype._onProgressItem = function(item, progress) {
-                var total = this._getTotalProgress(progress);
-                this.progress = total;
-                item._onProgress(progress);
-                this.onProgressItem(item, progress);
-                this.onProgressAll(total);
-                this._render();
-            };
-            /**
-             * Inner callback
-             * @param {FileItem} item
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             * @private
-             */
-            FileUploader.prototype._onSuccessItem = function(item, response, status, headers) {
-                item._onSuccess(response, status, headers);
-                this.onSuccessItem(item, response, status, headers);
-            };
-            /**
-             * Inner callback
-             * @param {FileItem} item
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             * @private
-             */
-            FileUploader.prototype._onErrorItem = function(item, response, status, headers) {
-                item._onError(response, status, headers);
-                this.onErrorItem(item, response, status, headers);
-            };
-            /**
-             * Inner callback
-             * @param {FileItem} item
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             * @private
-             */
-            FileUploader.prototype._onCancelItem = function(item, response, status, headers) {
-                item._onCancel(response, status, headers);
-                this.onCancelItem(item, response, status, headers);
-            };
-            /**
-             * Inner callback
-             * @param {FileItem} item
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             * @private
-             */
-            FileUploader.prototype._onCompleteItem = function(item, response, status, headers) {
-                item._onComplete(response, status, headers);
-                this.onCompleteItem(item, response, status, headers);
-
-                var nextItem = this.getReadyItems()[0];
-                this.isUploading = false;
-
-                if(angular.isDefined(nextItem)) {
-                    nextItem.upload();
-                    return;
-                }
-
-                this.onCompleteAll();
-                this.progress = this._getTotalProgress();
-                this._render();
-            };
-            /**********************
-             * STATIC
-             **********************/
-            /**
-             * @borrows FileUploader.prototype.isFile
-             */
-            FileUploader.isFile = FileUploader.prototype.isFile;
-            /**
-             * @borrows FileUploader.prototype.isFileLikeObject
-             */
-            FileUploader.isFileLikeObject = FileUploader.prototype.isFileLikeObject;
-            /**
-             * @borrows FileUploader.prototype.isArrayLikeObject
-             */
-            FileUploader.isArrayLikeObject = FileUploader.prototype.isArrayLikeObject;
-            /**
-             * @borrows FileUploader.prototype.isHTML5
-             */
-            FileUploader.isHTML5 = FileUploader.prototype.isHTML5;
-            /**
-             * Inherits a target (Class_1) by a source (Class_2)
-             * @param {Function} target
-             * @param {Function} source
-             */
-            FileUploader.inherit = function(target, source) {
-                target.prototype = Object.create(source.prototype);
-                target.prototype.constructor = target;
-                target.super_ = source;
-            };
-            FileUploader.FileLikeObject = FileLikeObject;
-            FileUploader.FileItem = FileItem;
-            FileUploader.FileDirective = FileDirective;
-            FileUploader.FileSelect = FileSelect;
-            FileUploader.FileDrop = FileDrop;
-            FileUploader.FileOver = FileOver;
-
-            // ---------------------------
-
-            /**
-             * Creates an instance of FileLikeObject
-             * @param {File|HTMLInputElement|Object} fileOrInput
-             * @constructor
-             */
-            function FileLikeObject(fileOrInput) {
-                var isInput = angular.isElement(fileOrInput);
-                var fakePathOrObject = isInput ? fileOrInput.value : fileOrInput;
-                var postfix = angular.isString(fakePathOrObject) ? 'FakePath' : 'Object';
-                var method = '_createFrom' + postfix;
-                this[method](fakePathOrObject);
-            }
-
-            /**
-             * Creates file like object from fake path string
-             * @param {String} path
-             * @private
-             */
-            FileLikeObject.prototype._createFromFakePath = function(path) {
-                this.lastModifiedDate = null;
-                this.size = null;
-                this.type = 'like/' + path.slice(path.lastIndexOf('.') + 1).toLowerCase();
-                this.name = path.slice(path.lastIndexOf('/') + path.lastIndexOf('\\') + 2);
-            };
-            /**
-             * Creates file like object from object
-             * @param {File|FileLikeObject} object
-             * @private
-             */
-            FileLikeObject.prototype._createFromObject = function(object) {
-                this.lastModifiedDate = angular.copy(object.lastModifiedDate);
-                this.size = object.size;
-                this.type = object.type;
-                this.name = object.name;
-            };
-
-            // ---------------------------
-
-            /**
-             * Creates an instance of FileItem
-             * @param {FileUploader} uploader
-             * @param {File|HTMLInputElement|Object} some
-             * @param {Object} options
-             * @constructor
-             */
-            function FileItem(uploader, some, options) {
-                var isInput = angular.isElement(some);
-                var input = isInput ? angular.element(some) : null;
-                var file = !isInput ? some : null;
-
-                angular.extend(this, {
-                    url: uploader.url,
-                    alias: uploader.alias,
-                    headers: angular.copy(uploader.headers),
-                    formData: angular.copy(uploader.formData),
-                    removeAfterUpload: uploader.removeAfterUpload,
-                    withCredentials: uploader.withCredentials,
-                    method: uploader.method
-                }, options, {
-                    uploader: uploader,
-                    file: new FileUploader.FileLikeObject(some),
-                    isReady: false,
-                    isUploading: false,
-                    isUploaded: false,
-                    isSuccess: false,
-                    isCancel: false,
-                    isError: false,
-                    progress: 0,
-                    index: null,
-                    _file: file,
-                    _input: input
-                });
-
-                if (input) this._replaceNode(input);
-            }
-            /**********************
-             * PUBLIC
-             **********************/
-            /**
-             * Uploads a FileItem
-             */
-            FileItem.prototype.upload = function() {
-                this.uploader.uploadItem(this);
-            };
-            /**
-             * Cancels uploading of FileItem
-             */
-            FileItem.prototype.cancel = function() {
-                this.uploader.cancelItem(this);
-            };
-            /**
-             * Removes a FileItem
-             */
-            FileItem.prototype.remove = function() {
-                this.uploader.removeFromQueue(this);
-            };
-            /**
-             * Callback
-             * @private
-             */
-            FileItem.prototype.onBeforeUpload = function() {};
-            /**
-             * Callback
-             * @param {Number} progress
-             * @private
-             */
-            FileItem.prototype.onProgress = function(progress) {};
-            /**
-             * Callback
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             */
-            FileItem.prototype.onSuccess = function(response, status, headers) {};
-            /**
-             * Callback
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             */
-            FileItem.prototype.onError = function(response, status, headers) {};
-            /**
-             * Callback
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             */
-            FileItem.prototype.onCancel = function(response, status, headers) {};
-            /**
-             * Callback
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             */
-            FileItem.prototype.onComplete = function(response, status, headers) {};
-            /**********************
-             * PRIVATE
-             **********************/
-            /**
-             * Inner callback
-             */
-            FileItem.prototype._onBeforeUpload = function() {
-                this.isReady = true;
-                this.isUploading = true;
-                this.isUploaded = false;
-                this.isSuccess = false;
-                this.isCancel = false;
-                this.isError = false;
-                this.progress = 0;
-                this.onBeforeUpload();
-            };
-            /**
-             * Inner callback
-             * @param {Number} progress
-             * @private
-             */
-            FileItem.prototype._onProgress = function(progress) {
-                this.progress = progress;
-                this.onProgress(progress);
-            };
-            /**
-             * Inner callback
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             * @private
-             */
-            FileItem.prototype._onSuccess = function(response, status, headers) {
-                this.isReady = false;
-                this.isUploading = false;
-                this.isUploaded = true;
-                this.isSuccess = true;
-                this.isCancel = false;
-                this.isError = false;
-                this.progress = 100;
-                this.index = null;
-                this.onSuccess(response, status, headers);
-            };
-            /**
-             * Inner callback
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             * @private
-             */
-            FileItem.prototype._onError = function(response, status, headers) {
-                this.isReady = false;
-                this.isUploading = false;
-                this.isUploaded = true;
-                this.isSuccess = false;
-                this.isCancel = false;
-                this.isError = true;
-                this.progress = 0;
-                this.index = null;
-                this.onError(response, status, headers);
-            };
-            /**
-             * Inner callback
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             * @private
-             */
-            FileItem.prototype._onCancel = function(response, status, headers) {
-                this.isReady = false;
-                this.isUploading = false;
-                this.isUploaded = false;
-                this.isSuccess = false;
-                this.isCancel = true;
-                this.isError = false;
-                this.progress = 0;
-                this.index = null;
-                this.onCancel(response, status, headers);
-            };
-            /**
-             * Inner callback
-             * @param {*} response
-             * @param {Number} status
-             * @param {Object} headers
-             * @private
-             */
-            FileItem.prototype._onComplete = function(response, status, headers) {
-                this.onComplete(response, status, headers);
-                if (this.removeAfterUpload) this.remove();
-            };
-            /**
-             * Destroys a FileItem
-             */
-            FileItem.prototype._destroy = function() {
-                if (this._input) this._input.remove();
-                if (this._form) this._form.remove();
-                delete this._form;
-                delete this._input;
-            };
-            /**
-             * Prepares to uploading
-             * @private
-             */
-            FileItem.prototype._prepareToUploading = function() {
-                this.index = this.index || ++this.uploader._nextIndex;
-                this.isReady = true;
-            };
-            /**
-             * Replaces input element on his clone
-             * @param {JQLite|jQuery} input
-             * @private
-             */
-            FileItem.prototype._replaceNode = function(input) {
-                var clone = $compile(input.clone())(input.scope());
-                clone.prop('value', null); // FF fix
-                input.css('display', 'none');
-                input.after(clone); // remove jquery dependency
-            };
-
-            // ---------------------------
-
-            /**
-             * Creates instance of {FileDirective} object
-             * @param {Object} options
-             * @param {Object} options.uploader
-             * @param {HTMLElement} options.element
-             * @param {Object} options.events
-             * @param {String} options.prop
-             * @constructor
-             */
-            function FileDirective(options) {
-                angular.extend(this, options);
-                this.uploader._directives[this.prop].push(this);
-                this._saveLinks();
-                this.bind();
-            }
-            /**
-             * Map of events
-             * @type {Object}
-             */
-            FileDirective.prototype.events = {};
-            /**
-             * Binds events handles
-             */
-            FileDirective.prototype.bind = function() {
-                for(var key in this.events) {
-                    var prop = this.events[key];
-                    this.element.bind(key, this[prop]);
-                }
-            };
-            /**
-             * Unbinds events handles
-             */
-            FileDirective.prototype.unbind = function() {
-                for(var key in this.events) {
-                    this.element.unbind(key, this.events[key]);
-                }
-            };
-            /**
-             * Destroys directive
-             */
-            FileDirective.prototype.destroy = function() {
-                var index = this.uploader._directives[this.prop].indexOf(this);
-                this.uploader._directives[this.prop].splice(index, 1);
-                this.unbind();
-                // this.element = null;
-            };
-            /**
-             * Saves links to functions
-             * @private
-             */
-            FileDirective.prototype._saveLinks = function() {
-                for(var key in this.events) {
-                    var prop = this.events[key];
-                    this[prop] = this[prop].bind(this);
-                }
-            };
-
-            // ---------------------------
-
-            FileUploader.inherit(FileSelect, FileDirective);
-
-            /**
-             * Creates instance of {FileSelect} object
-             * @param {Object} options
-             * @constructor
-             */
-            function FileSelect(options) {
-                FileSelect.super_.apply(this, arguments);
-
-                if(!this.uploader.isHTML5) {
-                    this.element.removeAttr('multiple');
-                }
-                this.element.prop('value', null); // FF fix
-            }
-            /**
-             * Map of events
-             * @type {Object}
-             */
-            FileSelect.prototype.events = {
-                $destroy: 'destroy',
-                change: 'onChange'
-            };
-            /**
-             * Name of property inside uploader._directive object
-             * @type {String}
-             */
-            FileSelect.prototype.prop = 'select';
-            /**
-             * Returns options
-             * @return {Object|undefined}
-             */
-            FileSelect.prototype.getOptions = function() {};
-            /**
-             * Returns filters
-             * @return {Array<Function>|String|undefined}
-             */
-            FileSelect.prototype.getFilters = function() {};
-            /**
-             * If returns "true" then HTMLInputElement will be cleared
-             * @returns {Boolean}
-             */
-            FileSelect.prototype.isEmptyAfterSelection = function() {
-                return !!this.element.attr('multiple');
-            };
-            /**
-             * Event handler
-             */
-            FileSelect.prototype.onChange = function() {
-                var files = this.uploader.isHTML5 ? this.element[0].files : this.element[0];
-                var options = this.getOptions();
-                var filters = this.getFilters();
-
-                if (!this.uploader.isHTML5) this.destroy();
-                this.uploader.addToQueue(files, options, filters);
-                if (this.isEmptyAfterSelection()) this.element.prop('value', null);
-            };
-
-            // ---------------------------
-
-            FileUploader.inherit(FileDrop, FileDirective);
-
-            /**
-             * Creates instance of {FileDrop} object
-             * @param {Object} options
-             * @constructor
-             */
-            function FileDrop(options) {
-                FileDrop.super_.apply(this, arguments);
-            }
-            /**
-             * Map of events
-             * @type {Object}
-             */
-            FileDrop.prototype.events = {
-                $destroy: 'destroy',
-                drop: 'onDrop',
-                dragover: 'onDragOver',
-                dragleave: 'onDragLeave'
-            };
-            /**
-             * Name of property inside uploader._directive object
-             * @type {String}
-             */
-            FileDrop.prototype.prop = 'drop';
-            /**
-             * Returns options
-             * @return {Object|undefined}
-             */
-            FileDrop.prototype.getOptions = function() {};
-            /**
-             * Returns filters
-             * @return {Array<Function>|String|undefined}
-             */
-            FileDrop.prototype.getFilters = function() {};
-            /**
-             * Event handler
-             */
-            FileDrop.prototype.onDrop = function(event) {
-                var transfer = this._getTransfer(event);
-                if (!transfer) return;
-                var options = this.getOptions();
-                var filters = this.getFilters();
-                this._preventAndStop(event);
-                angular.forEach(this.uploader._directives.over, this._removeOverClass, this);
-                this.uploader.addToQueue(transfer.files, options, filters);
-            };
-            /**
-             * Event handler
-             */
-            FileDrop.prototype.onDragOver = function(event) {
-                var transfer = this._getTransfer(event);
-                if(!this._haveFiles(transfer.types)) return;
-                transfer.dropEffect = 'copy';
-                this._preventAndStop(event);
-                angular.forEach(this.uploader._directives.over, this._addOverClass, this);
-            };
-            /**
-             * Event handler
-             */
-            FileDrop.prototype.onDragLeave = function(event) {
-                if (event.currentTarget !== this.element[0]) return;
-                this._preventAndStop(event);
-                angular.forEach(this.uploader._directives.over, this._removeOverClass, this);
-            };
-            /**
-             * Helper
-             */
-            FileDrop.prototype._getTransfer = function(event) {
-                return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer; // jQuery fix;
-            };
-            /**
-             * Helper
-             */
-            FileDrop.prototype._preventAndStop = function(event) {
-                event.preventDefault();
-                event.stopPropagation();
-            };
-            /**
-             * Returns "true" if types contains files
-             * @param {Object} types
-             */
-            FileDrop.prototype._haveFiles = function(types) {
-                if (!types) return false;
-                if (types.indexOf) {
-                    return types.indexOf('Files') !== -1;
-                } else if(types.contains) {
-                    return types.contains('Files');
-                } else {
-                    return false;
-                }
-            };
-            /**
-             * Callback
-             */
-            FileDrop.prototype._addOverClass = function(item) {
-                item.addOverClass();
-            };
-            /**
-             * Callback
-             */
-            FileDrop.prototype._removeOverClass = function(item) {
-                item.removeOverClass();
-            };
-
-            // ---------------------------
-
-            FileUploader.inherit(FileOver, FileDirective);
-
-            /**
-             * Creates instance of {FileDrop} object
-             * @param {Object} options
-             * @constructor
-             */
-            function FileOver(options) {
-                FileOver.super_.apply(this, arguments);
-            }
-            /**
-             * Map of events
-             * @type {Object}
-             */
-            FileOver.prototype.events = {
-                $destroy: 'destroy'
-            };
-            /**
-             * Name of property inside uploader._directive object
-             * @type {String}
-             */
-            FileOver.prototype.prop = 'over';
-            /**
-             * Over class
-             * @type {string}
-             */
-            FileOver.prototype.overClass = 'nv-file-over';
-            /**
-             * Adds over class
-             */
-            FileOver.prototype.addOverClass = function() {
-                this.element.addClass(this.getOverClass());
-            };
-            /**
-             * Removes over class
-             */
-            FileOver.prototype.removeOverClass = function() {
-                this.element.removeClass(this.getOverClass());
-            };
-            /**
-             * Returns over class
-             * @returns {String}
-             */
-            FileOver.prototype.getOverClass = function() {
-                return this.overClass;
-            };
-
-            return FileUploader;
-        }])
-
-
-    .directive('nvFileSelect', ['$parse', 'FileUploader', function($parse, FileUploader) {
-        return {
-            link: function(scope, element, attributes) {
-                var uploader = scope.$eval(attributes.uploader);
-
-                if (!(uploader instanceof FileUploader)) {
-                    throw new TypeError('"Uploader" must be an instance of FileUploader');
-                }
-
-                var object = new FileUploader.FileSelect({
-                    uploader: uploader,
-                    element: element
-                });
-
-                object.getOptions = $parse(attributes.options).bind(object, scope);
-                object.getFilters = function() {return attributes.filters;};
-            }
+          }
+        }, false);
+      };
+    };
+
+    $http(config).then(function (r) {
+      deferred.resolve(r);
+    }, function (e) {
+      deferred.reject(e);
+    }, function (n) {
+      deferred.notify(n);
+    });
+
+    promise.success = function (fn) {
+      promise.then(function (response) {
+        fn(response.data, response.status, response.headers, config);
+      });
+      return promise;
+    };
+
+    promise.error = function (fn) {
+      promise.then(null, function (response) {
+        fn(response.data, response.status, response.headers, config);
+      });
+      return promise;
+    };
+
+    promise.progress = function (fn) {
+      promise.progressFunc = fn;
+      promise.then(null, null, function (update) {
+        fn(update);
+      });
+      return promise;
+    };
+    promise.abort = function () {
+      if (config.__XHR) {
+        $timeout(function () {
+          config.__XHR.abort();
+        });
+      }
+      return promise;
+    };
+    promise.xhr = function (fn) {
+      config.xhrFn = (function (origXhrFn) {
+        return function () {
+          if (origXhrFn) origXhrFn.apply(promise, arguments);
+          fn.apply(promise, arguments);
         };
-    }])
+      })(config.xhrFn);
+      return promise;
+    };
 
+    return promise;
+  }
 
-    .directive('nvFileDrop', ['$parse', 'FileUploader', function($parse, FileUploader) {
-        return {
-            link: function(scope, element, attributes) {
-                var uploader = scope.$eval(attributes.uploader);
-
-                if (!(uploader instanceof FileUploader)) {
-                    throw new TypeError('"Uploader" must be an instance of FileUploader');
-                }
-
-                if (!uploader.isHTML5) return;
-
-                var object = new FileUploader.FileDrop({
-                    uploader: uploader,
-                    element: element
-                });
-
-                object.getOptions = $parse(attributes.options).bind(object, scope);
-                object.getFilters = function() {return attributes.filters;};
+  this.upload = function (config) {
+    function addFieldToFormData(formData, val, key) {
+      if (val !== undefined) {
+        if (angular.isDate(val)) {
+          val = val.toISOString();
+        }
+        if (angular.isString(val)) {
+          formData.append(key, val);
+        } else if (config.sendFieldsAs === 'form') {
+          if (angular.isObject(val)) {
+            for (var k in val) {
+              if (val.hasOwnProperty(k)) {
+                addFieldToFormData(formData, val[k], key + '[' + k + ']');
+              }
             }
-        };
-    }])
+          } else {
+            formData.append(key, val);
+          }
+        } else {
+          val = angular.isString(val) ? val : JSON.stringify(val);
+          if (config.sendFieldsAs === 'json-blob') {
+            formData.append(key, new Blob([val], {type: 'application/json'}));
+          } else {
+            formData.append(key, val);
+          }
+        }
+      }
+    }
 
+    config.headers = config.headers || {};
+    config.headers['Content-Type'] = undefined;
+    config.transformRequest = config.transformRequest ?
+      (angular.isArray(config.transformRequest) ?
+        config.transformRequest : [config.transformRequest]) : [];
+    config.transformRequest.push(function (data) {
+      var formData = new FormData();
+      var allFields = {};
+      var key;
+      for (key in config.fields) {
+        if (config.fields.hasOwnProperty(key)) {
+          allFields[key] = config.fields[key];
+        }
+      }
+      if (data) allFields.data = data;
+      for (key in allFields) {
+        if (allFields.hasOwnProperty(key)) {
+          var val = allFields[key];
+          if (config.formDataAppender) {
+            config.formDataAppender(formData, key, val);
+          } else {
+            addFieldToFormData(formData, val, key);
+          }
+        }
+      }
 
-    .directive('nvFileOver', ['FileUploader', function(FileUploader) {
-        return {
-            link: function(scope, element, attributes) {
-                var uploader = scope.$eval(attributes.uploader);
+      if (config.file != null) {
+        var fileFormName = config.fileFormDataName || 'file';
 
-                if (!(uploader instanceof FileUploader)) {
-                    throw new TypeError('"Uploader" must be an instance of FileUploader');
-                }
+        if (angular.isArray(config.file)) {
+          var isFileFormNameString = angular.isString(fileFormName);
+          for (var i = 0; i < config.file.length; i++) {
+            formData.append(isFileFormNameString ? fileFormName : fileFormName[i], config.file[i],
+              (config.fileName && config.fileName[i]) || config.file[i].name);
+          }
+        } else {
+          formData.append(fileFormName, config.file, config.fileName || config.file.name);
+        }
+      }
+      return formData;
+    });
 
-                var object = new FileUploader.FileOver({
-                    uploader: uploader,
-                    element: element
-                });
+    return sendHttp(config);
+  };
 
-                object.getOverClass = function() {
-                    return attributes.overClass || this.overClass;
-                };
+  this.http = function (config) {
+    config.transformRequest = config.transformRequest || function (data) {
+        if ((window.ArrayBuffer && data instanceof window.ArrayBuffer) || data instanceof Blob) {
+          return data;
+        }
+        return $http.defaults.transformRequest[0](arguments);
+      };
+    return sendHttp(config);
+  };
+
+  this.dataUrl = function (file, callback, disallowObjectUrl) {
+    if (window.FileReader && file &&
+      (!window.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
+      (!window.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
+      $timeout(function () {
+        //prefer URL.createObjectURL for handling refrences to files of all sizes
+        //since it doesn´t build a large string in memory
+        var URL = window.URL || window.webkitURL;
+        if (URL && URL.createObjectURL && !disallowObjectUrl) {
+          callback(URL.createObjectURL(file));
+        } else {
+          var fileReader = new FileReader();
+          fileReader.readAsDataURL(file);
+          fileReader.onload = function (e) {
+            $timeout(function () {
+              callback(e.target.result);
+            });
+          };
+        }
+      });
+    } else {
+      callback(null);
+    }
+  };
+
+  this.setDefaults = function(defaults) {
+    ngFileUpload.defaults = defaults || {};
+  };
+}
+
+]);
+
+(function () {
+  ngFileUpload.getAttrWithDefaults = function(attr, name) {
+    return attr[name] != null ? attr[name] :
+      (ngFileUpload.defaults[name] == null ?
+        ngFileUpload.defaults[name] : ngFileUpload.defaults[name].toString());
+  };
+
+  var getAttr = ngFileUpload.getAttrWithDefaults;
+
+  ngFileUpload.directive('ngfSelect', ['$parse', '$timeout', '$compile',
+    function ($parse, $timeout, $compile) {
+      return {
+        restrict: 'AEC',
+        require: '?ngModel',
+        link: function (scope, elem, attr, ngModel) {
+          linkFileSelect(scope, elem, attr, ngModel, $parse, $timeout, $compile);
+        }
+      };
+    }]);
+
+  function linkFileSelect(scope, elem, attr, ngModel, $parse, $timeout, $compile) {
+    /** @namespace attr.ngfSelect */
+    /** @namespace attr.ngfChange */
+    /** @namespace attr.ngModel */
+    /** @namespace attr.ngModelRejected */
+    /** @namespace attr.ngfModel */
+    /** @namespace attr.ngfMultiple */
+    /** @namespace attr.ngfCapture */
+    /** @namespace attr.ngfAccept */
+    /** @namespace attr.ngfMaxSize */
+    /** @namespace attr.ngfMinSize */
+    /** @namespace attr.ngfResetOnClick */
+    /** @namespace attr.ngfResetModelOnClick */
+    /** @namespace attr.ngfKeep */
+    /** @namespace attr.ngfKeepDistinct */
+
+    if (elem.attr('__ngf_gen__')) {
+      return;
+    }
+
+    scope.$on('$destroy', function () {
+      if (elem.$$ngfRefElem) elem.$$ngfRefElem.remove();
+    });
+
+    var disabled = false;
+    if (getAttr(attr, 'ngfSelect').search(/\W+$files\W+/) === -1) {
+      scope.$watch(getAttr(attr, 'ngfSelect'), function (val) {
+        disabled = val === false;
+      });
+    }
+    function isInputTypeFile() {
+      return elem[0].tagName.toLowerCase() === 'input' && attr.type && attr.type.toLowerCase() === 'file';
+    }
+
+    var isUpdating = false;
+
+    function changeFn(evt) {
+      if (!isUpdating) {
+        isUpdating = true;
+        try {
+          var fileList = evt.__files_ || (evt.target && evt.target.files);
+          var files = [], rejFiles = [];
+
+          for (var i = 0; i < fileList.length; i++) {
+            var file = fileList.item(i);
+            if (validate(scope, $parse, attr, file, evt)) {
+              files.push(file);
+            } else {
+              rejFiles.push(file);
             }
-        };
-    }])
+          }
+          updateModel($parse, $timeout, scope, ngModel, attr,
+            getAttr(attr, 'ngfChange') || getAttr(attr, 'ngfSelect'), files, rejFiles, evt);
+          if (files.length === 0) evt.target.value = files;
+//                if (evt.target && evt.target.getAttribute('__ngf_gen__')) {
+//                    angular.element(evt.target).remove();
+//                }
+        } finally {
+          isUpdating = false;
+        }
+      }
+    }
 
-    return module;
-}));
+    function bindAttrToFileInput(fileElem) {
+      if (getAttr(attr, 'ngfMultiple')) fileElem.attr('multiple', $parse(getAttr(attr, 'ngfMultiple'))(scope));
+      if (getAttr(attr, 'ngfCapture')) fileElem.attr('capture', $parse(getAttr(attr, 'ngfCapture'))(scope));
+      if (getAttr(attr, 'accept')) fileElem.attr('accept', getAttr(attr, 'accept'));
+      for (var i = 0; i < elem[0].attributes.length; i++) {
+        var attribute = elem[0].attributes[i];
+        if ((isInputTypeFile() && attribute.name !== 'type') ||
+          (attribute.name !== 'type' && attribute.name !== 'class' &&
+          attribute.name !== 'id' && attribute.name !== 'style')) {
+          if (attribute.value == null || attribute.value === '') {
+            if (attribute.name === 'required') attribute.value = 'required';
+            if (attribute.name === 'multiple') attribute.value = 'multiple';
+          }
+          fileElem.attr(attribute.name, attribute.value);
+        }
+      }
+    }
+
+    function createFileInput(evt, resetOnClick) {
+      if (!resetOnClick && (evt || isInputTypeFile())) return elem.$$ngfRefElem || elem;
+      if (elem.$$ngfProgramClick) return elem;
+
+      var fileElem = angular.element('<input type="file">');
+      bindAttrToFileInput(fileElem);
+
+      if (isInputTypeFile()) {
+        elem.replaceWith(fileElem);
+        elem = fileElem;
+        fileElem.attr('__ngf_gen__', true);
+        $compile(elem)(scope);
+      } else {
+        fileElem.css('visibility', 'hidden').css('position', 'absolute').css('overflow', 'hidden')
+          .css('width', '0px').css('height', '0px').css('border', 'none')
+          .css('margin', '0px').css('padding', '0px').attr('tabindex', '-1');
+        if (elem.$$ngfRefElem) {
+          elem.$$ngfRefElem.remove();
+        }
+        elem.$$ngfRefElem = fileElem;
+        document.body.appendChild(fileElem[0]);
+      }
+
+      return fileElem;
+    }
+
+    function resetModel(evt) {
+      updateModel($parse, $timeout, scope, ngModel, attr,
+        getAttr(attr, 'ngfChange') || getAttr(attr, 'ngfSelect'), [], [], evt, true);
+    }
+
+    var initialTouchStartY = 0;
+    function clickHandler(evt) {
+      if (elem.attr('disabled') || disabled) return false;
+
+      if (evt != null) {
+        var touches = evt.changedTouches || (evt.originalEvent && evt.originalEvent.changedTouches);
+        if (evt.type === 'touchstart') {
+          initialTouchStartY = touches ? touches[0].clientY : 0;
+          return true; // don't block event default
+        } else {
+          evt.stopPropagation();
+          evt.preventDefault();
+
+          // prevent scroll from triggering event
+          if (evt.type === 'touchend') {
+            var currentLocation = touches ? touches[0].clientY : 0;
+            if (Math.abs(currentLocation - initialTouchStartY) > 20) return false;
+          }
+        }
+      }
+
+      var resetOnClick = $parse(getAttr(attr, 'ngfResetOnClick'))(scope) !== false;
+      var fileElem = createFileInput(evt, resetOnClick);
+
+      function clickAndAssign(evt) {
+        if (evt && !elem.$$ngfProgramClick) {
+          elem.$$ngfProgramClick = true;
+          fileElem[0].click();
+          $timeout(function() {
+            delete elem.$$ngfProgramClick;
+          }, 500);
+        }
+        if ((isInputTypeFile() || !evt) && resetOnClick) {
+          elem.bind('click touchstart touchend', clickHandler);
+        }
+      }
+
+      if (fileElem) {
+        if (!evt || resetOnClick) fileElem.bind('change', changeFn);
+        if (evt && resetOnClick && $parse(getAttr(attr, 'ngfResetModelOnClick'))(scope) !== false) {
+          resetModel(evt);
+        }
+
+        // fix for android native browser < 4.4
+        if (shouldClickLater(navigator.userAgent)) {
+          setTimeout(function () {
+            clickAndAssign(evt);
+          }, 0);
+        } else {
+          clickAndAssign(evt);
+        }
+      }
+
+      return false;
+    }
+
+    if (window.FileAPI && window.FileAPI.ngfFixIE) {
+      window.FileAPI.ngfFixIE(elem, createFileInput, bindAttrToFileInput, changeFn);
+    } else {
+      clickHandler();
+      //if (!isInputTypeFile()) {
+      //  elem.bind('click touchend', clickHandler);
+      //}
+    }
+  }
+
+  function shouldClickLater(ua) {
+    // android below 4.4
+    var m = ua.match(/Android[^\d]*(\d+)\.(\d+)/);
+    if (m && m.length > 2) {
+      var v = ngFileUpload.defaults.androidFixMinorVersion || 4;
+      return parseInt(m[1]) < 4 || (parseInt(m[1]) === v && parseInt(m[2]) < v);
+    }
+
+    // safari on windows
+    return ua.indexOf('Chrome') === -1 && /.*Windows.*Safari.*/.test(ua);
+  }
+
+  ngFileUpload.validate = function (scope, $parse, attr, file, evt) {
+    if (file == null) {
+      return false;
+    }
+    function globStringToRegex(str) {
+      if (str.length > 2 && str[0] === '/' && str[str.length - 1] === '/') {
+        return str.substring(1, str.length - 1);
+      }
+      var split = str.split(','), result = '';
+      if (split.length > 1) {
+        for (var i = 0; i < split.length; i++) {
+          result += '(' + globStringToRegex(split[i]) + ')';
+          if (i < split.length - 1) {
+            result += '|';
+          }
+        }
+      } else {
+        if (str.indexOf('.') === 0) {
+          str = '*' + str;
+        }
+        result = '^' + str.replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + '-]', 'g'), '\\$&') + '$';
+        result = result.replace(/\\\*/g, '.*').replace(/\\\?/g, '.');
+      }
+      return result;
+    }
+
+    var accept = $parse(getAttr(attr, 'ngfAccept'))(scope, {$file: file, $event: evt});
+    var fileSizeMax = $parse(getAttr(attr, 'ngfMaxSize'))(scope, {$file: file, $event: evt}) || 9007199254740991;
+    var fileSizeMin = $parse(getAttr(attr, 'ngfMinSize'))(scope, {$file: file, $event: evt}) || -1;
+    if (accept != null && angular.isString(accept)) {
+      var regexp = new RegExp(globStringToRegex(accept), 'gi');
+      accept = (file.type != null && regexp.test(file.type.toLowerCase())) ||
+        (file.name != null && regexp.test(file.name.toLowerCase()));
+      if (!accept) {
+        file.$error = 'accept';
+        return false;
+      }
+    } else {
+      if (accept === false) {
+        file.$error = 'accept';
+        return false;
+      }
+    }
+    if (file.size == null) return true;
+    if (file.size > fileSizeMax) {
+      file.$error = 'maxSize';
+      return false;
+    }
+    if (file.size < fileSizeMin) {
+      file.$error = 'minSize';
+      return false;
+    }
+    return true;
+  };
+
+  ngFileUpload.updateModel = function ($parse, $timeout, scope, ngModel, attr, fileChange,
+                                       files, rejFiles, evt, noDelay) {
+    function update() {
+      var keep = $parse(getAttr(attr, 'ngfKeep'))(scope);
+      if (keep === true) {
+        var prevFiles = (ngModel.$modelValue || []).slice(0);
+        if (!files || !files.length) {
+          files = prevFiles;
+        } else if ($parse(getAttr(attr, 'ngfKeepDistinct'))(scope) === true) {
+          var len = prevFiles.length;
+          for (var i = 0; i < files.length; i++) {
+            for (var j = 0; j < len; j++) {
+              if (files[i].name === prevFiles[j].name) break;
+            }
+            if (j === len) {
+              prevFiles.push(files[i]);
+            }
+          }
+          files = prevFiles;
+        } else {
+          files = prevFiles.concat(files);
+        }
+      }
+      var file = files && files.length ? files[0] : null;
+      if (ngModel) {
+        var singleModel = !$parse(getAttr(attr, 'ngfMultiple'))(scope) && ! getAttr(attr, 'multiple') && !keep;
+        $parse(getAttr(attr, 'ngModel')).assign(scope, singleModel ? file : files);
+        $timeout(function () {
+          if (ngModel) {
+            ngModel.$setViewValue(singleModel ? file : (files != null && files.length === 0 ? null : files));
+          }
+        });
+      }
+      var ngfModel = getAttr(attr, 'ngfModel');
+      if (ngfModel) {
+        $parse(ngfModel).assign(scope, files);
+      }
+
+      if (getAttr(attr, 'ngModelRejected')) {
+        $parse(getAttr(attr, 'ngModelRejected')).assign(scope, rejFiles);
+      }
+      if (fileChange) {
+        $parse(fileChange)(scope, {
+          $files: files,
+          $file: file,
+          $rejectedFiles: rejFiles,
+          $event: evt
+        });
+      }
+    }
+
+    if (noDelay) {
+      update();
+    } else {
+      $timeout(function () {
+        update();
+      });
+    }
+  };
+
+  var validate = ngFileUpload.validate;
+  var updateModel = ngFileUpload.updateModel;
+
+})();
+
+(function () {
+  var validate = ngFileUpload.validate;
+  var updateModel = ngFileUpload.updateModel;
+  var getAttr = ngFileUpload.getAttrWithDefaults;
+
+  ngFileUpload.directive('ngfDrop', ['$parse', '$timeout', '$location', function ($parse, $timeout, $location) {
+    return {
+      restrict: 'AEC',
+      require: '?ngModel',
+      link: function (scope, elem, attr, ngModel) {
+        linkDrop(scope, elem, attr, ngModel, $parse, $timeout, $location);
+      }
+    };
+  }]);
+
+  ngFileUpload.directive('ngfNoFileDrop', function () {
+    return function (scope, elem) {
+      if (dropAvailable()) elem.css('display', 'none');
+    };
+  });
+
+  ngFileUpload.directive('ngfDropAvailable', ['$parse', '$timeout', function ($parse, $timeout) {
+    return function (scope, elem, attr) {
+      if (dropAvailable()) {
+        var fn = $parse(getAttr(attr, 'ngfDropAvailable'));
+        $timeout(function () {
+          fn(scope);
+          if (fn.assign) {
+            fn.assign(scope, true);
+          }
+        });
+      }
+    };
+  }]);
+
+  function linkDrop(scope, elem, attr, ngModel, $parse, $timeout, $location) {
+    var available = dropAvailable();
+    if (getAttr(attr, 'dropAvailable')) {
+      $timeout(function () {
+        if (scope[getAttr(attr, 'dropAvailable')]) {
+          scope[getAttr(attr, 'dropAvailable')].value = available;
+        } else {
+          scope[getAttr(attr, 'dropAvailable')] = available;
+        }
+      });
+    }
+    if (!available) {
+      if ($parse(getAttr(attr, 'ngfHideOnDropNotAvailable'))(scope) === true) {
+        elem.css('display', 'none');
+      }
+      return;
+    }
+
+    var disabled = false;
+    if (getAttr(attr, 'ngfDrop').search(/\W+$files\W+/) === -1) {
+      scope.$watch(getAttr(attr, 'ngfDrop'), function(val) {
+        disabled = val === false;
+      });
+    }
+
+    var leaveTimeout = null;
+    var stopPropagation = $parse(getAttr(attr, 'ngfStopPropagation'));
+    var dragOverDelay = 1;
+    var actualDragOverClass;
+
+    elem[0].addEventListener('dragover', function (evt) {
+      if (elem.attr('disabled') || disabled) return;
+      evt.preventDefault();
+      if (stopPropagation(scope)) evt.stopPropagation();
+      // handling dragover events from the Chrome download bar
+      if (navigator.userAgent.indexOf('Chrome') > -1) {
+        var b = evt.dataTransfer.effectAllowed;
+        evt.dataTransfer.dropEffect = ('move' === b || 'linkMove' === b) ? 'move' : 'copy';
+      }
+      $timeout.cancel(leaveTimeout);
+      if (!scope.actualDragOverClass) {
+        actualDragOverClass = calculateDragOverClass(scope, attr, evt);
+      }
+      elem.addClass(actualDragOverClass);
+    }, false);
+    elem[0].addEventListener('dragenter', function (evt) {
+      if (elem.attr('disabled') || disabled) return;
+      evt.preventDefault();
+      if (stopPropagation(scope)) evt.stopPropagation();
+    }, false);
+    elem[0].addEventListener('dragleave', function () {
+      if (elem.attr('disabled') || disabled) return;
+      leaveTimeout = $timeout(function () {
+        elem.removeClass(actualDragOverClass);
+        actualDragOverClass = null;
+      }, dragOverDelay || 1);
+    }, false);
+    elem[0].addEventListener('drop', function (evt) {
+      if (elem.attr('disabled') || disabled) return;
+      evt.preventDefault();
+      if (stopPropagation(scope)) evt.stopPropagation();
+      elem.removeClass(actualDragOverClass);
+      actualDragOverClass = null;
+      extractFiles(evt, function (files, rejFiles) {
+        updateModel($parse, $timeout, scope, ngModel, attr,
+          getAttr(attr, 'ngfChange') || getAttr(attr, 'ngfDrop'), files, rejFiles, evt);
+      }, $parse(getAttr(attr, 'ngfAllowDir'))(scope) !== false,
+        getAttr(attr, 'multiple') || $parse(getAttr(attr, 'ngfMultiple'))(scope));
+    }, false);
+    elem[0].addEventListener('paste', function (evt) {
+      if (elem.attr('disabled') || disabled) return;
+      evt.preventDefault();
+      if (stopPropagation(scope)) evt.stopPropagation();
+      extractFiles(evt, function (files, rejFiles) {
+        updateModel($parse, $timeout, scope, ngModel, attr,
+          getAttr(attr, 'ngfChange') || getAttr(attr, 'ngfDrop'), files, rejFiles, evt);
+      }, false, getAttr(attr, 'multiple') || $parse(getAttr(attr, 'ngfMultiple'))(scope));
+    }, false);
+
+    function calculateDragOverClass(scope, attr, evt) {
+      var accepted = true;
+      var items = evt.dataTransfer.items;
+      if (items != null) {
+        for (var i = 0; i < items.length && accepted; i++) {
+          accepted = accepted &&
+            (items[i].kind === 'file' || items[i].kind === '') &&
+            validate(scope, $parse, attr, items[i], evt);
+        }
+      }
+      var clazz = $parse(getAttr(attr, 'ngfDragOverClass'))(scope, {$event: evt});
+      if (clazz) {
+        if (clazz.delay) dragOverDelay = clazz.delay;
+        if (clazz.accept) clazz = accepted ? clazz.accept : clazz.reject;
+      }
+      return clazz || getAttr(attr, 'ngfDragOverClass') || 'dragover';
+    }
+
+    function extractFiles(evt, callback, allowDir, multiple) {
+      var files = [], rejFiles = [], processing = 0;
+
+      function addFile(file) {
+        if (validate(scope, $parse, attr, file, evt)) {
+          files.push(file);
+        } else {
+          rejFiles.push(file);
+        }
+      }
+
+      function traverseFileTree(files, entry, path) {
+        if (entry != null) {
+          if (entry.isDirectory) {
+            var filePath = (path || '') + entry.name;
+            addFile({name: entry.name, type: 'directory', path: filePath});
+            var dirReader = entry.createReader();
+            var entries = [];
+            processing++;
+            var readEntries = function () {
+              dirReader.readEntries(function (results) {
+                try {
+                  if (!results.length) {
+                    for (var i = 0; i < entries.length; i++) {
+                      traverseFileTree(files, entries[i], (path ? path : '') + entry.name + '/');
+                    }
+                    processing--;
+                  } else {
+                    entries = entries.concat(Array.prototype.slice.call(results || [], 0));
+                    readEntries();
+                  }
+                } catch (e) {
+                  processing--;
+                  console.error(e);
+                }
+              }, function () {
+                processing--;
+              });
+            };
+            readEntries();
+          } else {
+            processing++;
+            entry.file(function (file) {
+              try {
+                processing--;
+                file.path = (path ? path : '') + file.name;
+                addFile(file);
+              } catch (e) {
+                processing--;
+                console.error(e);
+              }
+            }, function () {
+              processing--;
+            });
+          }
+        }
+      }
+
+      if (evt.type === 'paste') {
+        var clipboard = evt.clipboardData || evt.originalEvent.clipboardData;
+        if (clipboard && clipboard.items) {
+          for (var k = 0; k < clipboard.items.length; k++) {
+            if (clipboard.items[k].type.indexOf('image') !== -1) {
+              addFile(clipboard.items[k].getAsFile());
+            }
+          }
+          callback(files, rejFiles);
+        }
+      } else {
+        var items = evt.dataTransfer.items;
+
+        if (items && items.length > 0 && $location.protocol() !== 'file') {
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].webkitGetAsEntry && items[i].webkitGetAsEntry() && items[i].webkitGetAsEntry().isDirectory) {
+              var entry = items[i].webkitGetAsEntry();
+              if (entry.isDirectory && !allowDir) {
+                continue;
+              }
+              if (entry != null) {
+                traverseFileTree(files, entry);
+              }
+            } else {
+              var f = items[i].getAsFile();
+              if (f != null) addFile(f);
+            }
+            if (!multiple && files.length > 0) break;
+          }
+        } else {
+          var fileList = evt.dataTransfer.files;
+          if (fileList != null) {
+            for (var j = 0; j < fileList.length; j++) {
+              addFile(fileList.item(j));
+              if (!multiple && files.length > 0) {
+                break;
+              }
+            }
+          }
+        }
+        var delays = 0;
+        (function waitForProcess(delay) {
+          $timeout(function () {
+            if (!processing) {
+              if (!multiple && files.length > 1) {
+                i = 0;
+                while (files[i].type === 'directory') i++;
+                files = [files[i]];
+              }
+              callback(files, rejFiles);
+            } else {
+              if (delays++ * 10 < 20 * 1000) {
+                waitForProcess(10);
+              }
+            }
+          }, delay || 0);
+        })();
+      }
+    }
+  }
+
+  function dropAvailable() {
+    var div = document.createElement('div');
+    return ('draggable' in div) && ('ondrop' in div);
+  }
+
+})();
+
+(function () {
+
+  function fileToSrc(Upload, scope, $parse, attr, name, defaultName, callback) {
+      if (defaultName) {
+        callback($parse(defaultName)(scope));
+      }
+      scope.$watch(name, function (file) {
+        if (!angular.isString(file)) {
+          if (window.FileReader && ngFileUpload.validate(scope, $parse, attr, file, null)) {
+            Upload.dataUrl(file, function (url) {
+              if (callback) {
+                callback(url);
+              } else {
+                file.dataUrl = url || $parse(defaultName)(scope);
+              }
+            }, $parse(attr.ngfNoObjectUrl)(scope));
+          }
+        } else {
+          callback(file);
+        }
+      });
+  }
+
+  /** @namespace attr.ngfSrc */
+  /** @namespace attr.ngfDefaultSrc */
+  /** @namespace attr.ngfNoObjectUrl */
+  ngFileUpload.directive('ngfSrc', ['$parse', 'Upload', function ($parse, Upload) {
+    return {
+      restrict: 'AE',
+      link: function (scope, elem, attr) {
+        fileToSrc(Upload, scope, $parse, attr, attr.ngfSrc, attr.ngfDefaultSrc, function (url) {
+          elem.attr('src', url);
+        });
+      }
+    };
+  }]);
+
+  /** @namespace attr.ngfBackground */
+  /** @namespace attr.ngfDefaultBackground */
+  /** @namespace attr.ngfNoObjectUrl */
+  ngFileUpload.directive('ngfBackground', ['$parse', 'Upload', function ($parse, Upload) {
+    return {
+      restrict: 'AE',
+      link: function (scope, elem, attr) {
+        fileToSrc(Upload, scope, $parse, attr, attr.ngfBackground, attr.ngfDefaultBackground, function (url) {
+          elem.css('background-image', 'url(' + url + ')');
+        });
+      }
+    };
+  }]);
+
+  /** @namespace attr.ngfDataUrl */
+  /** @namespace attr.ngfDefaultDataUrl */
+  /** @namespace attr.ngfNoObjectUrl */
+  ngFileUpload.directive('ngfDataUrl', ['$parse', 'Upload', function ($parse, Upload) {
+    return {
+      restrict: 'AE',
+      link: function (scope, elem, attr) {
+
+        fileToSrc(Upload, scope, $parse, attr, attr.ngfDataUrl, attr.ngfDefaultDataUrl);
+      }
+    };
+  }]);
+})();

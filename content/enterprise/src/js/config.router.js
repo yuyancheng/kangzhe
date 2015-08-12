@@ -34,91 +34,13 @@ angular.module('app').run(
             }
           ]
         }
-      }).state('app.check_list_undone', {
-        url: '/check_list_undone',
-        templateUrl: 'src/tpl/customer_service/check_list_undone.html',
-        resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/check_list_undone.js').then(function() {
-                return uiLoad.load(JQ_CONFIG.dataTable);
-              });
-            }
-          ]
-        }
-      }).state('app.check_list_pass', {
-        url: '/check_list_pass',
-        templateUrl: 'src/tpl/customer_service/check_list_pass.html',
-        resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/check_list_pass.js').then(function() {
-                return uiLoad.load(JQ_CONFIG.dataTable);
-              });
-            }
-          ]
-        }
-      }).state('app.check_pass_view', {
-        url: '/check_pass_view',
-        templateUrl: 'src/tpl/customer_service/check_pass_view.html',
+      }).state('app.enterprise_manage', {
+        url: '/enterprise_manage',
+        templateUrl: 'src/tpl/customer_service/enterprise_manage.html',
         resolve: {
           deps: ['$ocLazyLoad',
             function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/check_pass_view.js');
-            }
-          ]
-        }
-      }).state('app.check_list_nopass', {
-        url: '/check_list_nopass',
-        templateUrl: 'src/tpl/customer_service/check_list_nopass.html',
-        resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/check_list_nopass.js').then(function() {
-                return uiLoad.load(JQ_CONFIG.dataTable);
-              });
-            }
-          ]
-        }
-      }).state('app.check_nopass_view', {
-        url: '/check_nopass_view',
-        templateUrl: 'src/tpl/customer_service/check_nopass_view.html',
-        resolve: {
-          deps: ['$ocLazyLoad',
-            function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/check_nopass_view.js');
-            }
-          ]
-        }
-      }).state('app.check_edit', {
-        url: '/check_edit',
-        templateUrl: 'src/tpl/customer_service/check_edit.html',
-        resolve: {
-          deps: ['$ocLazyLoad',
-            function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/check_edit.js');
-            }
-          ]
-        }
-      }).state('app.feedback_undone', {
-        url: '/feedback_undone',
-        templateUrl: 'src/tpl/customer_service/feedback_undone.html',
-        resolve: {
-          deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/feedback_undone.js').then(function() {
-                return uiLoad.load(JQ_CONFIG.dataTable);
-              });
-            }
-          ]
-        }
-      }).state('app.feedback_view', {
-        url: '/feedback_view',
-        templateUrl: 'src/tpl/customer_service/feedback_view.html',
-        resolve: {
-          deps: ['$ocLazyLoad',
-            function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/feedback_view.js');
+              return $ocLazyLoad.load('src/js/controllers/customer_service/enterprise_manage.js');
             }
           ]
         }

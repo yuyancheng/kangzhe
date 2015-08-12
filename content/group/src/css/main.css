@@ -72,9 +72,10 @@ th.sorting div{
 	border-radius: 2px;
 	table-layout: fixed;
 }
-#dialog-container{
+#dialog_container{
 	position: fixed;
 	width: 100%;
+	height: 100%;
 	top: 0;
 	z-index: 10000;
 }
@@ -88,6 +89,10 @@ th.sorting div{
 	opacity: .3;
 }
 
+.fade-in-right {
+  -webkit-animation: fadeInRight;
+          animation: fadeInRight;
+}
 .fade-in-down {
   -webkit-animation: fadeInDown;
           animation: fadeInDown;
@@ -124,40 +129,42 @@ th.sorting div{
   border-top: 1px solid #eee;
   /*box-shadow: 0 0 3px rgba(0,0,0,.1) inset;*/
   margin-right: -15px;
-  margin-top: 7px;
+  margin-top: 10px;
   margin-bottom: -10px;
   padding: 2px;
   background-color: #F6F8F8;
 }
-.dept-list li{
+.dept-list > li{
 	position: relative;
 	padding: 5px 8px;
 	line-height: 20px;
 	border-left: 5px solid #F6F8F8;
-	border-radius: 2px;
+	border-radius: 3px;
+	font-weight: normal;
+	color: #999;
 }
-.dept-list li:hover{
+.dept-list > li:hover{
 	background-color: #EAEAEA;
 	border-left: 5px solid #EAEAEA;
 }
 .cur-li, .dept-list .cur-li{
 	border-left: 5px solid #6464FF;
 	background-color: #D9DBFF;
-	border-top: none;
 }
 .list-group-item.cur-li:hover{
 	border-left: 5px solid #6464FF;
 	background-color: #D9DBFF;
-	padding-left: 10px;
+	padding-left: 11px;
 }
 .list-group-item.cur-li{
-	padding-left: 10px;
+	padding-left: 11px;
+	border-radius: 4px;
 }
 .dept-list .cur-li:hover{
 	border-left: 5px solid #6464FF;
 	background-color: #D9DBFF;
 }
-.dept-list li i{
+.dept-list > li i{
 	margin-left: -10px;
 	margin-right: 5px;
 	font-size: 5px;
@@ -173,15 +180,19 @@ th.sorting div{
   margin-right: -5px;
 }
 .list-group-item:hover{
-	background-color: #F6F8F8;
+	/*background-color: #F6F8F8;*/
 }
 
 /*****重写bootstrap.css, app.css*****/
+.navbar-brand{
+	font-size: 16px;
+}
 .list-group{
 	margin-bottom: 0;
 }
 .list-group-item{
 	cursor: pointer;
+	font-weight: bold;
 }
 .list-group-item .btn{
 	position: absolute;
@@ -209,10 +220,21 @@ th.sorting div{
 }
 .list-group-item .dropdown-menu{
 	min-width: inherit;
-	top: 30px;
+	top: 25px;
 	right: -11px;
 	left: inherit;
 }
+.slide-bar .publish{
+	margin-top: 20px;
+}
+.ngFileUpLoadBt{
+	background:#f6f8f8;
+	cursor: pointer;
+	border: 3px dashed #dee5e7;
+}
+.ngFileUpLoadBt:hover{
+	border-color: #949a9c;
+};
 .list-group-item > .badge{
 	line-height: 1.1;
 	margin-right: -5px;
@@ -221,3 +243,44 @@ th.sorting div{
 	margin-left: -5px;
 }
 
+
+.navbar-brand{
+	font-size: 16px;
+}
+.form-opr {
+  display: table;
+  width: 100%;
+  padding: 20px 0 10px;
+}
+.cnt-anim-dialog{
+	position: fixed;
+	height: 100%;
+	top: 0;
+	right: -2px;
+	z-index: 10000;
+}
+.cnt-anim-dialog .form-horizontal{
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+.cnt-anim-dialog .control-label{
+	padding-right: 0;
+}
+.cnt-anim-dialog .form-group{
+	margin-bottom: 0;
+}
+.cnt-anim-dialog .panel{
+	height: 100%;
+	margin-bottom: 0;
+}
+.cnt-anim-dialog .panel-heading{
+	position: relative;
+}
+.cnt-anim-dialog textarea{
+	margin-top: 10px;
+}
+.cnt-opr-btn{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}

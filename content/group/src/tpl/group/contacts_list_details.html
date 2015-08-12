@@ -1,0 +1,62 @@
+<!-- modal dialog -->
+<div class="mask"></div>
+<div class="cnt-anim-dialog animating fade-in-right" ng-controller="ContactsListDetails">
+  <div class="panel panel-default">
+    <div class="panel-heading font-bold text-center">个人资料</div>
+    <div class="panel-body">
+      <div class="panel-heading">
+        <div class="clearfix">
+          <a href="" class="pull-left thumb-md avatar b-3x m-r"><img src="src/img/a0.jpg"></a>
+          <div class="clear">
+            <div class="h3 m-t-xs m-b-xs">王五</div>
+            <small class="text-muted">医师 / 烧伤科 / 北大医院</small>
+          </div>
+          <div class="cnt-opr-btn">
+            <button ng-click="save()" type="button" class="btn btn-info btn-addon"><i class="fa fa-sign-in"></i>分配科室</button>
+            <button ng-click="save()" type="button" class="btn btn-danger btn-addon"><i class="fa fa-sign-out"></i>离 职</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-horizontal">
+        <div class="form-group">
+          <label class="control-label col-md-2 text-right">职业信息：</label>
+          <div class="form-text col-md-10">深圳中医院 / 儿科 / 医师</div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-2 text-right">手机：</label>
+          <div class="form-text col-md-10">18939923923</div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-2 text-right">个人介绍：</label>
+          <div class="form-text col-md-10">医生集团（禾新）临床基地首席儿科专家、北京和睦家医院儿科科主任。</div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-2 text-right">擅长：</label>
+          <div class="form-text col-md-10">擅长儿科危重症、疑难症及常见病的诊断治疗及抢救。</div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-2 text-right">状态：</label>
+          <div class="form-text col-md-10">由集团创建人 赵医生邀请。</div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-2 text-right">备注：</label>
+          <div class="col-md-10"><textarea class="w100 form-control" cols="50"></textarea></div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-2 text-right">值班表：</label>
+          <div class="col-md-10"><textarea class="w100 form-control" cols="50"></textarea></div>
+        </div>
+      </div>
+      <div class="line line-dashed b-b line-lg pull-in"></div>
+      <div class="form-group">
+        <div class="col-md-offset-2 col-md-4">
+          <button ng-click="save()" type="button" class="w100 btn btn-success">保 存</button>
+        </div>
+        <div class="col-md-4">
+          <button ng-click="cancel()" type="button" class="w100 btn btn-default">取 消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /modal dialog -->
