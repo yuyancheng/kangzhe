@@ -774,7 +774,14 @@ ul.nav.nav-list.abn-tree .level-9 i.tree-icon {
 	border-bottom-left-radius: 0;
 	box-shadow: none;
 }
-
+.ng-File-UpLoad-Bt{
+	background:#f6f8f8;
+	cursor: pointer;
+	border: 3px dashed #dee5e7;
+}
+.ng-File-UpLoad-Bt:hover{
+	border-color: #949a9c;
+}
 
 
 

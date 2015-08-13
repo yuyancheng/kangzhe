@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('ContactsListDetails', function($rootScope, $scope, $state, $timeout, $http, utils) {
+app.controller('ContactsListApportion', function($rootScope, $scope, $state, $timeout, $http, utils) {
   
 	var container = $('#dialog_container');
   var dt = null;
@@ -29,10 +29,6 @@ app.controller('ContactsListDetails', function($rootScope, $scope, $state, $time
   // 执行操作
   $scope.doSome = function(id){
     console.log("do something: " + id);
-  }
-  // 执行操作
-  $scope.apportion = function(id){
-    $state.go('app.contacts.list.apportion');
   }
 
   // 模态框退出

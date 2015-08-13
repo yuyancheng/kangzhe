@@ -12,6 +12,13 @@ app.controller('FillInfoController',['$scope','$http','$timeout','$compile','Upl
     $scope.$watch('ctrlPic',function (files) {
         goUpload (files);
     });
+    $scope.getReqParams = function () {
+        console.log($scope.generateErrorOnServer);
+        console.log($scope.serverErrorCode);
+        console.log($scope.serverErrorMsg);        
+        return $scope.generateErrorOnServer ? '?errorCode=' + $scope.serverErrorCode +
+        '&errorMessage=' + $scope.serverErrorMsg : '';
+    };
     function goUpload (files) {
         if (files != null) {
             if (!angular.isArray(files)) {
@@ -27,11 +34,21 @@ app.controller('FillInfoController',['$scope','$http','$timeout','$compile','Upl
     };
     function upload (file) {
         //console.log(file);
-        file.upload = Upload.upload({
-            url:'https://angular-file-upload-cors-srv.appspot.com/upload',
-            file:file,
-            fileName:['文件名']
+        // file.upload = Upload.upload({
+        //     url:'https://angular-file-upload-cors-srv.appspot.com/upload',
+        //     file:file,
+        //     fileName:['文件名']
+        // });
+
+        file.upload = Upload.http({
+            url: 'https://angular-file-upload-cors-srv.appspot.com/upload' + $scope.getReqParams(),
+            method: 'POST',
+            headers: {
+                'Content-Type': file.type
+            },
+            data: file
         });
+
         file.upload.progress(function (evt) {
             file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
         });
@@ -40,8 +57,9 @@ app.controller('FillInfoController',['$scope','$http','$timeout','$compile','Upl
             file.result = '上传成功！';
         });
         file.upload.error(function (response) {
-            console.log(response.status);
+            console.log(response);
         });
+
     };
   }
 ]);

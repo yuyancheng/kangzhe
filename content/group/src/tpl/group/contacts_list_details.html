@@ -9,19 +9,15 @@
           <a href="" class="pull-left thumb-md avatar b-3x m-r"><img src="src/img/a0.jpg"></a>
           <div class="clear">
             <div class="h3 m-t-xs m-b-xs">王五</div>
-            <small class="text-muted">医师 / 烧伤科 / 北大医院</small>
+            <small class="text-muted">医师 / 儿外科 / 北大医院</small>
           </div>
           <div class="cnt-opr-btn">
-            <button ng-click="save()" type="button" class="btn btn-info btn-addon"><i class="fa fa-sign-in"></i>分配科室</button>
+            <button ng-click="apportion()" type="button" class="btn btn-info btn-addon"><i class="fa fa-sign-in"></i>分配科室</button>
             <button ng-click="save()" type="button" class="btn btn-danger btn-addon"><i class="fa fa-sign-out"></i>离 职</button>
           </div>
         </div>
       </div>
       <div class="form-horizontal">
-        <div class="form-group">
-          <label class="control-label col-md-2 text-right">职业信息：</label>
-          <div class="form-text col-md-10">深圳中医院 / 儿科 / 医师</div>
-        </div>
         <div class="form-group">
           <label class="control-label col-md-2 text-right">手机：</label>
           <div class="form-text col-md-10">18939923923</div>
@@ -40,11 +36,56 @@
         </div>
         <div class="form-group">
           <label class="control-label col-md-2 text-right">备注：</label>
-          <div class="col-md-10"><textarea class="w100 form-control" cols="50"></textarea></div>
+          <div class="col-md-10"><textarea class="w100 form-control"></textarea></div>
         </div>
         <div class="form-group">
           <label class="control-label col-md-2 text-right">值班表：</label>
-          <div class="col-md-10"><textarea class="w100 form-control" cols="50"></textarea></div>
+          <div class="col-md-10">
+            <div class="duty-schedule">
+              <table>
+                <thead>
+                  <tr>
+                    <td>星期一</td>
+                    <td>星期二</td>
+                    <td>星期三</td>
+                    <td>星期四</td>
+                    <td>星期五</td>
+                    <td>星期六</td>
+                    <td>星期日</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>9:00</td>
+                    <td>10:30</td>
+                    <td></td>
+                    <td>9:30</td>
+                    <td></td>
+                    <td>10:10</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td>14:25</td>
+                    <td>15:30</td>
+                    <td>16:00</td>
+                    <td></td>
+                    <td>15:30</td>
+                  </tr>
+                  <tr>
+                    <td>19:00</td>
+                    <td></td>
+                    <td>20:10</td>
+                    <td></td>
+                    <td></td>
+                    <td>21:10</td>
+                    <td>20:40</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
       <div class="line line-dashed b-b line-lg pull-in"></div>

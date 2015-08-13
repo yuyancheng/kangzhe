@@ -182,11 +182,80 @@ th.sorting div{
 .list-group-item:hover{
 	/*background-color: #F6F8F8;*/
 }
+.duty-schedule{
+	margin-top: 10px;
+	border: 1px solid #cfdadd;
+	border-radius: 2px;
+}
+.duty-schedule table{
+	width: 100%;
+}
+.duty-schedule td{
+	border-top: 1px solid #dee5e7;
+	border-left: 1px solid #dee5e7;
+	padding: 7px 0;
+	text-align: center;
+	border-radius: 2px;
+}
+.duty-schedule tr td:first-child{
+	border-left: none;
+}
+.duty-schedule thead tr td{
+	border-top: none;
+}
+.cnt-apportion-left{
+	float: left;
+	width: 300px;
+	padding: 15px 15px 15px 0;
+	
+}
+.cnt-apportion-right{
+	float: right;
+	width: 200px;
+	padding: 15px 0 15px 15px;
+	border-left: 1px dashed #dee5e7;
+}
+.cnt-apportion-list p{
+	padding: 15px 0 5px;
+}
+.cnt-apportion-list div{
+	padding: 10px;
+	border: 1px solid #999;
+	border-radius: 2px;
+	background-color: #fff;
+}
+.cnt-apportion-list div .label-btn{
+	margin: 3px;
+}
+.label-btn{
+  display: inline-block;
+  line-height: 30px;
+  padding-left: 10px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+.label-btn i{
+	float: right;
+	width: 30px;
+	line-height: 30px;
+	margin-left: 5px;
+	text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.label-btn i:hover{
+	background-color: rgba(0, 0, 0, 0.1);
+}
 
 /*****重写bootstrap.css, app.css*****/
-.navbar-brand{
-	font-size: 16px;
-}
 .list-group{
 	margin-bottom: 0;
 }

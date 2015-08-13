@@ -86,15 +86,17 @@ angular.module('app').run(
             }
           ]
         }
-      }).state('app.contacts.list.view', {
-        url: '/list',
-        templateUrl: 'src/tpl/group/contacts_list.html',
+      }).state('app.contacts.list.apportion', {
+        url: '/apportion',
+        views: {
+          "dialogView@app": {
+            templateUrl: 'src/tpl/group/contacts_list_apportion.html'
+          }
+        },
         resolve: {
           deps: ['$ocLazyLoad', 'uiLoad',
-            function($ocLazyLoad, uiLoad) {
-              return $ocLazyLoad.load('src/js/controllers/group/contacts_list.js').then(function() {
-                return uiLoad.load(JQ_CONFIG.dataTable);
-              });
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/group/contacts_list_apportion.js');
             }
           ]
         }

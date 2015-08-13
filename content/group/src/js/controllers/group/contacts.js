@@ -155,7 +155,7 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
     // 初始存在的三个列表单元
     var links = [];
     var unassigned = $('<div class="list-group-item" data-id="123"><span class="badge bg-warning">624</span><i class="fa fa-bookmark fa-fw m-r-xs"></i>未分配</div>');
-    var uncheck = $('<div class="list-group-item" data-id="234"><span class="badge bg-info">19</span><i class="fa fa-clock-o fa-fw m-r-xs"></i>待审核</div>');
+    var uncheck = $('<div class="list-group-item" data-id="234"><span class="badge bg-info">19</span><i class="fa fa-clock-o fa-fw m-r-xs"></i>邀请待通过</div>');
     var dimission = $('<div class="list-group-item" data-id="345"><span class="badge bg-danger">6</span><i class="fa fa-bell fa-fw m-r-xs"></i>已离职</div>');
     cnt_list.append(unassigned).append(uncheck).append(dimission);
     links.push(unassigned,uncheck,dimission);
