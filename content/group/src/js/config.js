@@ -56,7 +56,7 @@ var app = angular.module('app').config(
         upload: {
           getCertPath: app.urlFile + 'getCertPath'
         },
-        signup:app.urlRoot + 'company/registerCompany'
+        signup:app.urlRoot + 'user/register'
       };
       app.lang = {
         datatables: {

@@ -1,8 +1,8 @@
 'use strict';
 
 // 公司注册控制器
-app.controller('SignupFormController', ['$scope', '$http', '$state',
-  function($scope, $http, $state) {
+app.controller('SignupFormController', ['$scope', '$http', '$state','utils',
+  function($scope, $http, $state, utils) {
     // $scope.user = {};
     // $scope.authError = null;
     // $scope.signup = function() {
@@ -20,19 +20,23 @@ app.controller('SignupFormController', ['$scope', '$http', '$state',
     //   });
     // };
     $scope.signup =  function() {
-        // $http.post(app.url.signup,{
-        //     access_token:'18e68ecd1a304600ad404d01724c4e12',
-        //     company:,
-        //     name:,
-        //     description:,
-        //     corporation:,
-        //     company:,
-        //     company:,
-        //     company:,
-        //     company:,
-        //     company:
-        // })
-      $state.go('access.Fill_Info');
+        $http.post(app.url.signup,{
+            userName:$scope.userName,
+            password:$scope.userPwd,
+            userPhone:$scope.userPhone,
+            smsCode:$scope.smsCode
+        }).
+        success(function (data,status,headers,confug) {
+            // body...
+            console.log(data);
+        }).
+        error(function(data, status, headers, config) {
+            console.log(data);
+            console.log(status);
+            console.log(headers);
+            console.log(config);
+        });
+      //$state.go('access.Fill_Info');
     }
   }
 ]);

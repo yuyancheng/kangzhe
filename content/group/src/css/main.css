@@ -111,6 +111,9 @@ th.sorting div{
 .cnt-col-lt{
 	padding-right: 5px;
 }
+.cnt-col-lt .list-group{
+	margin-bottom: 0;
+}
 .cnt-col-rt{
 	padding-left: 5px;
 }
@@ -206,13 +209,13 @@ th.sorting div{
 .cnt-apportion-left{
 	float: left;
 	width: 300px;
-	padding: 15px 15px 15px 0;
+	padding: 0 15px 0 0;
 	
 }
 .cnt-apportion-right{
 	float: right;
 	width: 200px;
-	padding: 15px 0 15px 15px;
+	padding: 0 0 0 15px;
 	border-left: 1px dashed #dee5e7;
 }
 .cnt-apportion-list p{
@@ -220,7 +223,7 @@ th.sorting div{
 }
 .cnt-apportion-list div{
 	padding: 10px;
-	border: 1px solid #999;
+	border: 1px solid #ddd;
 	border-radius: 2px;
 	background-color: #fff;
 }
@@ -256,9 +259,6 @@ th.sorting div{
 }
 
 /*****重写bootstrap.css, app.css*****/
-.list-group{
-	margin-bottom: 0;
-}
 .list-group-item{
 	cursor: pointer;
 	font-weight: bold;
@@ -296,12 +296,12 @@ th.sorting div{
 .slide-bar .publish{
 	margin-top: 20px;
 }
-.ngFileUpLoadBt{
+.ng-File-UpLoad-Bt{
 	background:#f6f8f8;
 	cursor: pointer;
 	border: 3px dashed #dee5e7;
 }
-.ngFileUpLoadBt:hover{
+.ng-File-UpLoad-Bt:hover{
 	border-color: #949a9c;
 };
 .list-group-item > .badge{
@@ -325,8 +325,13 @@ th.sorting div{
 	position: fixed;
 	height: 100%;
 	top: 0;
+	bottom: 0;
 	right: -2px;
 	z-index: 10000;
+	overflow-y: scroll;
+	background-color: #fff;
+	border-radius: 2px;
+	box-shadow: -1px 0 1px rgba(0,0,0,.5);
 }
 .cnt-anim-dialog .form-horizontal{
 	overflow-x: hidden;
@@ -339,8 +344,12 @@ th.sorting div{
 	margin-bottom: 0;
 }
 .cnt-anim-dialog .panel{
-	height: 100%;
+	/*height: 100%;*/
 	margin-bottom: 0;
+}
+.cnt-anim-dialog .panel-heading{
+	background-color: #fafafa;
+	border-bottom: 1px solid #e8e8e8;
 }
 .cnt-anim-dialog .panel-heading{
 	position: relative;
@@ -352,4 +361,63 @@ th.sorting div{
 	position: absolute;
 	top: 10px;
 	right: 10px;
+}
+
+.login-top{
+	line-height: 50px;
+	background-color: #fff;
+	box-shadow: 0 1px 2px rgba(0,0,0,.2);
+}
+.login-top p{
+	padding-right: 20px;
+	text-align: right;
+}
+.login-top p a{
+	color: #0094FF;
+}
+.login-wrapper{
+	position: relative;
+	z-index: 10;
+	width: 600px;
+	margin-top: 50px;
+	padding: 50px 50px 30px 50px;
+	background-color: #fff;
+	border-radius: 4px;
+	box-shadow: 0 0 3px rgba(0,0,0,.4);
+}
+.login-left{
+	width: 180px;
+	float: left;
+	margin-right: 35px;
+	text-align: center;
+}
+.login-left p{
+	margin-top: 10px;
+}
+.login-right{
+	width: 280px;
+	float: left;
+	padding-left: 50px;
+	border-left: 1px dashed #efefef;
+}
+.login-left h4,
+.login-right h4{
+	margin-top: 0;
+	margin-bottom: 30px;
+}
+.qr-code{
+	margin: 0 auto;
+}
+.qr-code img{
+	width: 150px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+.cprt-footer{
+	position: absolute;
+	bottom: 0;
+	z-index: 0;
+	width: 100%;
+	padding: 10px 0;
+	text-align: center;
 }

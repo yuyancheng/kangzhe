@@ -9,12 +9,20 @@
             <div class="form-group">
               <div class="col-sm-12"><i class="fa fa-chevron-right"></i>&nbsp;&nbsp;公司账户基本信息&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-chevron-right"></i>&nbsp;&nbsp;公司账户基本信息</div>
             </div>
-            <div class="form-group m-t-lg" ng-class="{'has-error':singnupForm.userName.$invalid&&singnupForm.userName.$dirty}">
+            <!-- <div class="form-group m-t-lg" ng-class="{'has-error':singnupForm.userName.$invalid&&singnupForm.userName.$dirty}">
               <label class="control-label col-sm-2">用户名</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control " placeholder="用户名" required ng-model="userName" name="userName" ng-pattern="/^[a-z0-9]+$/i" ng-minlength="6" ng-maxlength="16">
+                <input type="text" class="form-control " placeholder="用户名" required ng-model="userName" name="userName" ng-pattern="/^[a-z0-9]+$/i" ng-minlength="6" ng-maxlength="16" >
                 <span class="help-block m-b-none">6-16位英文字母或数字</span>
               </div>
+            </div> -->
+            <div class="form-group" ng-class="{'has-error':singnupForm.userPhone.$invalid&&singnupForm.userPhone.$dirty}">
+              <label class="control-label col-sm-2">手机号码</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control " placeholder="手机号码" name="userPhone" ng-model="userPhone" ng-pattern="/^[1][358][0-9]{9}$/" required></div>
+              <!-- <div class="col-sm-4 text-right">
+                <button class="btn btn-info btn-block" ng-disabled="singnupForm.userPhone.$invalid">获取验证码</button>
+              </div> -->
             </div>
             <div class="form-group" ng-class="{'has-error':singnupForm.userPwd.$invalid&&singnupForm.userPwd.$dirty}">
               <label class="control-label col-sm-2">密码</label>
@@ -30,19 +38,11 @@
                 <span class="help-block m-b-none">请确认，再次输入您的密码</span>
               </div>
             </div>
-            <div class="form-group" ng-class="{'has-error':singnupForm.userPhone.$invalid&&singnupForm.userPhone.$dirty}">
-              <label class="control-label col-sm-2">手机号码</label>
-              <div class="col-sm-6">
-                <input type="text" class="form-control " placeholder="手机号码" name="userPhone" ng-model="userPhone" ng-pattern="/^[1][358][0-9]{9}$/" required></div>
-              <div class="col-sm-4 text-right">
-                <button class="btn btn-info btn-block" ng-disabled="singnupForm.userPhone.$invalid">获取验证码</button>
-              </div>
-            </div>
-            <div class="form-group" ng-class="{'has-error':singnupForm.smsCode.$invalid&&singnupForm.smsCode.$dirty}">
+            <!-- <div class="form-group" ng-class="{'has-error':singnupForm.smsCode.$invalid&&singnupForm.smsCode.$dirty}">
               <label class="control-label col-sm-2">短信验证码</label>
               <div class="col-sm-10">
                 <input type="text" class="form-control " placeholder="短信验证码" name="smsCode" ng-model="smsCode" required></div>
-            </div>
+            </div> -->
             <div class="form-group m-t-lg">
               <div class="col-sm-3 col-sm-offset-2">
                 <button class="btn btn-primary btn-block" ng-disabled="singnupForm.$invalid" ng-click="signup()">注册</button>

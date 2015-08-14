@@ -121,16 +121,16 @@ angular.module('app').run(
           ]
         }
       })
-      .state('app.settings', {
-        url: '/settings',
-        templateUrl: 'src/tpl/customer_service/settings.html'
-        // resolve: {
-        //   deps: ['$ocLazyLoad', 'uiLoad',
-        //     function($ocLazyLoad, uiLoad) {
-        //       return $ocLazyLoad.load('src/js/controllers/customer_service/schedule.js');
-        //       }
-        //   ]
-        // }
+      .state('app.groupSettings', {
+        url: '/groupSettings',
+        templateUrl: 'src/tpl/customer_service/groupSettings.html',
+        resolve: {
+          deps: ['$ocLazyLoad', 'uiLoad',
+            function($ocLazyLoad, uiLoad) {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/groupSettings.js');
+              }
+          ]
+        }
       })
       // others
       .state('lockme', {

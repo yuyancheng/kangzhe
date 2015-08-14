@@ -1,0 +1,137 @@
+<div class="bg-light lter b-b wrapper-md ng-scope" ng-controller="groupSettingsCtrl">
+    <script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">加入公司</h3>
+    </div>
+    <div class="modal-body " ng-show="success">
+        <p class="text-center text-lg m-t-lg m-b-lg">您还没有与公司合作，请输入邀请码加入公司！</p>
+        <div class="row m-b-lg">
+            <div class="col-xs-6 col-xs-offset-2 text-center">
+                <div class="row">
+                    <input type="text" class="form-control" placeholder="邀请码"/>
+                </div>  
+            </div>
+            <div class="col-xs-2">
+                <div class="row">
+                    <button class="btn btn-info btn-block" ng-click="join()" tabindex="0">加入公司</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body " ng-hide="success">
+        <p class="text-center text-lg m-t-lg m-b-lg">恭喜您，加入成功！</p>
+    </div>
+    <div class="modal-footer">                  
+        <button class="btn btn-default" ng-click="cancel()" tabindex="0">关闭</button>
+    </div>
+    </script>
+    <h1 class="m-n font-thin h3"><button class="btn btn-info" ng-click="open()"><i class="icon-plus"></i>&nbsp;&nbsp;&nbsp;加入公司</button></h1>
+</div>
+<div class="wrapper-md ng-scope">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form class="form-horizontal" novalidate name="settingsForm">
+                        <div class="row">
+                            <div class="font-bold col-sm-12"><i class="fa fa-arrow-right"></i>&nbsp;&nbsp;&nbsp;基本信息</div>
+                        </div>
+                        <div class="row m-t-lg">
+                            <div class="col-sm-3 text-right">
+                                <label class="control-label">医生集团名</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control " placeholder="医生集团名" name="groupName" ng-model="groupName" required>
+                            </div>
+                        </div>
+                        <div class="row m-t-sm ">
+                            <div class="col-sm-3 text-right">
+                                <label class="control-label">集团图标</label>
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <div class="bg-white text-center ng-File-UpLoad-Bt" nv-file-over="" over-class="b-info" style="min-height:100px;" ngf-select ng-model="licPic" ngf-max-size="2000000" ng-model-rejected="reLicPic" accept="'.jpg,.jpeg,.png,.bmp'" required>
+                                  <img ngf-src="licPic" width="100%" height="auto" ng-show="licPic.progress>0">
+                                  <i ng-show="!licPic.progress" class="fa fa-file-picture-o" style="font-size:80px;line-height:100px;color:#dee5e7;"></i>
+                                </div>
+                            </div>
+                            <div class="col-sm-5 col-md-5">
+                                <p>支持格式类型 *.jpg;*.jpeg;*.png;*.bmp，大小不超过2M</p>
+                                <div class="progress m-b-none">
+                                  <div class="progress-bar progress-bar-striped progress-bar-success active font-bold" role="progressbar m-b-none" aria-valuenow="{{licPic.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{licPic.progress}}%;min-width: 2em;">
+                                    {{licPic.progress>0?licPic.progress:0}}%
+                                    <span class="sr-only">{{licPic.progress}}%</span>
+                                  </div>
+                                </div>
+                                <p class="font-bold" ng-class="{'text-success text-right':licPic.result,'text-danger':reLicPic[0].$error}" ng-show="licPic.result||reLicPic[0].$error">{{licPic.result?licPic.result:'上传错误：'+reLicPic[0].$error}}</p>
+                            </div>
+                        </div>
+                        <div class="row m-t-sm">
+                            <div class="col-sm-3 text-right">
+                                <label class="control-label">地址</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control " placeholder="地址" name="groupAddr" ng-model="groupAddr" required>
+                            </div>
+                        </div>
+                        <div class="row m-t-sm">
+                            <div class="col-sm-3 text-right">
+                                <label class="control-label">简介</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="6" placeholder="填写集团简介" name="groupInfo" ng-model="groupInfo" required></textarea>
+                            </div>
+                        </div>
+                        <div class="line m-t-lg  line-dashed b-b line-lg pull-in"></div>
+                        <div class="row m-b-lg">
+                            <div class="font-bold col-sm-12"><i class="fa fa-arrow-right"></i>&nbsp;&nbsp;&nbsp;集团财务信息</div>
+                        </div>
+                        <div class="row m-t-sm">
+                            <div class="col-sm-3 text-right">
+                                <label class="control-label">上级抽成比例</label>
+                            </div>
+                            <div class="col-sm-3 col-md-2">
+                                <div class="input-group m-b">
+                                  <input type="text" class="form-control text-center" ng-disabled="true" value="0" required>
+                                  <span class="input-group-addon">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 text-right">
+                                <label class="control-label">集团抽成比例</label>
+                            </div>
+                            <div class="col-sm-3 col-md-2">
+                                <div class="input-group m-b">
+                                  <input type="text" class="form-control text-center" ng-disabled="true" value="0" required>
+                                  <span class="input-group-addon">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 text-right">
+                                <label class="control-label">允许成员邀请医生加入</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <label class="i-checks control-label">
+                                    <input type="radio" name="a" value="option" required ng-disabled="true">
+                                    <i></i>
+                                    是
+                                </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <label class="i-checks control-label">
+                                    <input type="radio" name="a" value="option2" checked required ng-disabled="true">
+                                    <i></i>
+                                    否
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row m-t-sm m-b-lg">
+                            <div class="col-sm-2 col-sm-offset-3">
+                                <button class="btn btn-primary btn-block" >保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

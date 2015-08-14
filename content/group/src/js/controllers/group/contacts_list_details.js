@@ -4,6 +4,8 @@ app.controller('ContactsListDetails', function($rootScope, $scope, $state, $time
   
 	var container = $('#dialog_container');
   var dt = null;
+  var html = $('html');
+  html.css('overflow', 'hidden');
   
 
   var doIt = function(){
@@ -41,6 +43,7 @@ app.controller('ContactsListDetails', function($rootScope, $scope, $state, $time
     container.remove();
     window.history.back();
     //$state.go('app.contacts.list');
+    html.css('overflow', 'auto');
   }; 
 
 });

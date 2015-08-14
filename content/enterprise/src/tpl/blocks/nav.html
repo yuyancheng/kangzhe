@@ -1,3 +1,4 @@
+<div ng-controller="navCtrl">
 <!-- logo -->
 <div class="clearfix hidden-xs text-center hide show" id="aside-user">
   <div class="dropdown wrapper">
@@ -7,7 +8,7 @@
     </a>
     <a href="#" data-toggle="dropdown" class="dropdown-toggle hidden-folded">
       <span class="clear">
-        <span class="block m-t-sm"> <strong class="font-bold text-lt">张三医生集团</strong>
+        <span class="block m-t-sm"> <strong class="font-bold text-lt">公司</strong>
         </span>
       </span>
     </a>
@@ -19,20 +20,16 @@
 
 <ul class="nav" ng-model="datas">
   <li>
-    <a href="#/app/enterprise_manage"> <i class="icon-users"></i>
-      <span>集团</span>
+    <a href="#/app/group_manage"> <i class="icon-users"></i>
+      <span>集团管理</span>
     </a>
   </li>
   <li>
-    <a href="#/app/finance"> <i class="icon-bar-chart"></i>
-      <span>财务</span>
-    </a>
-  </li>
-  <li>
-    <a href="#/app/setting">
+    <a href="#/app/administrator">
       <i class="icon-settings"></i>
-      <span>设置</span>
+      <span>公司管理员</span>
     </a>
   </li>
 </ul>
 <!-- list -->
+</div>

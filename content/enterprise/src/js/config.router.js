@@ -11,7 +11,7 @@ angular.module('app').run(
     function($stateProvider, $urlRouterProvider, JQ_CONFIG) {
       //$urlRouterProvider.when('/app/home');
       //$urlRouterProvider.otherwise('/app/customer_service');
-      $urlRouterProvider.otherwise('/app/home');
+      $urlRouterProvider.otherwise('/app/group_manage');
       $stateProvider.state('app', {
         abstract: true,
         url: '/app',
@@ -24,27 +24,43 @@ angular.module('app').run(
             template: '<div id="dialog-container" ui-view></div>'
           }
         }
-      }).state('app.home', {
-        url: '/home',
-        templateUrl: 'src/tpl/home.html',
+      }).state('app.group_manage', {
+        url: '/group_manage',
+        templateUrl: 'src/tpl/customer_service/group_manage.html',
         resolve: {
           deps: ['$ocLazyLoad',
             function($ocLazyLoad) {
-              return $ocLazyLoad.load(['src/js/controllers/home.js']);
+              return $ocLazyLoad.load('src/js/controllers/customer_service/group_manage.js');
             }
           ]
         }
-      }).state('app.enterprise_manage', {
-        url: '/enterprise_manage',
-        templateUrl: 'src/tpl/customer_service/enterprise_manage.html',
+      }).state('app.group_manage.enterprise_setting', {
+        url: '/enterprise_setting',
+        views: {
+          "@app": {
+            templateUrl: 'src/tpl/customer_service/enterprise_setting.html'
+          }
+        },
+        //templateUrl: 'src/tpl/customer_service/enterprise_setting.html',
         resolve: {
           deps: ['$ocLazyLoad',
             function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/enterprise_manage.js');
+              return $ocLazyLoad.load('src/js/controllers/customer_service/enterprise_setting.js');
+            }
+          ]
+        }
+      }).state('app.administrator', {
+        url: '/administrator',
+        templateUrl: 'src/tpl/customer_service/administrator.html',
+        resolve: {
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/customer_service/administrator.js');
             }
           ]
         }
       })
+
       // pages
       .state('app.page', {
         url: '/page',

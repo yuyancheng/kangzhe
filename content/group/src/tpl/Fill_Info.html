@@ -11,17 +11,17 @@
             <div class="form-group">
               <div class="col-sm-12"><i class="fa fa-chevron-right"></i>&nbsp;&nbsp;公司账户基本信息&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-chevron-right"></i>&nbsp;&nbsp;公司账户基本信息</div>
             </div>
-            <div class="form-group m-t-lg" ng-class="{'has-error':FillInfoForm.hospName.$invalid&&FillInfoForm.hospName.$dirty}">
-              <label class="control-label col-sm-2">医院名称</label>
+            <div class="form-group m-t-lg" ng-class="{'has-error':FillInfoForm.coName.$invalid&&FillInfoForm.coName.$dirty}">
+              <label class="control-label col-sm-2">公司名称</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control " placeholder="" name="hospName" ng-model="hospName" required>
+                <input type="text" class="form-control " placeholder="" name="coName" ng-model="coName" required>
                 <span class="help-block m-b-none">需与营业执照上名称完全一致，审核通过后，企业名称不可修改</span>
               </div>
             </div>
-            <div class="form-group" ng-class="{'has-error':FillInfoForm.hospInfo.$invalid&&FillInfoForm.hospInfo.$dirty}">
-              <label class="control-label col-sm-2">医院简介</label>
+            <div class="form-group" ng-class="{'has-error':FillInfoForm.coInfo.$invalid&&FillInfoForm.coInfo.$dirty}">
+              <label class="control-label col-sm-2">公司简介</label>
               <div class="col-sm-10">
-                <textarea class="form-control" rows="6" placeholder="填写医院简介" name="hospInfo" ng-model="hospInfo" required></textarea>
+                <textarea class="form-control" rows="6" placeholder="填写医院简介" name="coInfo" ng-model="coInfo" required></textarea>
               </div>
             </div>
             <div class="form-group" ng-class="{'has-error':FillInfoForm.licNum.$invalid&&FillInfoForm.licNum.$dirty}">
