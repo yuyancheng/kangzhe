@@ -469,6 +469,7 @@ th.sorting div{
 	margin: -2px 0;
 }
 .cnt-list-warp > dd,
+.cnt-list-warp dd dl dd,
 .cnt-list-warp dt + dd{
 	padding-left: 15px;
 }
@@ -515,13 +516,12 @@ th.sorting div{
   cursor: pointer;
 }
 .cnt-list-warp dt:hover,
-.cnt-list-warp dd > dl > dd:hover
-{
+.cnt-list-warp dd > dl > dd:hover{
 	background-color: #B2D6FF;
 	color: #fff;
 }
-.cnt-list-warp dd > dl > dt + dd:hover
-{
+.cnt-list-warp dd > dl > dt + dd:hover,
+.cnt-list-warp dd > dl > dd:hover{
 	background-color: transparent;
 	color: #58666e;
 }

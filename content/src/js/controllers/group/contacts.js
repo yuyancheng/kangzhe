@@ -8,7 +8,7 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
   var dt = null;
 
   // 获取通讯录列表数据
-  $http({
+/*  $http({
     url: 'src/api/contacts_list.json',
     method: 'get',
     data: null
@@ -19,11 +19,12 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
     }
   }, function(x) {
     console.error(x.statusText);
-  });
+  });*/
 
   var contacts = new Tree('cnt_list',{
     hasCheck: true,
     dataUrl: 'src/api/contacts_list.json',
+    async: false,
     icons: {
       arrow: 'fa fa-caret-right/fa fa-caret-down',
       check: 'fa fa-check',

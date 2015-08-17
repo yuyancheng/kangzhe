@@ -1,6 +1,7 @@
 (function(window, undefined){
 	var Tree = function(id, settings){
 		this.tree = $('#' + id);
+		this.data = null;
 		this.settings = settings;
 		this.init(this.settings);
 	};
@@ -12,6 +13,7 @@
 		},
 
 		getData: function(url){
+			var _this = this;
 			$.ajax({
 				url: url,
 				type: 'get',
@@ -20,18 +22,17 @@
 					access_token: '',
 					groupId: ''
 				},
-				sucess: function(resp){
+				success: function(resp){
 					console.log(resp);
-					this.setTree(resp.data.data);
+					_this.setTree(resp.data);
 				}
 			});
 		},
 
 		setTree: function(dt){
-
-			this.tree.html('');
-	    var len = dt.length,
-	        item = null,
+	    var _this = this
+	    		data = dt,
+	    		len = data.length,
 	        dt = null,
 	        dd = null,
 	        dl = null,
@@ -43,65 +44,118 @@
 	        ln = 0,
 	        hasSub = false,
 	        siblings = null;
-	    //var wrapper = $('<dl class="cnt-list-warp"></dl>');
-	    for(var i=0; i<len; i++){
-	      item = $('<dl class="cnt-list-warp"></dl>');
+			
+			this.tree.html('');
 
-	      subs = dt[i].sub;
-	      // 含二级科室
+			for(var i=0; i<len; i++){
+				dl = $('<dl class="cnt-list-warp"></dl>');
+				dt = $('<dt></dt>');
+	      iOpr = $('<i></i>');
+	      iIcon = $('<i></i>');
+	      span = $('<span></span>');
+
+				span.html(data[i].name);
+				dt.data('id', data[i].id);
+				dt.append(iOpr).append(iIcon).append(span);
+	      dl.append(dt);
+
+				subs = data[i].sub;
+
+	      // 含下一级科室
 	      if(subs && (ln = subs.length) > 0){
-	        hasSub = true;
-	        dt = $('<dt></dt>');
-	        dd = $('<dd></dd>');
-	        iArrow = '<i class="fa fa-caret-right">';
-	        iIcon = '<i class="fa fa-h-square"></i>';
-	        dl = $('<dl></dl>');
-	        // 遍历每一个二级科室并生成相应的子列表
-	        for(var j=0; j<ln; j++){
-	          var dt = $('<dt></dt>');
-	          var dd = $('<dd></dd>');
+	      	iOpr.addClass('fa fa-caret-right');
+	      	iIcon.addClass('fa fa-stethoscope');
+	      	if(!this.settings.async){
+						var objs = this.setBranch(subs);			// 创建下一分支
 
-	          span = $('<span></span>');
-	          span.html(subs[j].name);
-
-	          li.on('click', function(e){});
-
-	          li.hover(function(){}, function(){});
-
-	          ul.append(li);
-	        }
-	        
-	        item.html(dt[i].name).prepend(ie).append(ul);
-
-	      }else{  // 不含二级科室
+						for(var j=0; j<objs.length; j++){
+							dl.append(objs[j]);
+						}
+	      	}
+	      }else{  // 不含下一级科室
 	        hasSub = false;
-	        iCheck = '<i class="fa fa-check">';
-	        iIcon = '<i class="fa fa-user-md"></i>';
-	        item.data('id', dt[i].id);
-	        span = $('<span></span>');
-	        span.html(dt[i].name);
-	        item.append(span);
+	        iOpr.addClass('fa fa-check');
+	        iIcon.addClass('fa fa-user-md');
 	      }
-	      this.tree.append(item);
+
+	      this.tree.append(dl);
+
 	      // 定义列表行的点击事件
-	      item.on('click', hasSub, function(st){});
+	      dt.on('click', hasSub, function(st){});
 
-	      // 鼠标停留时显示操作菜单热点
-	      item.hover(function(e){}, function(){});
-	    }
+	      // 鼠标停留时
+	      dt.hover(function(e){}, function(){});
+			}
 
-	    function showMenu(obj){
-	      var menu = obj.find('.dropdown-menu');
-	      this.tree.find('.dropdown-menu').css('display', 'none');
-	      var lis = menu.css('display', 'block').find('li');
-	      lis.on('click', function(e){
-	        var evt = e || window.event;
-	        evt.stopPropagation();
-	        //showMenu(that);
+		},
+
+		setBranch: function(data){
+			
+	    var _this = this,
+	    		len = data.length,
+	        item = null,
+	        dt = null,
+	        dd = null,
+	        dl = null,
+	        iArrow = null,
+	        iCheck = null,
+	        iIcon = null,
+	        span = null,
+	        subs = null,
+	        ln = 0,
+	        hasSub = false,
+	        siblings = null,
+	        objArr = [];
+
+	    // 遍历每一个二级科室并生成相应的子列表
+	    for(var i=0; i<len; i++){
+        dd = $('<dd></dd>');
+        dl = $('<dl></dl>');
+        dt = $('<dt></dt>');
+        iOpr = $('<i></i>');
+	      iIcon = $('<i></i>');
+        span = $('<span></span>');
+
+				span.html(data[i].name);
+				dt.data('id', data[i].id);
+        dt.append(iOpr).append(iIcon).append(span);
+        dl.append(dt);
+        dd.append(dl);
+
+        subs = data[i].sub;
+
+        // 含下一级科室
+        if(subs && (ln = subs.length) > 0){
+      		hasSub = true;
+					iOpr.addClass('fa fa-caret-right');
+        	iIcon.addClass('fa fa-h-square');
+
+	        if(!this.settings.async){
+						var objs = this.setBranch(subs);			// 创建下一分支
+
+						for(var j=0; j<objs.length; j++){
+							dl.append(objs[j]);
+						}
+	      	}
+
+        }else{  // 不含下一级科室
+	        hasSub = false;
+	        iOpr.addClass('fa fa-check');
+	        iIcon.addClass('fa fa-user-md');
+        }
+
+        objArr.push(dd);		
+        
+	      // 定义列表行的点击事件
+	      dt.on('click', hasSub, function(st){
+	      	_this.settings.events.clicked();
 	      });
+
+	      // 鼠标停留时
+	      dt.hover(function(e){}, function(){});
 	    }
 
-
+	    return objArr;
 
 		}
 
