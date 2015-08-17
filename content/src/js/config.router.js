@@ -34,7 +34,146 @@ angular.module('app').run(
             }
           ]
         }
-      }).state('app.check_list_undone', {
+      })
+      // others
+      .state('lockme', {
+        url: '/lockme',
+        templateUrl: 'src/tpl/lockme.html'
+      }).state('access', {
+        url: '/access',
+        template: '<div ui-view class="fade-in-right-big smooth"></div>'
+      }).state('access.signin', {
+        url: '/signin',
+        templateUrl: 'src/tpl/signin.html',
+        resolve: {
+          deps: ['uiLoad',
+            function(uiLoad) {
+              return uiLoad.load(['src/js/controllers/signin.js']);
+            }
+          ]
+        }
+      }).state('access.enterprise_signin', {
+        url: '/enterprise_signin',
+        templateUrl: 'src/tpl/enterprise/signin.html',
+        resolve: {
+          deps: ['uiLoad',
+            function(uiLoad) {
+              return uiLoad.load(['src/js/controllers/enterprise/signin.js']);
+            }
+          ]
+        }
+      }).state('access.signup', {
+        url: '/signup',
+        templateUrl: 'src/tpl/signup.html',
+        resolve: {
+          deps: ['uiLoad',
+            function(uiLoad) {
+              return uiLoad.load(['src/js/controllers/signup.js']);
+            }
+          ]
+        }
+      }).state('app.contacts', {
+        url: '/contacts',
+        templateUrl: 'src/tpl/group/contacts.html',
+        resolve: {
+          deps: ['$ocLazyLoad', 'uiLoad',
+            function($ocLazyLoad, uiLoad) {
+              return $ocLazyLoad.load('src/js/controllers/group/contacts.js').then(function() {
+                return uiLoad.load(JQ_CONFIG.tree);
+              });
+            }
+          ]
+        }
+      }).state('app.contacts.list', {
+        url: '/list',
+        templateUrl: 'src/tpl/group/contacts_list.html',
+        resolve: {
+          deps: ['$ocLazyLoad', 'uiLoad',
+            function($ocLazyLoad, uiLoad) {
+              return $ocLazyLoad.load('src/js/controllers/group/contacts_list.js').then(function() {
+                return uiLoad.load(JQ_CONFIG.dataTable);
+              });
+            }
+          ]
+        }
+      }).state('app.contacts.list.details', {
+        url: '/details',
+        views: {
+          "dialogView@app": {
+            templateUrl: 'src/tpl/group/contacts_list_details.html'
+          }
+        },
+        resolve: {
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/group/contacts_list_details.js');
+            }
+          ]
+        }
+      }).state('app.contacts.list.add', {
+        url: '/add',
+        views: {
+          "modalDialog@app": {
+            templateUrl: 'src/tpl/group/contacts_list_add.html'
+          }
+        },
+        resolve: {
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/group/contacts_list_add.js');
+            }
+          ]
+        }
+      }).state('app.contacts.list.apportion', {
+        url: '/apportion',
+        views: {
+          "dialogView@app": {
+            templateUrl: 'src/tpl/group/contacts_list_apportion.html'
+          }
+        },
+        resolve: {
+          deps: ['$ocLazyLoad', 'uiLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/group/contacts_list_apportion.js');
+            }
+          ]
+        }
+      }).state('app.groupSettings', {
+        url: '/groupSettings',
+        templateUrl: 'src/tpl/group/groupSettings.html',
+        resolve: {
+          deps: ['$ocLazyLoad', 'uiLoad',
+            function($ocLazyLoad, uiLoad) {
+              return $ocLazyLoad.load('src/js/controllers/group/groupSettings.js');
+              }
+          ]
+        }
+      }).state('access.Fill_Info', {
+        url: '/Fill_Info',
+        templateUrl: 'src/tpl/group/Fill_Info.html',
+        resolve: {
+          deps: ['$ocLazyLoad','uiLoad',
+            function($ocLazyLoad,uiLoad) {
+              return $ocLazyLoad.load('ngFileUpload').then(function(){
+                return uiLoad.load(['src/js/controllers/group/Fill_Info.js']);
+              });
+            }
+          ]
+        }
+      }).state('access.signup_success', {
+        url: '/signup_success',
+        templateUrl: 'src/tpl/enterprise/signup_success.html',
+        resolve: {
+          deps: ['$ocLazyLoad','uiLoad',
+            function(uiLoad) {
+              return uiLoad.load(['src/js/controllers/enterprise/signup_success.js']);
+            }
+          ]
+        }
+      })
+
+      // 认证审核
+      .state('app.check_list_undone', {
         url: '/check_list_undone',
         templateUrl: 'src/tpl/customer_service/check_list_undone.html',
         resolve: {
@@ -122,82 +261,19 @@ angular.module('app').run(
             }
           ]
         }
-      })
-      // pages
-      .state('app.page', {
-        url: '/page',
-        template: '<div ui-view class="fade-in-down"></div>'
-      }).state('app.page.profile', {
-        url: '/profile',
-        templateUrl: 'src/tpl/temp/page_profile.html'
-      }).state('app.docs', {
-        url: '/docs',
-        templateUrl: 'src/tpl/temp/docs.html'
-      })
-      // others
-      .state('lockme', {
-        url: '/lockme',
-        templateUrl: 'src/tpl/lockme.html'
-      }).state('access', {
-        url: '/access',
-        template: '<div ui-view class="fade-in-right-big smooth"></div>'
-      }).state('access.signin', {
-        url: '/signin',
-        templateUrl: 'src/tpl/signin.html',
-        resolve: {
-          deps: ['uiLoad',
-            function(uiLoad) {
-              return uiLoad.load(['src/js/controllers/signin.js']);
-            }
-          ]
-        }
-      }).state('access.signup', {
-        url: '/signup',
-        templateUrl: 'src/tpl/signup.html',
-        resolve: {
-          deps: ['uiLoad',
-            function(uiLoad) {
-              return uiLoad.load(['src/js/controllers/signup.js']);
-            }
-          ]
-        }
       }).state('access.forgotpwd', {
         url: '/forgotpwd',
         templateUrl: 'src/tpl/forgotpwd.html'
       }).state('access.404', {
         url: '/404',
         templateUrl: 'src/tpl/404.html'
-      }).state('app.mail', {
-        abstract: true,
-        url: '/mail',
-        templateUrl: 'src/tpl/mail.html',
-        resolve: {
-          deps: ['uiLoad',
-            function(uiLoad) {
-              return uiLoad.load(['src/js/app/mail/mail.js', 'src/js/app/mail/mail-service.js',
-                JQ_CONFIG.moment
-              ]);
-            }
-          ]
-        }
       }).state('app.mail.list', {
         url: '/inbox/{fold}',
         templateUrl: 'src/tpl/mail.list.html'
       }).state('app.mail.detail', {
+        abstract: true,
         url: '/{mailId:[0-9]{1,4}}',
         templateUrl: 'src/tpl/mail.detail.html'
-      }).state('layout.mobile', {
-        url: '/mobile',
-        views: {
-          '': {
-            templateUrl: 'src/tpl/layout_mobile.html'
-          },
-          'footer': {
-            templateUrl: 'src/tpl/layout_footer_mobile.html'
-          }
-        }
-      }).state('app.todo.list', {
-        url: '/{fold}'
       })
     }
   ]);

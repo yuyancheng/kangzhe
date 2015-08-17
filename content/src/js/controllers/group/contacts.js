@@ -21,6 +21,33 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
     console.error(x.statusText);
   });
 
+  var contacts = new Tree('cnt_list',{
+    hasCheck: true,
+    dataUrl: 'src/api/contacts_list.json',
+    icons: {
+      arrow: 'fa fa-caret-right/fa fa-caret-down',
+      check: 'fa fa-check',
+      hospital: 'fa fa-hospital-o',
+      department: 'fa fa-h-square',
+      section: 'fa fa-user-md'
+    },
+    datakey: {
+      id: 'id',
+      name: 'name',
+      sub: 'sub'
+    },
+    events: {
+      checked: $scope.check,
+      clicked: function(){
+        alert('clicked');
+      }
+    }
+  });
+
+  $scope.check = function(){
+    alert('checked');
+  };
+
   // 初始化通讯录列表
   function initList(){
     cnt_list.html('');
@@ -220,7 +247,7 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
   // 操作
   $scope.forward = function(id){
     console.log(id);
-    if(id==='002')
+    if(id==='001')
     $state.go('app.contacts.list');
     else
     $state.go('app.contacts.list.add');

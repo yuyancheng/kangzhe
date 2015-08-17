@@ -14,6 +14,7 @@ var app = angular.module('app').config(
       // API路径集合
       app.urlRoot = '/kangzhe/';
       app.urlFile = '/upload/';
+      app.yiliao = '/yiliao/';
       var common = {
         list: 'list.iv',
         save: 'save.iv',
@@ -56,7 +57,13 @@ var app = angular.module('app').config(
         upload: {
           getCertPath: app.urlFile + 'getCertPath'
         },
-        signup:app.urlRoot + 'user/register'
+        signup:app.urlRoot + 'user/register',
+        yiliao: {
+          signup: app.yiliao + 'signup',
+          login: app.yiliao + 'login',
+          fillInfo: app.yiliao + 'group-webapi/company/regCompany'
+        }
+
       };
       app.lang = {
         datatables: {

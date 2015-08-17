@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile) {
+app.controller('Contacts', function($rootScope, $scope, $state, $http) {
   //var url = app.url.contacts.getContacts; // 后台API路径
   var data = null;
   var cnt_list = $('#cnt_list');
@@ -15,7 +15,7 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
   }).then(function(resp){
     if(resp.data.data && resp.data.data.length > 0){
       dt = resp.data.data;
-      //initList();
+      initList();
     }
   }, function(x) {
     console.error(x.statusText);
@@ -66,21 +66,14 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
           });
 
           li.hover(function(){
-            var that = $(this);
             var hBtn = $('<button type="button" class="btn btn-default" dropdown-toggle aria-haspopup="true" aria-expanded="false"><span></span></button>');
-            var menu = $('<ul class="dropdown-menu"><li><a ng-href>添加</a></li><li><a ng-href ng-click="remove()">删除</a></li></ul>');
+            var menu = $('<ul class="dropdown-menu"><li><a href="">添加</a></li><li><a href="" ng-click="remove()">删除</a></li></ul>');
             $(this).append(hBtn).append(menu);
             hBtn.on('click', function(e){
               var evt = e || window.event;
               evt.stopPropagation();  // 阻止事件冒泡
-              showMenu(that);
+              console.log("test1111");
             });
-            var b = $(this).parent().siblings('.btn-default');
-            var m = $(this).parent().siblings('.dropdown-menu');
-            if(b.length > 0){
-              b.remove();
-              m.remove();
-            }
           }, function(){
             $(this).find('.dropdown-menu').remove();
             $(this).find('.btn-default').remove();
@@ -120,20 +113,14 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
       });
 
       // 鼠标停留时显示操作菜单热点
-      item.hover(function(e){
-        var evt = e || window.event;
-        var target = evt.target || evt.srcElement;
-        if(target.nodeName !== 'DIV' || $(this).find('.dept-list').length > 0) {
-          return;
-        }
-        var that = $(this);
+      item.hover(function(){
         var hBtn = $('<button type="button" class="btn btn-default" dropdown-toggle aria-haspopup="true" aria-expanded="false"><span></span></button>');
-        var menu = $('<ul class="dropdown-menu"><li><a ng-href>添加</a></li><li><a ng-href ng-click="remove()">删除</a></li></ul>');
+        var menu = $('<ul class="dropdown-menu"><li><a href="">添加</a></li><li><a href="" ng-click="remove()">删除</a></li></ul>');
+        $(this).addClass('dropdown').attr('dropdown','');
         $(this).append(hBtn).append(menu);
         hBtn.on('click', function(e){
           var evt = e || window.event;
           evt.stopPropagation();
-          showMenu(that);
         });
       }, function(){
         $(this).find('.dropdown-menu').remove();
@@ -141,21 +128,10 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
       });
     }
 
-    function showMenu(obj){
-      var menu = obj.find('.dropdown-menu');
-      cnt_list.find('.dropdown-menu').css('display', 'none');
-      var lis = menu.css('display', 'block').find('li');
-      lis.on('click', function(e){
-        var evt = e || window.event;
-        evt.stopPropagation();
-        //showMenu(that);
-      });
-    }
-
     // 初始存在的三个列表单元
     var links = [];
     var unassigned = $('<div class="list-group-item" data-id="123"><span class="badge bg-warning">624</span><i class="fa fa-bookmark fa-fw m-r-xs"></i>未分配</div>');
-    var uncheck = $('<div class="list-group-item" data-id="234"><span class="badge bg-info">19</span><i class="fa fa-clock-o fa-fw m-r-xs"></i>邀请待通过</div>');
+    var uncheck = $('<div class="list-group-item" data-id="234"><span class="badge bg-info">19</span><i class="fa fa-clock-o fa-fw m-r-xs"></i>待审核</div>');
     var dimission = $('<div class="list-group-item" data-id="345"><span class="badge bg-danger">6</span><i class="fa fa-bell fa-fw m-r-xs"></i>已离职</div>');
     cnt_list.append(unassigned).append(uncheck).append(dimission);
     links.push(unassigned,uncheck,dimission);

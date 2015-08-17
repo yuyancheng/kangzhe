@@ -1,0 +1,30 @@
+<!-- modal dialog -->
+<div class="mask"></div>
+<div id="dialog_container" class="" ng-controller="ContactsListAdd">
+  <div id="dialog" class="col-md-offset-2 col-md-8 animating fade-in-down">
+    <div class="panel panel-default">
+      <div class="panel-heading font-bold">查找医生</div>
+      <div class="panel-body">
+        <form name="form" class="form-validation form-horizontal">
+          <div class="form-group">
+            <div class="col-sm-9">
+              <input type="text" id="doctorInfo" placeholder="请输入医生号/手机号" class="form-control" ng-model="formData.doctorInfo" reuired>
+            </div>
+            <div class="col-sm-3">
+              <button type="submit" ng-click="query()" class="w100 btn btn-info" ng-disabled='form.$invalid'>查 找</button>
+            </div>
+          </div>
+        </form>  
+        <div id="searchInfo"></div>
+
+        <div class="line line-dashed b-b line-lg pull-in"></div>
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-4">
+            <button ng-click="cancel()" type="button" class="pull-right w100 btn btn-default">取 消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /modal dialog -->

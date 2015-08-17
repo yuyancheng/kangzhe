@@ -13,11 +13,11 @@ var app = angular.module('app').config(
 
       // API路径集合
       app.urlRoot = '/kangzhe/';
-      //app.urlRoot = 'http://192.168.3.7:8091/';
-      //app.urlRoot = '/api/';
+
       app.urlFile = '/upload/';
-      //app.urlFile = 'http://192.168.3.7:9000/';
-      //app.urlRoot = 'http://localhost:8070/kangzhe/{_proxy}/';
+
+      app.yiliao = '/yiliao/';
+
       var common = {
         list: 'list.iv',
         save: 'save.iv',
@@ -36,6 +36,8 @@ var app = angular.module('app').config(
         }
         return apis;
       }
+
+      // 定义统一api路径
       app.url = {
         access_token: localStorage.getItem('access_token'),
 
@@ -60,33 +62,12 @@ var app = angular.module('app').config(
         upload: {
           getCertPath: app.urlFile + 'getCertPath'
         },
-
-        currentUser:  app.urlRoot + 'user/currentUserInfo.iv',
-        menus:        app.urlRoot + 'mainMenuItem/list.iv',
-        orgUnits:     app.urlRoot + 'adminOrgUnit/allAdminOrgUnits.iv',
-        orgTypes:     app.urlRoot + 'orgUnitLayerType/allAdminOrgUnits.iv',
-        org: {
-          api:      getApi('adminOrgUnit', common),
-          freeze:   app.urlRoot + 'adminOrgUnit/freeze.iv',
-          allUnits: app.urlRoot + 'adminOrgUnit/allAdminOrgUnits.iv',
-          subUnits: app.urlRoot + 'adminOrgUnit/directSubAdminOrgUnits.iv'
-        },        
-        orgLayer: {
-          api: getApi('orgUnitLayer', common)
-        },        
-        employee: {
-          api: getApi('person', common)
-        },        
-        position: {
-          api: getApi('position', common)
-        },
-        //orgLayer: app.urlRoot + 'orgUnitLayer/list.iv',
-        orgSave:  app.urlRoot + 'adminOrgUnit/save.iv',
-        orgEdit:  app.urlRoot + 'adminOrgUnit/modify.iv',
-        position: app.urlRoot + 'position/list.iv',
-        employee: app.urlRoot + 'person/list.iv',
-        signup:   app.urlRoot + 'person/save.iv',
-        system:   app.urlRoot + 'param/list.iv'
+        signup:app.urlRoot + 'user/register',
+        yiliao: {
+          enterprise_login: app.yiliao + 'group-webapi/user/login',
+          login:            app.yiliao + 'group-webapi/user/login',
+          fillInfo:         app.yiliao + 'health-group-webapi/company/regCompany'
+        }
       };
       app.lang = {
         datatables: {

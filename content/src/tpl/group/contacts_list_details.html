@@ -1,0 +1,101 @@
+<!-- modal dialog -->
+<div class="mask"></div>
+<div class="cnt-anim-dialog animating fade-in-right" ng-controller="ContactsListDetails">
+  <div class="panel-heading font-bold text-center">个人资料</div>
+  <div class="panel-body">
+    <div class="panel-heading">
+      <div class="clearfix">
+        <a href="" class="pull-left thumb-md avatar b-3x m-r"><img src="src/img/a0.jpg"></a>
+        <div class="clear">
+          <div class="h3 m-t-xs m-b-xs">王五</div>
+          <small class="text-muted">医师 / 儿外科 / 北大医院</small>
+        </div>
+        <div class="cnt-opr-btn">
+          <button ng-click="apportion()" type="button" class="btn btn-info btn-addon"><i class="fa fa-sign-in"></i>分配科室</button>
+          <button ng-click="save()" type="button" class="btn btn-danger btn-addon"><i class="fa fa-sign-out"></i>离 职</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-horizontal">
+      <div class="form-group">
+        <label class="control-label col-md-2 text-right">手机：</label>
+        <div class="form-text col-md-10">18939923923</div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-md-2 text-right">个人介绍：</label>
+        <div class="form-text col-md-10">医生集团（禾新）临床基地首席儿科专家、北京和睦家医院儿科科主任。</div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-md-2 text-right">擅长：</label>
+        <div class="form-text col-md-10">擅长儿科危重症、疑难症及常见病的诊断治疗及抢救。</div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-md-2 text-right">状态：</label>
+        <div class="form-text col-md-10">由集团创建人 赵医生邀请。</div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-md-2 text-right">备注：</label>
+        <div class="col-md-10"><textarea class="w100 form-control"></textarea></div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-md-2 text-right">值班表：</label>
+        <div class="col-md-10">
+          <div class="duty-schedule">
+            <table>
+              <thead>
+                <tr>
+                  <td>星期一</td>
+                  <td>星期二</td>
+                  <td>星期三</td>
+                  <td>星期四</td>
+                  <td>星期五</td>
+                  <td>星期六</td>
+                  <td>星期日</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>9:00</td>
+                  <td>10:30</td>
+                  <td></td>
+                  <td>9:30</td>
+                  <td></td>
+                  <td>10:10</td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>14:25</td>
+                  <td>15:30</td>
+                  <td>16:00</td>
+                  <td></td>
+                  <td>15:30</td>
+                </tr>
+                <tr>
+                  <td>19:00</td>
+                  <td></td>
+                  <td>20:10</td>
+                  <td></td>
+                  <td></td>
+                  <td>21:10</td>
+                  <td>20:40</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="line line-dashed b-b line-lg pull-in"></div>
+    <div class="form-group">
+      <div class="col-md-offset-2 col-md-4">
+        <button ng-click="save()" type="button" class="w100 btn btn-success">保 存</button>
+      </div>
+      <div class="col-md-4">
+        <button ng-click="cancel()" type="button" class="w100 btn btn-default">取 消</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /modal dialog -->
