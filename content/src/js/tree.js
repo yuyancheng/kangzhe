@@ -9,7 +9,6 @@
 	Tree.prototype = {
 		init: function(set){
 			var dt = this.getData(set.dataUrl);
-
 		},
 
 		getData: function(url){

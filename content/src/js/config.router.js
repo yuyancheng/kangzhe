@@ -110,17 +110,17 @@ angular.module('app').run(
             }
           ]
         }
-      }).state('app.contacts.list.add', {
+      }).state('app.contacts.add', {
         url: '/add',
         views: {
           "modalDialog@app": {
-            templateUrl: 'src/tpl/group/contacts_list_add.html'
+            templateUrl: 'src/tpl/group/contacts_add.html'
           }
         },
         resolve: {
           deps: ['$ocLazyLoad',
             function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/group/contacts_list_add.js');
+              return $ocLazyLoad.load('src/js/controllers/group/contacts_add.js');
             }
           ]
         }

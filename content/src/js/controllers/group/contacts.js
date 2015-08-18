@@ -98,7 +98,7 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile,
   // 添加（工具栏按钮）
   $scope.addUnit = function(){
     console.log($scope.curDepartmentId);
-    $state.go('app.contacts.list.add');
+    $state.go('app.contacts.add');
   };
 
   // 编辑某一组织（工具栏按钮）
