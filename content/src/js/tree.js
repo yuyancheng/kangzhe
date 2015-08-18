@@ -18,10 +18,7 @@
 				url: url,
 				type: 'get',
 				dataType: 'json',
-				data: {
-					access_token: '',
-					groupId: ''
-				},
+				data: _this.settings.data,
 				success: function(resp){
 					console.log(resp);
 					_this.setTree(resp.data);
@@ -55,38 +52,46 @@
 	      span = $('<span></span>');
 
 				span.html(data[i].name);
-				dt.data('id', data[i].id);
-				dt.append(iOpr).append(iIcon).append(span);
-	      dl.append(dt);
+				dt.data('id', data[i].id).data('name', data[i].name);
 
-				subs = data[i].sub;
+				subs = data[i][_this.settings.datakey.sub];
 
 	      // 含下一级科室
 	      if(subs && (ln = subs.length) > 0){
-	      	iOpr.addClass('fa fa-caret-right');
+	      	iOpr.addClass('fa fa-caret-down');
 	      	iIcon.addClass('fa fa-stethoscope');
+	      	dt.append(iOpr).append(iIcon).append(span);
+	      	dl.append(dt);
 	      	if(!this.settings.async){
 						var objs = this.setBranch(subs);			// 创建下一分支
-
 						for(var j=0; j<objs.length; j++){
 							dl.append(objs[j]);
 						}
 	      	}
 	      }else{  // 不含下一级科室
 	        hasSub = false;
-	        iOpr.addClass('fa fa-check');
+	        if(_this.settings.hasCheck){
+	        	iOpr.addClass('fa fa-check un-check');
+	        	dt.append(iOpr);
+	        }
+	        dt.append(iIcon).append(span);
+	        dl.append(dt);
 	        iIcon.addClass('fa fa-user-md');
 	      }
 
 	      this.tree.append(dl);
 
 	      // 定义列表行的点击事件
-	      dt.on('click', hasSub, function(st){});
+	      dt.on('click', hasSub, function(){
+	      	_this.settings.events.click.call(null, $(this).data('id'), $(this).data('name'));
+	      });
 
 	      // 鼠标停留时
 	      dt.hover(function(e){}, function(){});
 			}
 
+			// 结束之后调用回调方法
+			this.settings.callback();
 		},
 
 		setBranch: function(data){
@@ -117,22 +122,21 @@
         span = $('<span></span>');
 
 				span.html(data[i].name);
-				dt.data('id', data[i].id);
-        dt.append(iOpr).append(iIcon).append(span);
-        dl.append(dt);
-        dd.append(dl);
+				dt.data('id', data[i].id).data('name', data[i].name);
 
-        subs = data[i].sub;
+        subs = data[i][_this.settings.datakey.sub];
 
         // 含下一级科室
         if(subs && (ln = subs.length) > 0){
       		hasSub = true;
-					iOpr.addClass('fa fa-caret-right');
+					iOpr.addClass('fa fa-caret-down');
         	iIcon.addClass('fa fa-h-square');
+					dt.append(iOpr).append(iIcon).append(span);
+        	dl.append(dt);
+        	dd.append(dl);
 
 	        if(!this.settings.async){
 						var objs = this.setBranch(subs);			// 创建下一分支
-
 						for(var j=0; j<objs.length; j++){
 							dl.append(objs[j]);
 						}
@@ -140,15 +144,21 @@
 
         }else{  // 不含下一级科室
 	        hasSub = false;
-	        iOpr.addClass('fa fa-check');
+	        if(_this.settings.hasCheck){
+	        	iOpr.addClass('fa fa-check un-check');
+	        	dt.append(iOpr);
+	        }
+	        dt.append(iIcon).append(span);
+	        dl.append(dt);
+        	dd.append(dl);
 	        iIcon.addClass('fa fa-user-md');
         }
 
         objArr.push(dd);		
         
 	      // 定义列表行的点击事件
-	      dt.on('click', hasSub, function(st){
-	      	_this.settings.events.clicked();
+	      dt.on('click', hasSub, function(){
+	      	_this.settings.events.click.call(null, $(this).data('id'), $(this).data('name'));
 	      });
 
 	      // 鼠标停留时

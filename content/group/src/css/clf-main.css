@@ -24,26 +24,14 @@
 	width: 30%;
 }
 .sch-table td:hover{
-	background-color: #DFF0D8;
-	opacity:0.4;
 	cursor: pointer;
 }
 .sch-table td:first-of-type:hover{
 	background-color: #fff;
 	opacity:1;
 }
-.hbox .col-xs-12{
-	padding-top: 10px;
-}
-.org-title{
-	margin: 0;
-	padding: 10px 0;
-	font-size: 18px;
-	font-weight: bold;
-}
-
 .sch-slide-bar-hide{
-	width:600px;
+	width:40%;
 	height: 100%;
 	position: absolute;
 	right: -600px;
@@ -51,7 +39,7 @@
 	transition: right 0.2s;
 }
 .sch-slide-bar-show{
-	width:600px;
+	width:40%;
 	height: 100%;
 	position: absolute;
 	right: 0;
@@ -71,5 +59,14 @@
 .sch-slide-bar .publish{
 	margin-top: 20px;
 }
-
+slide-bar .list-group-item{
+	cursor: default;
+}
+.doc-tab .icon-close{
+	visibility: hidden;
+}
+.doc-tab:hover .icon-close{
+	visibility: visible;
+	cursor: pointer;
+}
 

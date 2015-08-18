@@ -18,9 +18,11 @@ app.controller('FillInfoController',['$scope','$http','$timeout','$compile','Upl
             license:$scope.licNum
         }).
         success(function (data,status,headers,confug) {
-            //console.log(data);
+            console.log(data);
             if(data.resultCode===1){
-                $state.go(app.groupSettings);
+                //$state.go(app.groupSettings);
+            }else{
+                console.log(data);
             }
         }).
         error(function(data, status, headers, config) {

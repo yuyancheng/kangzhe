@@ -1,0 +1,33 @@
+<!-- modal dialog -->
+<div class="mask"></div>
+<div id="dialog_container" class="" ng-controller="ContactsListAdd">
+  <div id="dialog" class="col-md-offset-2 col-md-8 animating fade-in-down">
+    <div class="panel panel-default">
+      <div class="panel-heading font-bold">删除医生</div>
+      <div class="panel-body">
+        <div class="panel panel-default">
+          <div class="panel-heading" style="border-bottom:none">
+            <div class="clearfix">
+              <a href="" class="pull-left thumb-md avatar b-3x m-r"><img src="src/img/a0.jpg" alt="..."></a>
+              <div class="clear">
+                <div class="h3 m-t-xs m-b-xs"></div>
+                <small class="text-muted"></small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="form-text">删除后将会使该医生转入离职群组，你将不能对该医生进行业务操作。</p>
+        <div class="line line-dashed b-b line-lg pull-in"></div>
+        <div class="form-group">
+          <div class="col-md-offset-3 col-md-3">
+            <button ng-click="do()" type="button" class="pull-right w100 btn btn-default">确 定</button>
+          </div>
+          <div class="col-md-3">
+            <button ng-click="cancel()" type="button" class="pull-right w100 btn btn-default">取 消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /modal dialog -->

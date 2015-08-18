@@ -1,10 +1,15 @@
 'use strict';
 
 app.controller('ContactsList', function($rootScope, $scope, $state, $timeout, $http, utils) {
-  var url = app.url.admin.check.getDoctors, // 后台API路径
+  var url = app.url.yiliao.getDoctors, // 后台API路径
       data = null,
       html = $('html'),
-      body = $('body');
+      body = $('body'),
+      deptId = $scope.curDepartmentId || utils.localData('curDepartmentId');
+
+  if(!deptId){
+    return;
+  }
 
   if($rootScope.pageName !== 'list_pass'){
     utils.localData('page_index', null);
@@ -54,16 +59,17 @@ app.controller('ContactsList', function($rootScope, $scope, $state, $timeout, $h
             "url": sSource,
             "dataType": "json",
             "data": {
-              //aoData: JSON.stringify(aoData),
-              status: 1,
-              name: name,
+              departmentId: deptId,
               pageIndex: index - 1,
               pageSize: aoData[4]['value'],
-              access_token: app.url.access_token
+              access_token: 'ad0d05eaa3124d6e93b6ca0603cdde67'
+              //access_token: app.url.access_token
             }, 
             "success": function(resp) {
               index = aoData[0]['value'];
-              utils.extendHash(resp.data.pageData, ["doctorNum","title","hospital","name","telephone","remark","licenseExpire","licenseNum","userId","departments"]);
+              for(var i=0; i<resp.data.pageData.length; i++){
+                utils.extendHash(resp.data.pageData[i].doctor, ["name","position","doctorNum","skill","introduction"]);
+              }
               resp.start = resp.data.start;
               resp.recordsTotal = resp.data.total;
               resp.recordsFiltered = resp.data.total;
@@ -76,29 +82,29 @@ app.controller('ContactsList', function($rootScope, $scope, $state, $timeout, $h
         //"searching": false,
         "language": app.lang.datatables.translation,
         "createdRow": function(nRow, aData, iDataIndex){
-          $(nRow).attr('data-id', aData['userId']).click(aData['userId'], function(param, e) {
+          $(nRow).attr('data-id', aData['doctorId']).click(aData['doctorId'], function(param, e) {
             $scope.seeDetails(param.data);
             $('.currentRow').removeClass('currentRow');
             $rootScope.curRowId = $(this).data('id');
           });
         },
         "columns": [{
-          "data": "name",
+          "data": "doctor.name",
           "orderable": false
         }, {
-          "data": "hospital",
+          "data": "doctor.doctorNum",
           "orderable": false,
           "searchable": false
         }, {
-          "data": "departments",
+          "data": "doctor.position",
           "orderable": false,
           "searchable": false
         }, {
-          "data": "title",
+          "data": "doctor.skill",
           "orderable": false,
           "searchable": false
         }, {
-          "data": "telephone",
+          "data": "doctor.introduction",
           "orderable": false,
           "searchable": false
         }]

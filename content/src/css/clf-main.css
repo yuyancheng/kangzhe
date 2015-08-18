@@ -1,0 +1,86 @@
+/*值班表css*/
+.sch-table tr th{
+	text-align: center;
+	vertical-align: middle !important;
+	height: 50px;
+}
+.sch-table tr td:first-of-type{
+	text-align: center;
+	vertical-align: middle;
+	width: 10%;
+}
+.sch-table tr{
+	height: 80px;
+}
+.sch-table tr:first-of-type{
+	height: 50px;
+}
+.sch-table td:nth-child(2){
+	width: 30%;
+}
+.sch-table td:nth-child(3){
+	width: 30%;
+}
+.sch-table td:nth-child(4){
+	width: 30%;
+}
+.sch-table td:hover{
+	cursor: pointer;
+}
+.sch-table td:first-of-type:hover{
+	background-color: #fff;
+	opacity:1;
+}
+.sch-slide-bar-hide{
+	width:40%;
+	height: 100%;
+	position: absolute;
+	right: -600px;
+	top: 40px;
+	transition: right 0.2s;
+}
+.sch-slide-bar-show{
+	width:40%;
+	height: 100%;
+	position: absolute;
+	right: 0;
+	top: 40px;
+	transition: right 0.2s;
+}
+.sch-slide-bar .panel-body{
+	background-color: #eee;
+}
+.sch-slide-bar .doctor-list{
+	padding: 20px;
+}
+.sch-slide-bar .choosed-doctor{
+	padding: 20px;
+	background-color: #fff;
+}
+.sch-slide-bar .publish{
+	margin-top: 20px;
+}
+slide-bar .list-group-item{
+	cursor: default;
+}
+.doc-tab .icon-close{
+	visibility: hidden;
+}
+.doc-tab:hover .icon-close{
+	visibility: visible;
+	cursor: pointer;
+}
+
+
+/*集团css*/
+ul{
+	list-style-type: none;
+}
+.setting-row{
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.setting-row .invitation{
+	margin:0 20px;
+}
+

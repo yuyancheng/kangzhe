@@ -64,11 +64,11 @@ angular.module('app').run(
         }
       }).state('access.signup', {
         url: '/signup',
-        templateUrl: 'src/tpl/signup.html',
+        templateUrl: 'src/tpl/enterprise/signup.html',
         resolve: {
           deps: ['uiLoad',
             function(uiLoad) {
-              return uiLoad.load(['src/js/controllers/signup.js']);
+              return uiLoad.load(['src/js/controllers/enterprise/signup.js']);
             }
           ]
         }
@@ -85,7 +85,7 @@ angular.module('app').run(
           ]
         }
       }).state('app.contacts.list', {
-        url: '/list',
+        url: '/list/{id}',
         templateUrl: 'src/tpl/group/contacts_list.html',
         resolve: {
           deps: ['$ocLazyLoad', 'uiLoad',
@@ -124,6 +124,20 @@ angular.module('app').run(
             }
           ]
         }
+      }).state('app.contacts.list.quit', {
+        url: '/quit',
+        views: {
+          "modalDialog@app": {
+            templateUrl: 'src/tpl/group/contacts_list_quit.html'
+          }
+        },
+        resolve: {
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/group/contacts_list_quit.js');
+            }
+          ]
+        }
       }).state('app.contacts.list.apportion', {
         url: '/apportion',
         views: {
@@ -148,14 +162,66 @@ angular.module('app').run(
               }
           ]
         }
-      }).state('access.Fill_Info', {
+      })
+      //值班表
+      .state('app.schedule', {
+        url: '/schedule',
+        templateUrl: 'src/tpl/group/schedule.html',
+        resolve: {
+          deps: ['$ocLazyLoad', 'uiLoad',
+            function($ocLazyLoad, uiLoad) {
+              return $ocLazyLoad.load('src/js/controllers/group/schedule.js');
+              }
+          ]
+        }
+      })
+
+      //集团
+      .state('app.group_manage', {
+        url: '/group_manage',
+        templateUrl: 'src/tpl/enterprise/group_manage.html',
+        resolve: {
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/enterprise/group_manage.js');
+            }
+          ]
+        }
+      }).state('app.group_manage.enterprise_setting', {
+        url: '/enterprise_setting',
+        views: {
+          "@app": {
+            templateUrl: 'src/tpl/enterprise/enterprise_setting.html'
+          }
+        },
+        //templateUrl: 'src/tpl/enterprise/enterprise_setting.html',
+        resolve: {
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/enterprise/enterprise_setting.js');
+            }
+          ]
+        }
+      }).state('app.administrator', {
+        url: '/administrator',
+        templateUrl: 'src/tpl/enterprise/administrator.html',
+        resolve: {
+          deps: ['$ocLazyLoad',
+            function($ocLazyLoad) {
+              return $ocLazyLoad.load('src/js/controllers/enterprise/administrator.js');
+            }
+          ]
+        }
+      })
+
+      .state('access.Fill_Info', {
         url: '/Fill_Info',
-        templateUrl: 'src/tpl/group/Fill_Info.html',
+        templateUrl: 'src/tpl/enterprise/Fill_Info.html',
         resolve: {
           deps: ['$ocLazyLoad','uiLoad',
             function($ocLazyLoad,uiLoad) {
               return $ocLazyLoad.load('ngFileUpload').then(function(){
-                return uiLoad.load(['src/js/controllers/group/Fill_Info.js']);
+                return uiLoad.load(['src/js/controllers/enterprise/Fill_Info.js']);
               });
             }
           ]
@@ -167,6 +233,16 @@ angular.module('app').run(
           deps: ['$ocLazyLoad','uiLoad',
             function(uiLoad) {
               return uiLoad.load(['src/js/controllers/enterprise/signup_success.js']);
+            }
+          ]
+        }
+      }).state('access.enterprise_verify', {
+        url: '/verify',
+        templateUrl: 'src/tpl/enterprise/verify.html',
+        resolve: {
+          deps: ['$ocLazyLoad','uiLoad',
+            function(uiLoad) {
+              return uiLoad.load(['src/js/controllers/enterprise/verify.js']);
             }
           ]
         }

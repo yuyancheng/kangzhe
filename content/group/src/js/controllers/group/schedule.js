@@ -98,7 +98,9 @@ app.controller('ScheduleCtrl', ['$scope', '$http','$log',
     };
 
 
-
+    $scope.showCloseBtn = function(index){
+        
+    }
 
 
 

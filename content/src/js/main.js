@@ -2,6 +2,7 @@
 /* Controllers */
 angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStorage', '$window', '$http', '$state','$cookieStore', 'utils',
   function($scope, $translate, $localStorage, $window, $http, $state,$cookieStore,utils) {
+    $scope.nav = 'src/tpl/blocks/nav.html';
     // add 'ie' classes to html
     var isIE = !! navigator.userAgent.match(/MSIE/i);
     isIE && angular.element($window.document.body).addClass('ie');

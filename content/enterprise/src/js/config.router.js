@@ -55,7 +55,11 @@ angular.module('app').run(
         resolve: {
           deps: ['$ocLazyLoad',
             function($ocLazyLoad) {
-              return $ocLazyLoad.load('src/js/controllers/customer_service/administrator.js');
+              return $ocLazyLoad.load('toaster').then(
+                function() {
+                  return $ocLazyLoad.load('src/js/controllers/customer_service/administrator.js');
+                }
+              );
             }
           ]
         }

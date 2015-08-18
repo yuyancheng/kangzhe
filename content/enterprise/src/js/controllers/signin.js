@@ -22,7 +22,7 @@ app.controller('SigninFormController', ['$scope', '$http', '$state', '$cookieSto
       $http.post(app.url.login, {
         telephone: $scope.user.telephone,
         password: $scope.user.password,
-        userType: 2,
+        userType: 5,
         access_token: app.url.access_token
       }).then(function(response) {
         if (response.data.resultCode === 1) {
@@ -50,7 +50,7 @@ app.controller('SigninFormController', ['$scope', '$http', '$state', '$cookieSto
           var exp = new Date();
           exp.setTime(exp.getTime() + 30 * 1000);
           $cookieStore.put('username', escape($scope.user.name) + ';expires=' + exp.toGMTString());
-          $state.go('app.home');
+          $state.go('app.group_manage');
         } else {
           $scope.authError = '用户名或密码错误';
         }

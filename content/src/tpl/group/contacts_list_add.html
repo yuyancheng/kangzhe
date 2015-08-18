@@ -7,16 +7,62 @@
       <div class="panel-body">
         <form name="form" class="form-validation form-horizontal">
           <div class="form-group">
-            <div class="col-sm-9">
+            <div class="col-md-9">
               <input type="text" id="doctorInfo" placeholder="请输入医生号/手机号" class="form-control" ng-model="formData.doctorInfo" reuired>
             </div>
-            <div class="col-sm-3">
+            <div class="col-md-3">
               <button type="submit" ng-click="query()" class="w100 btn btn-info" ng-disabled='form.$invalid'>查 找</button>
             </div>
           </div>
-        </form>  
-        <div id="searchInfo"></div>
+         
+          <div id="searchInfo" ng-init="gotResult=true;sendMsg=false;send=false">
+            <div ng-show="gotResult">
+              <div class="line line-dashed b-b line-lg pull-in"></div>
+              <div class="panel panel-default">
+                <div class="panel-heading" style="border-bottom:none">
+                  <div class="clearfix">
+                    <a href class="pull-left thumb-md avatar b-3x m-r"><img src="src/img/a0.jpg" alt=".."></a>
+                    <div class="clear">
+                      <div class="h3 m-t-xs m-b-xs">wang wu</div>
+                      <small class="text-muted"> a / b  / c </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div><button ng-click="invite('657')" class="btn btn-primary btn-addon"><i class="fa fa-plus"></i>邀请加入集团</button></div>
+            </div>
 
+            <div ng-show="sendMsg">
+              <div class="line line-dashed b-b line-lg pull-in"></div>
+              <div class="panel panel-default">
+                <div class="panel-heading" style="border-bottom:none">
+                  <div class="clearfix">
+                    <a href class="pull-left thumb-md avatar b-3x m-r"><img src="src/img/a0.jpg" alt=".."></a>
+                    <div class="clear">
+                      <div class="h3 m-t-xs m-b-xs">13896959605</div>
+                      <small class="text-muted"> 未找该医生的信息，您可以通过发送短信邀请。 </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div><button ng-click="sendMsg()" class="btn btn-primary btn-addon"><i class="fa fa-plus"></i>发送短信邀请</button></div>
+            </div>
+
+            <div ng-show="send">
+              <div class="line line-dashed b-b line-lg pull-in"></div>
+              <div class="form-group">
+                <div class="col-md-12">
+                  <textarea class="w100 form-control"></textarea>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="pull-right col-md-4">
+                  <button ng-click="doSend()" class="w100 btn btn-success">发 送</button>
+                </div>
+              </div>           
+            </div>
+          </div>
+        </form> 
         <div class="line line-dashed b-b line-lg pull-in"></div>
         <div class="form-group">
           <div class="col-md-offset-4 col-md-4">

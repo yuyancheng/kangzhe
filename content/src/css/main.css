@@ -111,7 +111,11 @@ th.sorting div{
 	padding-right: 5px;
 }
 .cnt-col-lt .list-group{
+	min-height: 524px;
 	margin-bottom: 0;
+	padding: 4px 1px 2px 2px;
+	overflow: auto;
+	border: 1px solid #DEE5E7;
 }
 .cnt-col-rt{
 	padding-left: 5px;
@@ -221,6 +225,7 @@ th.sorting div{
 	padding: 15px 0 5px;
 }
 .cnt-apportion-list div{
+	min-height: 200px;
 	padding: 10px;
 	border: 1px solid #ddd;
 	border-radius: 2px;
@@ -333,6 +338,7 @@ th.sorting div{
 	box-shadow: -1px 0 1px rgba(0,0,0,.5);
 }
 .cnt-anim-dialog .form-horizontal{
+	margin-top: 15px;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
@@ -448,6 +454,9 @@ th.sorting div{
 
 /**************Start 集团界面**************/
 
+.cnt-list-warp{
+	margin-bottom: 0;
+}
 .cnt-list-warp dl{
 	margin-bottom: 0;
 }
@@ -465,8 +474,11 @@ th.sorting div{
 
 .cnt-list-warp dt,
 .cnt-list-warp dd{
+	width: 100%;
 	padding: 2px 7px;
 	margin: -2px 0;
+	white-space: nowrap;
+	display: table;
 }
 .cnt-list-warp > dd,
 .cnt-list-warp dd dl dd,
@@ -515,17 +527,31 @@ th.sorting div{
   font-size: 12px;
   cursor: pointer;
 }
+.cnt-list-warp .un-check{
+  color: #fff;
+}
 .cnt-list-warp dt:hover,
 .cnt-list-warp dd > dl > dd:hover{
 	background-color: #B2D6FF;
-	color: #fff;
+	/*color: #0047FF;*/
 }
 .cnt-list-warp dd > dl > dt + dd:hover,
 .cnt-list-warp dd > dl > dd:hover{
 	background-color: transparent;
 	color: #58666e;
 }
+.cur-line{
+	background-color: #71B3FF;
+}
+.cur-line span{
+	color: #fff;
+}
+.cnt-list-warp .cur-line:hover{
+	background-color: #71B3FF;
+	color: #fff;
+}
 .cnt-list-warp .badge {
   float: right;
+  margin-top: 3px;
 }
 /***************End 集团界面***************/

@@ -52,6 +52,10 @@ app.factory('utils', ['$http', function($http) {
       }
     },
     extendHash: function(dt, keys){
+    	if(!dt) {
+    		console.warn("数据无效！ In function 'extendHash'.");
+    		return;
+    	}
     	if(dt.constructor === Array){
     		var len = dt.length;
 	    	for(var i=0; i<len; i++){

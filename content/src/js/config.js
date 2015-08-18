@@ -40,7 +40,8 @@ var app = angular.module('app').config(
       // 定义统一api路径
       app.url = {
         access_token: localStorage.getItem('access_token'),
-
+        getSMS: app.urlRoot + 'sms/randcode/getSMSCode',
+        verifySMS: app.urlRoot + 'sms/randcode/verifyCode',
         login:  app.urlRoot + 'user/login',
         logout: app.urlRoot + 'user/logout',
         admin: {
@@ -65,8 +66,14 @@ var app = angular.module('app').config(
         signup:app.urlRoot + 'user/register',
         yiliao: {
           enterprise_login: app.yiliao + 'group-webapi/user/login',
-          login:            app.yiliao + 'group-webapi/user/login',
-          fillInfo:         app.yiliao + 'health-group-webapi/company/regCompany'
+          login:            app.yiliao + 'user/login',
+          getAllData:       app.yiliao + 'group-webapi/department/getAllDataById',
+          getDoctors:       app.yiliao + 'group-webapi/department/doctor/searchByDeDoctor',
+          searchDoctor:     app.yiliao + 'group-webapi/group/doctor/searchByGroupDoctor',
+          saveDoctor:       app.yiliao + 'group-webapi/department/doctor/saveDoctorIdBydepartIds',
+          deleteDoctor:     app.yiliao + 'group-webapi/department/doctor/deleteByDeDoctor',
+          fillInfo:         app.yiliao + 'health-group-webapi/company/regCompany',
+          verifyEnterprise: app.urlRoot + 'group-webapi/company/user/verifyByCuser'
         }
       };
       app.lang = {

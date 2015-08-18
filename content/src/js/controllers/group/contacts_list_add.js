@@ -4,7 +4,12 @@ app.controller('ContactsListAdd', function($rootScope, $scope, $state, $timeout,
   
 	var container = $('#dialog_container');
   var dt = null;
-  
+
+  var deptId = $scope.curDepartmentId || utils.localData('curDepartmentId');
+
+  if(!deptId){
+    return;
+  }
 
   var doIt = function(){
     // 获取医生数据
@@ -24,23 +29,59 @@ app.controller('ContactsListAdd', function($rootScope, $scope, $state, $timeout,
                 '<div class="clear">'+
                   '<div class="h3 m-t-xs m-b-xs">'+ dt[0].name +'</div>'+
                   '<small class="text-muted">'+ dt[0].title +' / '+ dt[0].department +' / '+ dt[0].hospital +'</small>'+
-                '</div></div></div></div>'+
-          '<div><button ng-click="doSome('+ dt[0].id +')" class="btn btn-primary btn-addon"><i class="fa fa-plus"></i>邀请加入集团</button></div>';
-        $('#searchInfo').html(eleStr);
+                '</div></div></div></div>';
+        if(dt.length !== 0){
+          eleStr += '<div><button onClick="doSome('+ dt[0].id +')" class="btn btn-primary btn-addon"><i class="fa fa-plus"></i>邀请加入集团</button></div>';
+        }else{
+          eleStr += '<div><button onClick="doSome('+ dt[0].id +')" class="btn btn-primary btn-addon"><i class="fa fa-plus"></i>发送短信邀请</button></div>';
+        }  
+        
+        //$('#searchInfo').html(eleStr);
+        function doSome(id){
+          var str = '<div class="form-group">'+
+                      '<div class="col-md-12">'+
+                        '<textarea class="w100 form-control"></textarea>'+
+                      '</div>'+
+                    '</div>'+
+                    '<div class="form-group">'+
+                      '<div class="pull-right col-md-3">'+
+                        '<button type="button" onClick="doSend('+ dt[0].id +')" class="w100 btn btn-success">发 送</button>'+
+                      '</div>'+
+                    '</div>';
+
+          //$('#searchInfo').html(str);          
+        }
+      }else{
+        var eleStr = '';
       }
     }, function(x) {
       console.error(x.statusText);
     });
   };
 
+  // 发起邀请
+  $scope.invite = function(id){
+    console.log(id);
+    $scope.sendMsg = true;
+    $scope.gotResult = false;
+    
+  };
+
+  // 开启短信邀请
+  $scope.sendMsg = function(){
+    $scope.send = true;
+    $scope.sendMsg = false;
+    
+  };
+  // 发送短信
+  $scope.doSend = function(){
+    $scope.send = false;
+  };
+
   // 执行操作
   $scope.query = function(){
     doIt();
   };
-  // 执行操作
-  $scope.doSome = function(id){
-    console.log("do something: " + id);
-  }
 
   // 模态框退出
   $scope.cancel = function(){

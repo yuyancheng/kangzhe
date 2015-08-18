@@ -12,9 +12,8 @@
         </tr>
         <tr ng-repeat="weekday in weekdays">
           <td>{{weekday}}</td>
-          <td ng-repeat="stage in dataStages" ng-click="tdClick(weekday,stage)" style="vertical-align: middle;text-align: center;">
-            <div ng-repeat='item in [1,2,3,4,5,6,7]' style="width:80px;height:40px;border-radius: 5px;position:relative;border:1px solid #eaeff0;font-size: 10px;margin: 5px;display: inline-block;float: left;">
-              <i class="icon-close" style="position: absolute;top: -5px;right: -5px;border-radius: 6px;"></i>
+          <td ng-repeat="stage in dataStages" ng-click="tdClick($event,weekday,stage)" style="vertical-align: middle;text-align: center;">
+            <div class="doc-tab" ng-repeat='item in [1,2,3,4,5,6,7]' style="width:80px;height:40px;border-radius: 5px;position:relative;border:1px solid #eaeff0;font-size: 10px;margin: 5px;display: inline-block;float: left;"> <i class="icon-close" style="position: absolute;top: -5px;right: -5px;border-radius: 6px;" ng-click="closeTab($event,5)"></i>
               <p class="doc-name" style="line-height: 20px;">小张</p>
               <p class="time" style="line-height: 20px;">9:10-10:20</p>
             </div>
@@ -28,18 +27,39 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           {{currentWeekday}}{{currentStage}}值班安排
+          <button type="button" class="close" aria-label="Close" ng-click="collapse()">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
         <div class="panel-body">
           <div class="picker-group">
-          <timepicker style="display: inline-block;" ng-model="startTime" ng-change="changed()" min="6" max="maxTime" hour-step="hstep" minute-step="mstep" show-meridian="false"></timepicker>
-          <timepicker style="display: inline-block;margin-left: 50px;" ng-model="endTime" ng-change="changed()" min="minTime" max="maxTime" hour-step="hstep" minute-step="mstep" show-meridian="false"></timepicker>
+            <timepicker style="display: inline-block;" ng-model="startTime" ng-change="changed()" min="minTime" max="maxTime" hour-step="hstep" minute-step="mstep" show-meridian="false"></timepicker>
+            <timepicker style="display: inline-block;margin-left: 50px;" ng-model="endTime" ng-change="changed()" min="minTime" max="maxTime" hour-step="hstep" minute-step="mstep" show-meridian="false"></timepicker>
           </div>
-          <pre class="alert alert-info">Time is: {{mytime | date:'shortTime' }}</pre> 
 
-          <button type="button" class="btn btn-info" ng-click="toggleMode()">12H / 24H</button>
-          <button type="button" class="btn btn-default" ng-click="update()">Set to 14:00</button>
-          <button type="button" class="btn btn-danger" ng-click="clear()">Clear</button>
+          <div class="panel b-a">
+            <div class="clearfix panel-footer">
+              <div style="display:inline-block;float: left;line-height: 30px;">医生选择：</div>
+              <input style="width: 150px;" type="text" class="form-control rounded pull-right" placeholder="搜索医生"></div>
+            <ul class="list-group list-group-lg no-bg auto" style="height: 500px;overflow-y: auto;">
+              <li class="list-group-item clearfix" ng-repeat="item in [1,2,3,4,5,6,7]" style="position: relative;" ng-click="">
 
+                <label class="i-checks m-b-none" style="position:absolute;top: 25px;">
+                  <input type="checkbox" name="post[]"> <i></i>
+                </label>
+                <div style="margin-left: 50px;">
+                  <span class="pull-left thumb-sm avatar m-r">
+                    <img src="src/img/a0.jpg" alt="..."></span>
+                  <span class="clear">
+                    <span>Chris Fox</span>
+                    <small class="text-muted clear text-ellipsis">What's up, buddy</small>
+                  </span>
+                </div>
+              </li>
+            </ul>
+
+          </div>
+          <button class="btn m-b-xs w-xs btn-success pull-right">提交</button>
         </div>
       </div>
     </slide-bar>

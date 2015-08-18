@@ -45,7 +45,7 @@ angular.module('app')
         name: 'ui.select',
         files: ['bower_components/angular-ui-select/dist/select.min.js', 'bower_components/angular-ui-select/dist/select.min.css']
       }, {
-        name: 'angularFileUpload',
+        name: 'ngFileUpload',
         files: ['bower_components/angular-file-upload/angular-file-upload.min.js']
       }, {
         name: 'ui.calendar',

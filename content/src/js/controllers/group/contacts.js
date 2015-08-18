@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile) {
-  //var url = app.url.contacts.getContacts; // 后台API路径
+app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile, utils) {
+  var url = app.url.yiliao.getAllData; // 后台API路径
   var data = null;
   var cnt_list = $('#cnt_list');
   var items = cnt_list.find('.list-group-item');
@@ -21,9 +21,14 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
     console.error(x.statusText);
   });*/
 
+  // 创建通讯录列表数据
   var contacts = new Tree('cnt_list',{
-    hasCheck: true,
-    dataUrl: 'src/api/contacts_list.json',
+    hasCheck: false,
+    dataUrl: url,
+    data: {
+      access_token: 'ad0d05eaa3124d6e93b6ca0603cdde67',
+      groupId: '55d01bdc4f13030a489463c8'
+    },
     async: false,
     icons: {
       arrow: 'fa fa-caret-right/fa fa-caret-down',
@@ -35,181 +40,64 @@ app.controller('Contacts', function($rootScope, $scope, $state, $http, $compile)
     datakey: {
       id: 'id',
       name: 'name',
-      sub: 'sub'
+      sub: 'subList'
     },
     events: {
-      checked: $scope.check,
-      clicked: function(){
-        alert('clicked');
+      click: forward
+    },
+    callback: function(){
+      var cnt_list = $('#cnt_list');
+      var n = 3;
+      while(n--){
+        var dl = $('<dl class="cnt-list-warp"></dl>');
+        var dt = $('<dt></dt>');
+        var iIcon = $('<i class="fa-fw m-r-xs"></i>');
+        var span = $('<span></span>');
+        var num = $('<span class="badge"></span>');
+        if(n === 1){
+          iIcon.addClass('fa fa-bookmark');
+          span.html('未分配');
+          num.html('1087');
+          num.addClass('bg-warning');
+        }else if(n === 2){
+          iIcon.addClass('fa fa-bell');
+          span.html('待审核');
+          num.html('1925');
+          num.addClass('bg-info');
+        }else{
+          iIcon.addClass('fa fa-clock-o');
+          span.html('已离职');
+          num.html('623');
+          num.addClass('bg-danger');
+        }
+
+        dt.append(num).append(iIcon).append(span);
+        dl.append(dt);
+        cnt_list.append(dl);
+
+        dt.bind('click', 'id_' + n, function(e){
+          $state.go('app.contacts.list', {id:e.data}, {reload:false})
+        });
       }
+      
+      var curDepartment = cnt_list.find('.cnt-list-warp').first();
+      curDepartment.find('dt').first().addClass('cur-line').trigger('click');
     }
   });
+
+  function forward(id){
+    utils.localData('curDepartmentId', id);
+    $state.go('app.contacts.list',{id: id}, {reload: false});
+    $scope.curDepartmentId = id;
+  }
 
   $scope.check = function(){
     alert('checked');
   };
 
-  // 初始化通讯录列表
-  function initList(){
-    cnt_list.html('');
-    var len = dt.length,
-        items = [],
-        item = null,
-        ul = null,
-        li = null,
-        ie = null,
-        span = null,
-        subs = null,
-        ln = 0,
-        hasSub = false,
-        siblings = null;
-    for(var i=0; i<len; i++){
-      item = $('<div class="list-group-item"></div>'); 
-      items.push(item);
-      subs = dt[i].sub;
-      // 含二级科室
-      if(subs && (ln = subs.length) > 0){
-        hasSub = true;
-        ie = $('<i class="fa fa-chevron-right text-muted"><i>');
-        ul = $('<ul class="dept-list none"></ul>');
-        // 遍历每一个二级科室并生成相应的子列表
-        for(var j=0; j<ln; j++){
-          li = $('<li></li>');
-          li.data('id',subs[j].id);
-          span = $('<span class="badge bg-default"></span>');
-          span.html(Math.floor(Math.random() * 1000));
-          li.html(subs[j].name).prepend(span);
-
-          li.on('click', function(e){
-            var evt = e || window.event;
-            evt.stopPropagation();
-
-            $scope.forward($(this).data('id')); // 跳转到相应的页面
-
-            siblings = $(this).siblings();
-            if(!$(this).hasClass('cur-li')){
-              cnt_list.find('.cur-li').removeClass('cur-li');
-              $(this).addClass('cur-li');  
-            }
-          });
-
-          li.hover(function(){
-            var that = $(this);
-            var hBtn = $('<button type="button" class="btn btn-default" dropdown-toggle aria-haspopup="true" aria-expanded="false"><span></span></button>');
-            var menu = $('<ul class="dropdown-menu"><li><a ng-href>添加</a></li><li><a ng-href ng-click="remove()">删除</a></li></ul>');
-            $(this).append(hBtn).append(menu);
-            hBtn.on('click', function(e){
-              var evt = e || window.event;
-              evt.stopPropagation();  // 阻止事件冒泡
-              showMenu(that);
-            });
-            var b = $(this).parent().siblings('.btn-default');
-            var m = $(this).parent().siblings('.dropdown-menu');
-            if(b.length > 0){
-              b.remove();
-              m.remove();
-            }
-          }, function(){
-            $(this).find('.dropdown-menu').remove();
-            $(this).find('.btn-default').remove();
-          });
-          ul.append(li);
-        }
-        item.html(dt[i].name).prepend(ie).append(ul);
-      }else{  // 不含二级科室
-        hasSub = false;
-        item.data('id', dt[i].id);
-        span = $('<span class="badge bg-primary"></span>');
-        span.html(Math.floor(Math.random() * 1000));
-        item.html(dt[i].name).prepend(span);
-      }
-      cnt_list.append(item);
-      // 定义列表行的点击事件
-      item.on('click', hasSub, function(st){
-        siblings = $(this).siblings();
-        if(!st.data){
-          if(!$(this).hasClass('cur-li')){
-            cnt_list.find('.cur-li').removeClass('cur-li');
-            $(this).addClass('cur-li');  
-          }
-        }else{
-          var list = $(this).find('.dept-list');
-          if(list.hasClass('none')){
-            list.removeClass('none');
-            $(this).find('.fa-chevron-right').addClass('fa-chevron-down').removeClass('fa-chevron-right');
-          }else{
-            list.addClass('none');
-            $(this).find('.fa-chevron-down').addClass('fa-chevron-right').removeClass('fa-chevron-down');
-          }
-        }
-        if($(this).data('id')){
-          $scope.forward($(this).data('id')); // 跳转到相应的页面
-        }
-      });
-
-      // 鼠标停留时显示操作菜单热点
-      item.hover(function(e){
-        var evt = e || window.event;
-        var target = evt.target || evt.srcElement;
-        if(target.nodeName !== 'DIV' || $(this).find('.dept-list').length > 0) {
-          return;
-        }
-        var that = $(this);
-        var hBtn = $('<button type="button" class="btn btn-default" dropdown-toggle aria-haspopup="true" aria-expanded="false"><span></span></button>');
-        var menu = $('<ul class="dropdown-menu"><li><a ng-href>添加</a></li><li><a ng-href ng-click="remove()">删除</a></li></ul>');
-        $(this).append(hBtn).append(menu);
-        hBtn.on('click', function(e){
-          var evt = e || window.event;
-          evt.stopPropagation();
-          showMenu(that);
-        });
-      }, function(){
-        $(this).find('.dropdown-menu').remove();
-        $(this).find('.btn-default').remove();
-      });
-    }
-
-    function showMenu(obj){
-      var menu = obj.find('.dropdown-menu');
-      cnt_list.find('.dropdown-menu').css('display', 'none');
-      var lis = menu.css('display', 'block').find('li');
-      lis.on('click', function(e){
-        var evt = e || window.event;
-        evt.stopPropagation();
-        //showMenu(that);
-      });
-    }
-
-    // 初始存在的三个列表单元
-    var links = [];
-    var unassigned = $('<div class="list-group-item" data-id="123"><span class="badge bg-warning">624</span><i class="fa fa-bookmark fa-fw m-r-xs"></i>未分配</div>');
-    var uncheck = $('<div class="list-group-item" data-id="234"><span class="badge bg-info">19</span><i class="fa fa-clock-o fa-fw m-r-xs"></i>邀请待通过</div>');
-    var dimission = $('<div class="list-group-item" data-id="345"><span class="badge bg-danger">6</span><i class="fa fa-bell fa-fw m-r-xs"></i>已离职</div>');
-    cnt_list.append(unassigned).append(uncheck).append(dimission);
-    links.push(unassigned,uncheck,dimission);
-    var len = links.length;
-    while(len--){
-      links[len].on('click', function(e){
-        var evt = e || window.event;
-        evt.stopPropagation();
-
-        $scope.forward($(this).data('id')); // 跳转到相应的页面
-
-        siblings = $(this).siblings();
-        if(!$(this).hasClass('cur-li')){
-          cnt_list.find('.cur-li').removeClass('cur-li');
-          $(this).addClass('cur-li');  
-        }
-      });
-    }
-  }
-
-  // items.eq(0).off().on('click', function(){
-  //   $state.go('app.contacts.list');
-  // });
-
   // 添加（工具栏按钮）
   $scope.addUnit = function(){
+    console.log($scope.curDepartmentId);
     $state.go('app.contacts.list.add');
   };
 

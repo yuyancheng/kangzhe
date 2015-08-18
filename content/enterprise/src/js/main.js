@@ -9,6 +9,7 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
     app.state = $state;
     // config
     $scope.app = {
+      token:'3fa603629d3d4b5f9c6557554fbc5422',
       name: '健康伽平台',
       version: '1.0.0',
       // for chart colors
@@ -34,6 +35,34 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
         container: false
       }
     }
+
+    //这里是虚拟的token
+    $scope.access_token = '3fa603629d3d4b5f9c6557554fbc5422';
+    $scope.companyName = null;
+    //验证公司账户
+    $http.post(app.urlRoot + '/group-webapi/company/user/verifyByCuser', {
+      access_token: $scope.access_token,
+      doctorId: 9,
+      userType: 5
+    }).
+    success(function(data, status, headers, config) {
+        console.log(data);
+        var companyId = data.data.groupList.pageData[0].companyId;
+        $http.post(app.urlRoot+'/group-webapi/company/getCompanyById',{
+          id:companyId,
+          access_token:$scope.access_token
+        }).success(function(data, status, headers, config) {
+            console.log(data);
+            $scope.companyName=data.data.bankAccount;
+          }).
+          error(function(data, status, headers, config) {
+            console.log(data);
+          })
+    }).
+    error(function(data, status, headers, config) {
+      console.log(data);
+    });
+
     // save settings to local storage
     if (angular.isDefined($localStorage.settings)) {
       $scope.app.settings = $localStorage.settings;

@@ -1,0 +1,78 @@
+
+
+<div ng-controller="AdminCtrl">
+  <div class="panel">
+    <div class="panel-heading b-b b-light">
+      <button class="btn m-b-xs btn-sm btn-primary btn-addon" ng-click="invite()"> <i class="fa fa-plus"></i>
+        邀请管理员
+      </button>
+    </div>
+    <div class="panel-body">
+      <table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
+        <thead>
+          <tr>
+            <th st-sort="firstName">管理员</th>
+            <th st-sort="lastName">账号</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="row in adminstrators">
+            <td>{{row.firstName}}</td>
+            <td>{{row.lastName}}</td>
+            <td>
+              <button type="button" ng-click="removeRow(row)" class="btn btn-xs btn-default"> <i class="fa fa-times"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+
+    </div>
+    <div class="panel-footer"></div>
+  </div>
+
+</div>
+
+<script type="text/ng-template" id="removeModalContent.html">
+
+<div class="modal-header">
+  <h3 class="modal-title">确认删除？</h3>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="cancel()">取消</button>
+  <button class="btn btn-primary" ng-click="ok()">删除</button>
+</div>
+</script>
+
+<script type="text/ng-template" id="inviteDocToManageModalContent.html">
+<div class="modal-header">
+<h3 class="modal-title">邀请医生创建集团</h3>
+</div>
+<div class="modal-body">
+<div class="input-group">
+<input type="text" class="form-control" placeholder="请输入医生号/手机号">
+<span class="input-group-btn">
+<button class="btn btn-default" type="button" ng-click="searchDoc()">查找</button>
+</span>
+</div><!-- /input-group --> </div>
+<div class="modal-body">
+<div collapse="isCollapsed">
+<p>查找结果：</p>
+<img src="src/img/a0.jpg"/ style="width:100px;height:100px;display:inline-block;float:left;">
+<ul style="display:inline-block;float:left;">
+<li style="line-height:33px;">罗医生</li>
+<li style="line-height:33px;">主任|内科</li>
+<li style="line-height:33px;">深圳中医院</li>
+</ul>
+
+<button class="btn m-b-xs btn-sm btn-success btn-addon pull-right" ng-click="inviteDoc()" style="margin-top:30px;"> <i class="fa icon-action-redo"></i>
+邀请管理集团
+</button>
+
+<div style="clear:both;"></div>
+</div>
+</div>
+</script>

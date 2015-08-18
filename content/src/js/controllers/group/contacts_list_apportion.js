@@ -1,130 +1,92 @@
 'use strict';
 
 app.controller('ContactsListApportion', function($rootScope, $scope, $state, $timeout, $http, utils) {
-  //var url = app.url.contacts.getContacts; // 后台API路径
-	var container = $('#dialog_container');
-  var data = null;
-  var cnt_list = $('#cnt_list_apportion');
-  var items = cnt_list.find('.list-group-item');
-  var dt = null;
-  var html = $('html');
+  var url = app.url.yiliao.getAllData, 
+      container = $('#dialog_container'),
+      data = null,
+      cnt_list = $('#cnt_list_apportion'),
+      dt = null,
+      html = $('html'),
+      list_wrapper = $('#cnt_list_wrapper'),
+      list_arr = [],
+      deptId = $scope.curDepartmentId || utils.localData('curDepartmentId');
+
+  if(!deptId){
+    return;
+  };
+
+  $scope.formData = {};
   html.css('overflow', 'hidden');
 
-  // 获取通讯录列表数据
-  $http({
-    url: 'src/api/contacts_list.json',
-    method: 'get',
-    data: null
-  }).then(function(resp){
-    if(resp.data.data && resp.data.data.length > 0){
-      dt = resp.data.data;
-      initList();
-    }
-  }, function(x) {
-    console.error(x.statusText);
-  });
+  list_wrapper.html('');
 
   // 初始化通讯录列表
-  function initList(){
-    cnt_list.html('');
-    var len = dt.length,
-        items = [],
-        item = null,
-        ul = null,
-        li = null,
-        ie = null,
-        span = null,
-        subs = null,
-        ln = 0,
-        hasSub = false,
-        siblings = null;
-    for(var i=0; i<len; i++){
-      item = $('<div class="list-group-item"></div>'); 
-      items.push(item);
-      subs = dt[i].sub;
-      // 含二级科室
-      if(subs && (ln = subs.length) > 0){
-        hasSub = true;
-        ie = $('<i class="fa fa-chevron-right text-muted"><i>');
-        ul = $('<ul class="dept-list none"></ul>');
-        // 遍历每一个二级科室并生成相应的子列表
-        for(var j=0; j<ln; j++){
-          li = $('<li></li>');
-          li.data('id',subs[j].id);
-          li.html(subs[j].name);
-
-          li.on('click', function(e){
-            var evt = e || window.event;
-            evt.stopPropagation();
-
-            $scope.forward($(this).data('id')); // 跳转到相应的页面
-
-            siblings = $(this).siblings();
-            if(!$(this).hasClass('cur-li')){
-              cnt_list.find('.cur-li').removeClass('cur-li');
-              $(this).addClass('cur-li');  
-            }
-          });
-
-          ul.append(li);
-        }
-        item.html(dt[i].name).prepend(ie).append(ul);
-      }else{  // 不含二级科室
-        hasSub = false;
-        item.data('id', dt[i].id);
-        item.html(dt[i].name);
-      }
-      cnt_list.append(item);
-      // 定义列表行的点击事件
-      item.on('click', hasSub, function(st){
-        siblings = $(this).siblings();
-        if(!st.data){
-          if(!$(this).hasClass('cur-li')){
-            cnt_list.find('.cur-li').removeClass('cur-li');
-            $(this).addClass('cur-li');  
-          }
-        }else{
-          var list = $(this).find('.dept-list');
-          if(list.hasClass('none')){
-            list.removeClass('none');
-            $(this).find('.fa-chevron-right').addClass('fa-chevron-down').removeClass('fa-chevron-right');
-          }else{
-            list.addClass('none');
-            $(this).find('.fa-chevron-down').addClass('fa-chevron-right').removeClass('fa-chevron-down');
-          }
-        }
-        if($(this).data('id')){
-          $scope.forward($(this).data('id')); // 跳转到相应的页面
-        }
-      });
+  var contacts = new Tree('cnt_list_apportion',{
+    hasCheck: true,
+    dataUrl: url,
+    data: {
+      access_token: 'ad0d05eaa3124d6e93b6ca0603cdde67',
+      groupId: '55d01bdc4f13030a489463c8'
+    },
+    async: false,
+    icons: {
+      arrow: 'fa fa-caret-right/fa fa-caret-down',
+      check: 'fa fa-check',
+      hospital: 'fa fa-hospital-o',
+      department: 'fa fa-h-square',
+      section: 'fa fa-user-md'
+    },
+    datakey: {
+      id: 'id',
+      name: 'name',
+      sub: 'subList'
+    },
+    events: {
+      click: check
+    },
+    callback: function(){
+      var cnt_list = $('#cnt_list_apportion');
     }
-  }
+  });
   
+  function check(id, name){
+    if(list_arr.indexOf(id) !== -1) return;
+    $scope.formData.id = id;
+    $scope.formData.name = name;
+    list_arr.push(id);
+    var span = $('<span class="label-btn btn-info"></span>');
+    var i = $('<i class="fa fa-times"></i>');
+    span.html(name).data('id', id).append(i);
+    list_wrapper.append(span);
+    i.on('click', function(){
+      var idx = 0;
+      $(this).parent().remove();
+      if(idx = list_arr.indexOf(id) !== -1){
+        list_arr.splice(idx, 1);
+      }
+    });
+  }
 
-  var doIt = function(){
-    // 获取医生数据
+  // 执行操作
+  $scope.save = function(){
     $http({
-      url: 'src/api/doctors_list.json',
-      method: 'get',
-      data: null
+      url: app.url.yiliao.saveDoctor,
+      method: 'post',
+      data: {
+        access_token: 'ad0d05eaa3124d6e93b6ca0603cdde67',
+        departmentIds: list_arr,
+        doctorId: $scope.details.id
+      }
     }).then(function(resp){
-      if(resp.data.data && resp.data.data.length > 0){
-        dt = resp.data.data;
-        if(dt.length === 0) return;
+      if(resp.data.resultCode === 1){
+        console.log("分配成功！");
+      }else{
+        console.warn("分配失败！");
       }
     }, function(x) {
       console.error(x.statusText);
     });
   };
-
-  // 执行操作
-  $scope.query = function(){
-    doIt();
-  };
-  // 执行操作
-  $scope.doSome = function(id){
-    console.log("do something: " + id);
-  }
 
   // 模态框退出
   $scope.cancel = function(){
